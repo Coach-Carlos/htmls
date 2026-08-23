@@ -1,0 +1,623 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>A1 Practice: Hotel Conversation 1 (Checking In at Reception)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 40%, #0c4a6e 100%);
+      color: #ffffff;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      touch-action: manipulation;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background-color: #0f172a;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+      border: 1px solid #0284c7;
+    }
+
+    .header {
+      border-bottom: 2px solid #0284c7;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .header h1 {
+      color: #facc15;
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      color: #38bdf8;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .progress-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      color: #facc15;
+    }
+
+    .progress-bar {
+      width: 70%;
+      background-color: #1e293b;
+      border-radius: 8px;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background-color: #38bdf8;
+      transition: width 0.3s ease;
+    }
+
+    .card {
+      background-color: #1e293b;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border-left: 4px solid #facc15;
+    }
+
+    .tourist-label {
+      color: #facc15;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+
+    .tourist-text {
+      font-size: 1.1rem;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .audio-btn {
+      background-color: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 12px 14px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .audio-btn:active {
+      background-color: #38bdf8;
+      color: #0f172a;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .option-btn {
+      background-color: #1e293b;
+      color: #ffffff;
+      border: 2px solid #0284c7;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .option-btn.correct {
+      background-color: #0369a1;
+      border-color: #38bdf8;
+      color: #38bdf8;
+      font-weight: bold;
+    }
+
+    .option-btn.incorrect {
+      background-color: #450a0a;
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    .shadowing-section {
+      display: none;
+      background-color: #1e293b;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #38bdf8;
+    }
+
+    .shadowing-section h3 {
+      color: #38bdf8;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .rec-btn {
+      background-color: #ef4444;
+      color: #ffffff;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .rec-btn.recording {
+      background-color: #facc15;
+      color: #0f172a;
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .transcript-box {
+      width: 100%;
+      background-color: #0f172a;
+      color: #ffffff;
+      border: 1px solid #0284c7;
+      border-radius: 6px;
+      padding: 10px;
+      margin: 10px 0;
+      min-height: 48px;
+      font-size: 0.9rem;
+    }
+
+    .feedback-box {
+      display: none;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .score-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      margin-top: 4px;
+    }
+
+    .nav-controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      background-color: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .nav-btn:disabled {
+      background-color: #334155;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      border-top: 1px solid #0284c7;
+      padding-top: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>Prepared by Coach Carlos O.</h1>
+      <p>A1 Practice: Hotel Conversation 1 (Checking In at Reception)</p>
+    </div>
+
+    <div class="progress-container">
+      <span id="step-indicator">Step 1 of 5</span>
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+    </div>
+
+    <!-- TOURIST QUESTION -->
+    <div class="card">
+      <div class="tourist-label">👤 Tourist Phrase:</div>
+      <div class="tourist-text" id="tourist-text">...</div>
+      <button class="audio-btn" id="listen-tourist-btn" onclick="playCurrentQuestion()">🔊 Listen to Tourist</button>
+    </div>
+
+    <!-- RECEPTIONIST RESPONSE CHOICES -->
+    <div id="choices-container">
+      <div class="section-title">Select the correct Receptionist response:</div>
+      <div class="options-grid" id="options"></div>
+    </div>
+
+    <!-- SHADOWING & SPEECH RECOGNITION SECTION -->
+    <div class="shadowing-section" id="shadowing-section">
+      <h3>🗣️ Practice Shadowing & Pronunciation</h3>
+      <p style="font-size:0.85rem; color:#cbd5e1; margin-bottom:8px;">
+        1. Listen to the receptionist model.<br>
+        2. Click <strong>"Record My Voice"</strong> and repeat out loud.<br>
+        3. Target score: <strong>80% or higher</strong> recommended for optimal mastery.
+      </p>
+      <button class="audio-btn" style="margin-bottom:10px;" onclick="playSelectedModel()">🔊 Listen Correct Receptionist Model</button>
+      
+      <button class="rec-btn" id="rec-btn" onclick="toggleSpeechRecognition()">🎙️ Record My Voice</button>
+      
+      <div style="font-size:0.8rem; color:#facc15; margin-top:8px;">Your Voice Transcription:</div>
+      <div class="transcript-box" id="student-transcript"><em>Click record and start speaking...</em></div>
+    </div>
+
+    <!-- FEEDBACK BOX -->
+    <div class="feedback-box" id="feedback"></div>
+
+    <!-- NAVIGATION BUTTONS -->
+    <div class="nav-controls">
+      <button class="nav-btn" id="prev-btn" onclick="previousStep()" disabled>Previous</button>
+      <button class="nav-btn" id="next-btn" onclick="nextStep()">Next Question</button>
+    </div>
+
+    <div class="footer">
+      © Developed for educational excellence By Coach Carlos O
+    </div>
+  </div>
+
+  <script>
+    const dialogueSequence = [
+      {
+        tourist: "Good afternoon. I have a reservation.",
+        choices: [
+          { text: "Good afternoon. Welcome to our hotel. What is your name, please?", correct: true },
+          { text: "We do not have any rooms available.", correct: false },
+          { text: "Please go away.", correct: false }
+        ],
+        pedagogicalFeedback: "'Good afternoon. Welcome to our hotel. What is your name, please?' greets the guest politely and asks for their details."
+      },
+      {
+        tourist: "My name is John Smith.",
+        choices: [
+          { text: "Let me check. Yes, I have your reservation.", correct: true },
+          { text: "I don't care what your name is.", correct: false },
+          { text: "John Smith is not allowed here.", correct: false }
+        ],
+        pedagogicalFeedback: "'Let me check. Yes, I have your reservation' confirms that the guest's booking has been found in the system."
+      },
+      {
+        tourist: "Great.",
+        choices: [
+          { text: "May I see your passport, please?", correct: true },
+          { text: "Give me all your money.", correct: false },
+          { text: "Please leave the lobby.", correct: false }
+        ],
+        pedagogicalFeedback: "'May I see your passport, please?' politely requests mandatory check-in identification."
+      },
+      {
+        tourist: "Of course. Here it is.",
+        choices: [
+          { text: "Thank you. Here is your room key.", correct: true },
+          { text: "I do not want your passport.", correct: false },
+          { text: "The keys are lost.", correct: false }
+        ],
+        pedagogicalFeedback: "'Thank you. Here is your room key' acknowledges receiving the ID and hands over access to the room."
+      },
+      {
+        tourist: "Thank you very much.",
+        choices: [
+          { text: "You're welcome. Enjoy your stay!", correct: true },
+          { text: "Don't talk to me.", correct: false },
+          { text: "The hotel is closing now.", correct: false }
+        ],
+        pedagogicalFeedback: "'You're welcome. Enjoy your stay!' offers a friendly and warm conclusion to the check-in process."
+      }
+    ];
+
+    let currentStep = 0;
+    let selectedCorrectAnswer = "";
+    let isRecording = false;
+    let recognition = null;
+    let isSpeechUnlocked = false;
+
+    // Mobile Speech Synthesis Unlock (Required for iOS / Mobile Chrome)
+    function unlockMobileSpeech() {
+      if (!isSpeechUnlocked && 'speechSynthesis' in window) {
+        const silentUtterance = new SpeechSynthesisUtterance('');
+        silentUtterance.volume = 0;
+        window.speechSynthesis.speak(silentUtterance);
+        isSpeechUnlocked = true;
+      }
+    }
+
+    // Attach unlock event to first user touch/click
+    document.addEventListener('touchstart', unlockMobileSpeech, { once: true });
+    document.addEventListener('click', unlockMobileSpeech, { once: true });
+
+    // Contextual Vocabulary Normalizer
+    function normalizeVocabulary(text) {
+      let normalized = text.toLowerCase();
+
+      const homophoneMap = {
+        "reservation": "reservation",
+        "passport": "passport",
+        "key": "key",
+        "stay": "stay",
+        "you're": "you're",
+        "youre": "you're",
+        "your": "your",
+        "welcome": "welcome"
+      };
+
+      for (const [misheard, target] of Object.entries(homophoneMap)) {
+        const regex = new RegExp(misheard.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        normalized = normalized.replace(regex, target);
+      }
+
+      return normalized;
+    }
+
+    // Similarity score calculation
+    function calculateSimilarity(str1, str2) {
+      const clean1 = normalizeVocabulary(str1);
+      const clean2 = normalizeVocabulary(str2);
+
+      const words1 = clean1.replace(/[^\w\s]/gi, '').split(/\s+/).filter(Boolean);
+      const words2 = clean2.replace(/[^\w\s]/gi, '').split(/\s+/).filter(Boolean);
+      
+      if (words1.length === 0 || words2.length === 0) return 0;
+      
+      let matches = 0;
+      words1.forEach(w => {
+        if (words2.includes(w)) matches++;
+      });
+
+      return Math.round((matches / Math.max(words1.length, words2.length)) * 100);
+    }
+
+    // Mobile-Optimized Speech Recognition Setup
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = function() {
+        isRecording = true;
+        const recBtn = document.getElementById('rec-btn');
+        recBtn.classList.add('recording');
+        recBtn.innerHTML = '🛑 Listening... Speak now!';
+        document.getElementById('student-transcript').innerText = "Listening to your voice...";
+      };
+
+      recognition.onresult = function(event) {
+        const rawTranscript = event.results[0][0].transcript;
+        const correctedTranscript = normalizeVocabulary(rawTranscript);
+        
+        document.getElementById('student-transcript').innerText = `"${correctedTranscript}"`;
+        evaluatePronunciation(correctedTranscript);
+      };
+
+      recognition.onerror = function(event) {
+        document.getElementById('student-transcript').innerText = "Microphone access failed or no speech was detected. Please check permissions and try again.";
+        stopRecordingState();
+      };
+
+      recognition.onend = function() {
+        stopRecordingState();
+      };
+    }
+
+    function stopRecordingState() {
+      isRecording = false;
+      const recBtn = document.getElementById('rec-btn');
+      recBtn.classList.remove('recording');
+      recBtn.innerHTML = '🎙️ Record My Voice';
+    }
+
+    function toggleSpeechRecognition() {
+      if (!recognition) {
+        alert("Speech Recognition is not supported by your mobile browser. Please use Chrome on Android or Safari on iOS.");
+        return;
+      }
+
+      if (!isRecording) {
+        try {
+          recognition.start();
+        } catch (e) {
+          recognition.stop();
+        }
+      } else {
+        recognition.stop();
+      }
+    }
+
+    function evaluatePronunciation(studentSpeech) {
+      const feedback = document.getElementById('feedback');
+      feedback.style.display = 'block';
+
+      const accuracyScore = calculateSimilarity(selectedCorrectAnswer, studentSpeech);
+
+      if (accuracyScore >= 80) {
+        feedback.style.backgroundColor = '#0369a1';
+        feedback.style.color = '#38bdf8';
+        feedback.style.border = '1px solid #38bdf8';
+        feedback.innerHTML = `
+          <strong>Score: ${accuracyScore}% - Excellent!</strong> 
+          <span class="score-badge" style="background-color:#38bdf8; color:#0f172a;">ACCEPTABLE (&ge;80%)</span><br>
+          Your pronunciation is clear and easy to understand.<br>
+          <em>${dialogueSequence[currentStep].pedagogicalFeedback}</em>
+        `;
+      } else {
+        feedback.style.backgroundColor = '#422006';
+        feedback.style.color = '#fde047';
+        feedback.style.border = '1px solid #ca8a04';
+        feedback.innerHTML = `
+          <strong>Score: ${accuracyScore}% - Below Target (80%)</strong> 
+          <span class="score-badge" style="background-color:#ca8a04; color:#0f172a;">KEEP PRACTICING</span><br>
+          An 80% score is recommended to ensure solid fluency, but feel free to continue practicing or move to the next question whenever you are ready.<br>
+          <em>${dialogueSequence[currentStep].pedagogicalFeedback}</em>
+        `;
+      }
+    }
+
+    function loadStep(index) {
+      const data = dialogueSequence[index];
+      
+      document.getElementById('step-indicator').innerText = `Step ${index + 1} of ${dialogueSequence.length}`;
+      document.getElementById('progress').style.width = `${((index + 1) / dialogueSequence.length) * 100}%`;
+      document.getElementById('tourist-text').innerText = `"${data.tourist}"`;
+
+      document.getElementById('choices-container').style.display = 'block';
+      document.getElementById('shadowing-section').style.display = 'none';
+      document.getElementById('feedback').style.display = 'none';
+      document.getElementById('student-transcript').innerText = 'Click record and start speaking...';
+
+      const optionsContainer = document.getElementById('options');
+      optionsContainer.innerHTML = '';
+      const shuffledChoices = [...data.choices].sort(() => Math.random() - 0.5);
+
+      shuffledChoices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = choice.text;
+        btn.onclick = () => selectOption(choice, btn);
+        optionsContainer.appendChild(btn);
+      });
+
+      document.getElementById('prev-btn').disabled = index === 0;
+      document.getElementById('next-btn').innerText = index === dialogueSequence.length - 1 ? "Finish Conversation" : "Next Question";
+    }
+
+    // Robust Mobile TTS Function
+    function playTTS(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // Reset previous speech queue
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.85;
+
+        // Ensure voices are loaded for iOS Safari
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+          const usVoice = voices.find(v => v.lang === 'en-US' || v.lang === 'en_US');
+          if (usVoice) utterance.voice = usVoice;
+        }
+
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert("Text-to-Speech is not supported on this mobile browser.");
+      }
+    }
+
+    function playCurrentQuestion() {
+      playTTS(dialogueSequence[currentStep].tourist);
+    }
+
+    function playSelectedModel() {
+      playTTS(selectedCorrectAnswer);
+    }
+
+    function selectOption(choice, btnElement) {
+      const allButtons = document.querySelectorAll('.option-btn');
+      
+      if (choice.correct) {
+        btnElement.classList.add('correct');
+        allButtons.forEach(b => b.style.pointerEvents = 'none');
+        selectedCorrectAnswer = choice.text;
+
+        playTTS(selectedCorrectAnswer);
+
+        setTimeout(() => {
+          document.getElementById('shadowing-section').style.display = 'block';
+        }, 800);
+
+      } else {
+        btnElement.classList.add('incorrect');
+        const feedback = document.getElementById('feedback');
+        feedback.style.display = 'block';
+        feedback.style.backgroundColor = '#450a0a';
+        feedback.style.color = '#ef4444';
+        feedback.style.border = '1px solid #ef4444';
+        feedback.innerHTML = `<strong>Incorrect option.</strong> Try again to select the correct receptionist response.`;
+      }
+    }
+
+    function nextStep() {
+      if (currentStep < dialogueSequence.length - 1) {
+        currentStep++;
+        loadStep(currentStep);
+      } else {
+        alert("Great job! You completed 'A1 Practice: Hotel Conversation 1 (Checking In at Reception)'.");
+      }
+    }
+
+    function previousStep() {
+      if (currentStep > 0) {
+        currentStep--;
+        loadStep(currentStep);
+      }
+    }
+
+    window.onload = () => loadStep(0);
+  </script>
+</body>
+</html>
