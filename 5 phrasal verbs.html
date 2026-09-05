@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phrasal Verbs Flashcards - EasyEnglishEducation</title>
+  <style>
+    :root {
+      --primary: #93c5fd;
+      --accent: #f43f5e;
+      --text: #f8fafc;
+      --pink-subtle: #fce7f3;
+      --green-success: #15803d;
+      --green-outer: #49A00D; /* Outer frame green */
+      --cobalt-blue-box: #0047AB; /* Inner box cobalt blue */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* MINT GREEN BACKGROUND */
+    html, body {
+      background-color: #27F5B7 !important;
+      color: #0f172a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    body {
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      color: #0f172a;
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    header p {
+      color: #1e293b;
+      font-size: 0.95rem;
+      margin-top: 5px;
+      font-weight: 700;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 550px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .progress-container {
+      width: 100%;
+      background-color: #ffffff;
+      height: 10px;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .counter {
+      font-weight: bold;
+      color: #0f172a;
+    }
+
+    /* Flashcard Flip FX */
+    .flashcard-container {
+      width: 100%;
+      height: 590px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .flashcard {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.15);
+    }
+
+    .flashcard.flipped {
+      transform: rotateY(180deg);
+    }
+
+    /* Card Frame Outer: #49A00D */
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      text-align: center;
+      border: 2px solid #367709;
+      background-color: var(--green-outer);
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+    }
+
+    /* Primary Text Box Container: #0047AB */
+    .sea-blue-textbox {
+      width: 100%;
+      height: 100%;
+      background-color: var(--cobalt-blue-box);
+      border-radius: 12px;
+      border: 1px solid #2563eb;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25);
+      overflow-y: auto;
+    }
+
+    .card-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #93c5fd;
+      font-weight: 700;
+    }
+
+    .card-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+
+    .pattern-tag {
+      font-size: 0.82rem;
+      color: #bfdbfe;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-top: 4px;
+    }
+
+    .prompt-question {
+      font-size: 1.1rem;
+      color: #cbd5e1;
+      font-style: italic;
+    }
+
+    .english-definition {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #f8fafc;
+      background-color: #1e3a8a;
+      padding: 8px 16px;
+      border-radius: 8px;
+      margin-top: 2px;
+      width: 100%;
+      text-align: center;
+      line-height: 1.35;
+      border: 1px solid #3b82f6;
+    }
+
+    .card-example {
+      font-size: 0.85rem;
+      font-style: italic;
+      color: #ffffff;
+      background-color: #1e3a8a;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border-left: 4px solid var(--accent);
+      width: 100%;
+      text-align: left;
+      line-height: 1.35;
+      max-height: 100px;
+      overflow-y: auto;
+    }
+
+    .card-example div {
+      padding: 3px 6px;
+      border-radius: 4px;
+      margin-bottom: 2px;
+      transition: background-color 0.2s ease, font-weight 0.2s ease;
+    }
+
+    .card-example div.active-example {
+      background-color: #2563eb;
+      font-weight: 700;
+      color: #ffffff;
+      border-left: 3px solid #f43f5e;
+    }
+
+    /* Signature Pink Challenge Box */
+    .challenge-box {
+      width: 100%;
+      background-color: var(--pink-subtle);
+      border: 1.5px dashed #f472b6;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 2px;
+      text-align: left;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    .challenge-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #be185d;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .challenge-sentence {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .challenge-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Percentage & Detailed Feedback Display */
+    .evaluation-container {
+      margin-top: 6px;
+      padding: 8px;
+      background-color: #ffffff;
+      border-radius: 6px;
+      border: 1px solid #f472b6;
+    }
+
+    .score-badge {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #be185d;
+      margin-bottom: 2px;
+    }
+
+    .transcript-box {
+      font-size: 0.82rem;
+      font-style: italic;
+      color: #334155;
+      background-color: #f8fafc;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #cbd5e1;
+      margin-bottom: 6px;
+      min-height: 28px;
+      word-break: break-word;
+    }
+
+    .transcript-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .rec-status {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #0f172a;
+      line-height: 1.3;
+    }
+
+    .rec-status.success {
+      color: #15803d; /* Correct answers turn green inside the pink box */
+    }
+
+    .rec-status.error {
+      color: #b91c1c;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+
+    .btn-secondary {
+      background-color: #ffffff;
+      color: #0f172a;
+    }
+
+    .btn-secondary:hover {
+      background-color: #e2e8f0;
+    }
+
+    .btn-primary {
+      background-color: #0047AB;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #1d4ed8;
+    }
+
+    .btn-audio {
+      background-color: #1e3a8a;
+      border: 1px solid #60a5fa;
+      color: #ffffff;
+      border-radius: 50px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+    }
+
+    .btn-audio:hover {
+      background-color: #2563eb;
+    }
+
+    .btn-mic {
+      background-color: #be185d;
+      color: white;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+    }
+
+    .btn-mic.recording {
+      background-color: #dc2626;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+
+    .btn-mic:hover {
+      background-color: #9d174d;
+    }
+
+    .btn-listen-challenge {
+      background-color: #1e3a8a;
+      color: white;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+    }
+
+    .btn-listen-challenge:hover {
+      background-color: #1d4ed8;
+    }
+
+    footer {
+      margin-top: auto;
+      padding-top: 30px;
+      font-size: 0.85rem;
+      color: #0f172a;
+      font-weight: 600;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Essential Phrasal Verbs</h1>
+    <p>EasyEnglishEducation</p>
+  </header>
+
+  <div class="app-container">
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    
+    <div class="counter" id="counter">1 / 5</div>
+
+    <div class="flashcard-container" id="cardContainer">
+      <div class="flashcard" id="flashcard">
+        <!-- FRONT FACE -->
+        <div class="card-face card-front">
+          <div class="sea-blue-textbox">
+            <div class="card-label">Phrasal Verb</div>
+            <div class="card-title" id="frontExpression">FIGURE OUT</div>
+            <div class="pattern-tag" id="frontPattern">💡 figure out + noun/pronoun</div>
+            <button class="btn-audio" onclick="event.stopPropagation(); speakExpression();">
+              🔊 Listen (US English)
+            </button>
+            <div class="prompt-question">"What does it mean?"</div>
+            <div style="font-size: 0.8rem; color: #93c5fd;">(Click card to flip)</div>
+          </div>
+        </div>
+
+        <!-- BACK FACE -->
+        <div class="card-face card-back">
+          <div class="sea-blue-textbox">
+            <div class="card-label">Meaning & Examples</div>
+            <div class="english-definition" id="backDefinition">To understand or solve something after thinking about it.</div>
+            
+            <div class="card-example" id="backExamples">
+              <!-- Dynamically populated examples -->
+            </div>
+
+            <button class="btn-audio" id="shadowBtn" onclick="event.stopPropagation(); speakNextExample();">
+              🔊 Listen & Shadow Example 1/5 (US English)
+            </button>
+
+            <!-- Voice Challenge Box -->
+            <div class="challenge-box" onclick="event.stopPropagation();">
+              <div class="challenge-title">Read & Record Pronunciation Challenge:</div>
+              <div class="challenge-sentence" id="challengeSentence">"I’m trying to ______ how to use this new software."</div>
+              
+              <div class="challenge-actions">
+                <button class="btn-listen-challenge" onclick="speakChallengeModel()">
+                  🔊 Listen to Model
+                </button>
+                <button class="btn-mic" id="micBtn" onclick="toggleSpeechRecognition()">
+                  🎤 Record Answer
+                </button>
+              </div>
+
+              <!-- Interactive Feedback Box with Percentage & Live Transcription -->
+              <div class="evaluation-container">
+                <div class="score-badge" id="scoreBadge">Score: --%</div>
+                
+                <div class="transcript-label">Your Spoken Attempt:</div>
+                <div class="transcript-box" id="transcriptDisplay">"(Press record and speak sentence...)"</div>
+
+                <div class="rec-status" id="recStatus">Click record when ready! Take your time—pauses are allowed. Click "Done" when finished speaking.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn-secondary" onclick="prevCard()">◀ Prev</button>
+      <button class="btn-secondary" onclick="shuffleCards()">🔀 Shuffle</button>
+      <button class="btn-primary" onclick="nextCard()">Next ▶</button>
+    </div>
+  </div>
+
+  <footer>
+    © Developed for educational excellence By Coach Carlos O
+  </footer>
+
+  <script>
+    const vocabData = [
+      {
+        expression: "FIGURE OUT",
+        pattern: "💡 figure out + noun/pronoun",
+        definition: "To understand or solve something after thinking about it.",
+        examples: [
+          "I’m trying to figure out how to use this new software.",
+          "She couldn’t figure out why her computer wasn’t working.",
+          "We need to figure out a way to get there before 8:00.",
+          "After a few minutes, he finally figured out the answer.",
+          "Don’t worry—I’m sure we’ll figure it out together."
+        ],
+        challengeTemplate: "I’m trying to ______ how to use this new software.",
+        targetKey: "figure out"
+      },
+      {
+        expression: "WORK OUT",
+        pattern: "💡 work out + problem/solution/details",
+        definition: "To find an answer or solution by thinking about something.",
+        examples: [
+          "I can’t work out how to solve this math problem.",
+          "We need to work out how much the trip is going to cost.",
+          "She spent an hour trying to work out the best solution.",
+          "Have you worked out what time we should leave?",
+          "The students worked together to work out the correct answer."
+        ],
+        challengeTemplate: "We need to ______ how much the trip is going to cost.",
+        targetKey: "work out"
+      },
+      {
+        expression: "TAKE IN",
+        pattern: "💡 Very natural: take it all in",
+        definition: "To understand and remember new information.",
+        examples: [
+          "There was so much information in the lecture that I couldn’t take it all in.",
+          "Give me a minute—I need some time to take in what you just told me.",
+          "It’s difficult to take in everything when you’re learning a new language.",
+          "The students listened carefully and tried to take in all the new vocabulary.",
+          "I read the instructions twice because I wanted to take in all the details."
+        ],
+        challengeTemplate: "It’s difficult to ______ everything when learning a new language.",
+        targetKey: "take in"
+      },
+      {
+        expression: "BRUSH UP ON",
+        pattern: "💡 brush up on + subject/skill",
+        definition: "To review or practise something you learned before.",
+        examples: [
+          "I need to brush up on my English before my trip to the United States.",
+          "She’s brushing up on her Spanish before visiting Colombia.",
+          "I’m going to brush up on my grammar before the exam.",
+          "He decided to brush up on his computer skills before applying for the job.",
+          "Before the interview, I brushed up on some common questions and vocabulary."
+        ],
+        challengeTemplate: "I need to ______ my English before my trip.",
+        targetKey: "brush up on"
+      },
+      {
+        expression: "WORK ON",
+        pattern: "💡 work on + project/skill/problem",
+        definition: "To spend time improving, developing, or completing something.",
+        examples: [
+          "I’m working on my English pronunciation every day.",
+          "She’s working on a new project for her company.",
+          "We need to work on our communication skills.",
+          "He’s working on improving his writing.",
+          "I’m still working on the report, so I’ll send it to you later."
+        ],
+        challengeTemplate: "I’m ______ my English pronunciation every day.",
+        targetKey: "working on"
+      }
+    ];
+
+    let currentIndex = 0;
+    let currentExampleIndex = 0;
+    let isFlipped = false;
+    let synth = window.speechSynthesis;
+    let usVoice = null;
+    
+    let recognition = null;
+    let isUserRecording = false;
+    let accumulatedTranscript = "";
+
+    const cardContainer = document.getElementById("cardContainer");
+    const flashcard = document.getElementById("flashcard");
+    const frontExpression = document.getElementById("frontExpression");
+    const frontPattern = document.getElementById("frontPattern");
+    const backDefinition = document.getElementById("backDefinition");
+    const backExamples = document.getElementById("backExamples");
+    const shadowBtn = document.getElementById("shadowBtn");
+    const challengeSentence = document.getElementById("challengeSentence");
+    const scoreBadge = document.getElementById("scoreBadge");
+    const transcriptDisplay = document.getElementById("transcriptDisplay");
+    const recStatus = document.getElementById("recStatus");
+    const micBtn = document.getElementById("micBtn");
+    const counter = document.getElementById("counter");
+    const progressBar = document.getElementById("progressBar");
+
+    function loadVoices() {
+      const voices = synth.getVoices();
+      usVoice = voices.find(v => v.lang.includes("en-US")) || voices[0];
+    }
+
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    cardContainer.addEventListener("click", () => {
+      isFlipped = !isFlipped;
+      flashcard.classList.toggle("flipped", isFlipped);
+    });
+
+    function updateCard() {
+      stopRecordingSession();
+      isFlipped = false;
+      currentExampleIndex = 0;
+      flashcard.classList.remove("flipped");
+      
+      const current = vocabData[currentIndex];
+      frontExpression.textContent = current.expression;
+      frontPattern.textContent = current.pattern;
+      backDefinition.textContent = current.definition;
+      
+      backExamples.innerHTML = current.examples.map((ex, idx) => 
+        `<div id="ex-${idx}">• "${ex}"</div>`
+      ).join("");
+
+      shadowBtn.textContent = `🔊 Listen & Shadow Example 1/5 (US English)`;
+      challengeSentence.textContent = `"${current.challengeTemplate}"`;
+      
+      scoreBadge.textContent = "Score: --%";
+      transcriptDisplay.textContent = '"(Press record and speak sentence...)"';
+      recStatus.textContent = "Click record when ready! Take your time—pauses are allowed. Click 'Done' when finished speaking.";
+      recStatus.className = "rec-status";
+      micBtn.innerHTML = "🎤 Record Answer";
+      micBtn.classList.remove("recording");
+
+      counter.textContent = `${currentIndex + 1} / ${vocabData.length}`;
+      progressBar.style.width = `${((currentIndex + 1) / vocabData.length) * 100}%`;
+    }
+
+    function nextCard() {
+      if (currentIndex < vocabData.length - 1) {
+        currentIndex++;
+      } else {
+        currentIndex = 0;
+      }
+      updateCard();
+    }
+
+    function prevCard() {
+      if (currentIndex > 0) {
+        currentIndex--;
+      } else {
+        currentIndex = vocabData.length - 1;
+      }
+      updateCard();
+    }
+
+    function shuffleCards() {
+      vocabData.sort(() => Math.random() - 0.5);
+      currentIndex = 0;
+      updateCard();
+    }
+
+    function speakExpression() {
+      synth.cancel();
+      if (!usVoice) loadVoices();
+      const textToSpeak = vocabData[currentIndex].expression;
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      if (usVoice) utterance.voice = usVoice;
+      utterance.rate = 0.85;
+      synth.speak(utterance);
+    }
+
+    function speakNextExample() {
+      synth.cancel();
+      if (!usVoice) loadVoices();
+      
+      const current = vocabData[currentIndex];
+      const targetExampleIndex = currentExampleIndex;
+
+      for (let i = 0; i < current.examples.length; i++) {
+        const el = document.getElementById(`ex-${i}`);
+        if (el) {
+          if (i === targetExampleIndex) {
+            el.classList.add("active-example");
+            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          } else {
+            el.classList.remove("active-example");
+          }
+        }
+      }
+
+      const textToSpeak = current.examples[targetExampleIndex];
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      if (usVoice) utterance.voice = usVoice;
+      utterance.rate = 0.85;
+      synth.speak(utterance);
+
+      currentExampleIndex = (currentExampleIndex + 1) % current.examples.length;
+      
+      const nextDisplayNum = currentExampleIndex + 1;
+      shadowBtn.textContent = `🔊 Listen & Shadow Example ${nextDisplayNum}/5 (US English)`;
+    }
+
+    function speakChallengeModel() {
+      synth.cancel();
+      if (!usVoice) loadVoices();
+      const current = vocabData[currentIndex];
+
+      const cleanTarget = current.targetKey.trim();
+      const completeSentence = current.challengeTemplate.replace(/______/g, cleanTarget);
+      
+      const utterance = new SpeechSynthesisUtterance(completeSentence);
+      if (usVoice) utterance.voice = usVoice;
+      utterance.rate = 0.85;
+
+      synth.speak(utterance);
+    }
+
+    async function toggleSpeechRecognition() {
+      if (isUserRecording) {
+        stopRecordingSession();
+      } else {
+        await startRecordingSession();
+      }
+    }
+
+    async function startRecordingSession() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        recStatus.textContent = "Speech Recognition is not supported on this browser. Please use Chrome, Edge, or Safari.";
+        recStatus.className = "rec-status error";
+        return;
+      }
+
+      // Explicitly request microphone access permission
+      try {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          await navigator.mediaDevices.getUserMedia({ audio: true });
+        }
+      } catch (err) {
+        recStatus.textContent = "Microphone access denied. Please click the lock/mic icon in your browser URL bar and allow microphone permissions.";
+        recStatus.className = "rec-status error";
+        return;
+      }
+
+      accumulatedTranscript = "";
+      isUserRecording = true;
+
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      micBtn.innerHTML = "⏹️ Done Recording";
+      micBtn.classList.add("recording");
+      recStatus.textContent = "🎙️ Listening... Speak naturally! Take all the time you need.";
+      recStatus.className = "rec-status";
+      scoreBadge.textContent = "Score: Listening...";
+      transcriptDisplay.textContent = '"..."';
+
+      recognition.onresult = function(event) {
+        let interimText = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            accumulatedTranscript += " " + event.results[i][0].transcript;
+          } else {
+            interimText += event.results[i][0].transcript;
+          }
+        }
+
+        const fullSpokenText = (accumulatedTranscript + " " + interimText).trim();
+        transcriptDisplay.textContent = `"${fullSpokenText}"`;
+        evaluatePronunciation(fullSpokenText.toLowerCase(), false);
+      };
+
+      recognition.onerror = function(event) {
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          recStatus.textContent = "Microphone access blocked. Please allow mic access in browser settings.";
+          recStatus.className = "rec-status error";
+          stopRecordingSession();
+        } else if (event.error !== 'no-speech' && event.error !== 'aborted') {
+          recStatus.textContent = "Microphone issue detected. Please tap record and try again!";
+          recStatus.className = "rec-status error";
+        }
+      };
+
+      recognition.onend = function() {
+        if (isUserRecording) {
+          try {
+            recognition.start();
+          } catch(e) {}
+        }
+      };
+
+      try {
+        recognition.start();
+      } catch(e) {
+        recStatus.textContent = "Could not initialize recording. Please try tapping record again.";
+        recStatus.className = "rec-status error";
+      }
+    }
+
+    function stopRecordingSession() {
+      isUserRecording = false;
+      if (recognition) {
+        recognition.onend = null;
+        try {
+          recognition.stop();
+        } catch(e) {}
+        recognition = null;
+      }
+
+      micBtn.innerHTML = "🎤 Record Answer";
+      micBtn.classList.remove("recording");
+
+      if (accumulatedTranscript.trim().length > 0) {
+        evaluatePronunciation(accumulatedTranscript.toLowerCase(), true);
+      } else {
+        scoreBadge.textContent = "Score: --%";
+        if (transcriptDisplay.textContent === '"..."') {
+          transcriptDisplay.textContent = '"(No speech detected)"';
+        }
+      }
+    }
+
+    function evaluatePronunciation(spokenText, isFinal) {
+      const current = vocabData[currentIndex];
+      const targetPhrase = current.targetKey.toLowerCase().trim();
+      const completeTarget = current.challengeTemplate.replace(/______/g, targetPhrase).toLowerCase().replace(/[^a-z0-9\s]/g, '');
+
+      const cleanSpoken = spokenText.replace(/[^a-z0-9\s]/g, '');
+      const spokenWords = cleanSpoken.split(/\s+/).filter(Boolean);
+      const targetWords = completeTarget.split(/\s+/).filter(Boolean);
+
+      if (spokenWords.length === 0) return;
+
+      let matchedCount = 0;
+      targetWords.forEach(word => {
+        if (spokenWords.includes(word)) matchedCount++;
+      });
+
+      let percentage = Math.round((matchedCount / targetWords.length) * 100);
+      
+      const keyIncluded = cleanSpoken.includes(targetPhrase.replace(/[^a-z0-9\s]/g, ''));
+      if (keyIncluded && percentage < 85) {
+        percentage = 85;
+      }
+      if (percentage > 100) percentage = 100;
+
+      scoreBadge.textContent = `Score: ${percentage}%`;
+
+      if (percentage >= 80) {
+        recStatus.textContent = `🌟 Fantastic job! Excellent rhythm and clear pronunciation. Keep it up!`;
+        recStatus.className = "rec-status success";
+      } else if (percentage >= 50) {
+        recStatus.textContent = `👍 Good effort! You're getting closer. Listen to the model to refine your stress and try again!`;
+        recStatus.className = "rec-status";
+      } else {
+        recStatus.textContent = `💪 Keep practicing! Tap "Listen to Model" to hear the rhythm, then try recording again.`;
+        recStatus.className = "rec-status error";
+      }
+    }
+
+    updateCard();
+  </script>
+</body>
+</html>
