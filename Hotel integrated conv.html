@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A1 Practice: Complete Hotel Conversations (1-10)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      /* Updated to a lighter, elegant gold-amber hotel-style gradient overlay 
+         combined with an elegant restaurant/hotel building photograph from London */
+      background: 
+        linear-gradient(135deg, rgba(255, 248, 240, 0.65) 0%, rgba(224, 206, 180, 0.70) 50%, rgba(180, 150, 110, 0.75) 100%),
+        url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=80') center center / cover no-repeat fixed;
+      color: #ffffff;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      background-color: #0f172a;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+      border: 1px solid #0284c7;
+    }
+
+    .header {
+      border-bottom: 2px solid #0284c7;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .header h1 {
+      color: #facc15;
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      color: #38bdf8;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .topic-selector {
+      margin-bottom: 16px;
+    }
+
+    .topic-selector label {
+      display: block;
+      font-size: 0.85rem;
+      color: #facc15;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+
+    .topic-select {
+      width: 100%;
+      padding: 10px;
+      background-color: #1e293b;
+      color: #38bdf8;
+      border: 1px solid #0284c7;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Vibrant green style for Spanish option text inside selector */
+    .topic-select option .es-text {
+      color: #22c55e;
+      font-weight: normal;
+    }
+
+    .progress-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      color: #facc15;
+    }
+
+    .progress-bar {
+      width: 70%;
+      background-color: #1e293b;
+      border-radius: 8px;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background-color: #38bdf8;
+      transition: width 0.3s ease;
+    }
+
+    .card {
+      background-color: #1e293b;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border-left: 4px solid #facc15;
+    }
+
+    .tourist-label {
+      color: #facc15;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+
+    .tourist-translation {
+      color: #38bdf8;
+      font-weight: normal;
+      font-style: italic;
+    }
+
+    .tourist-text {
+      font-size: 1.1rem;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .audio-btn {
+      background-color: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .audio-btn:active {
+      background-color: #38bdf8;
+      color: #0f172a;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .option-btn {
+      background-color: #1e293b;
+      color: #ffffff;
+      border: 2px solid #0284c7;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .option-btn.correct {
+      background-color: #0369a1;
+      border-color: #38bdf8;
+      color: #38bdf8;
+      font-weight: bold;
+    }
+
+    .option-btn.incorrect {
+      background-color: #450a0a;
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    .translation-subtext {
+      font-size: 0.85rem;
+      color: #facc15;
+      font-weight: normal;
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    .shadowing-section {
+      display: none;
+      background-color: #1e293b;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #38bdf8;
+    }
+
+    .shadowing-section h3 {
+      color: #38bdf8;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .rec-btn {
+      background-color: #ef4444;
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .rec-btn.recording {
+      background-color: #facc15;
+      color: #0f172a;
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .transcript-box {
+      width: 100%;
+      background-color: #0f172a;
+      color: #ffffff;
+      border: 1px solid #0284c7;
+      border-radius: 6px;
+      padding: 10px;
+      margin: 10px 0;
+      min-height: 48px;
+      font-size: 0.9rem;
+    }
+
+    .feedback-box {
+      display: none;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .score-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      margin-top: 4px;
+    }
+
+    .nav-controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      background-color: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .nav-btn:disabled {
+      background-color: #334155;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      border-top: 1px solid #0284c7;
+      padding-top: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>Prepared by Coach Carlos O.</h1>
+      <p id="module-title">A1 Practice: Complete Hotel Conversations (1-10)</p>
+    </div>
+
+    <!-- MODULE SELECTOR -->
+    <div class="topic-selector">
+      <label for="module-select">Select Conversation Module / Seleccionar Módulo:</label>
+      <select id="module-select" class="topic-select" onchange="changeModule(this.value)">
+        <option value="0">1. Greeting & Check-in / Registration - <span class="es-text">Saludos y Registro</span></option>
+        <option value="1">2. Asking for Room Information & Amenities - <span class="es-text">Información de la Habitación y Servicios</span></option>
+        <option value="2">3. Asking for Breakfast Information - <span class="es-text">Información sobre el Desayuno</span></option>
+        <option value="3">4. Requesting Extra Room Items - <span class="es-text">Solicitar Artículos Adicionales</span></option>
+        <option value="4">5. Asking for the Wi-Fi Password - <span class="es-text">Pedir la Contraseña del Wi-Fi</span></option>
+        <option value="5">6. Reporting a Problem in the Room - <span class="es-text">Reportar un Problema en la Habitación</span></option>
+        <option value="6">7. Asking for a Taxi - <span class="es-text">Pedir un Taxi</span></option>
+        <option value="7">8. Asking for Tourist Information - <span class="es-text">Pedir Información Turística</span></option>
+        <option value="8">9. Checking Out - <span class="es-text">Salida del Hotel (Check-out)</span></option>
+        <option value="9">10. Leaving Luggage After Check-out - <span class="es-text">Dejar el Equipaje Después del Check-out</span></option>
+      </select>
+    </div>
+
+    <div class="progress-container">
+      <span id="step-indicator">Step 1 of 4</span>
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+    </div>
+
+    <!-- TOURIST QUESTION -->
+    <div class="card">
+      <div class="tourist-label">
+        👤 Tourist Phrase <span class="tourist-translation" id="tourist-translation">(...)</span>:
+      </div>
+      <div class="tourist-text" id="tourist-text">...</div>
+      <button class="audio-btn" onclick="playCurrentQuestion()">🔊 Listen to Tourist</button>
+    </div>
+
+    <!-- RECEPTIONIST RESPONSE CHOICES -->
+    <div id="choices-container">
+      <div class="section-title">Select the correct Receptionist response:</div>
+      <div class="options-grid" id="options"></div>
+    </div>
+
+    <!-- SHADOWING & SPEECH RECOGNITION SECTION -->
+    <div class="shadowing-section" id="shadowing-section">
+      <h3>🗣️ Practice Shadowing & Pronunciation</h3>
+      <p style="font-size:0.85rem; color:#cbd5e1; margin-bottom:8px;">
+        1. Listen to the receptionist model.<br>
+        2. Click <strong>"Record My Voice"</strong> and repeat out loud.<br>
+        3. Target score: <strong>80% or higher</strong> recommended for optimal mastery.
+      </p>
+      <button class="audio-btn" style="margin-bottom:10px;" onclick="playSelectedModel()">🔊 Listen Correct Receptionist Model</button>
+      
+      <button class="rec-btn" id="rec-btn" onclick="toggleSpeechRecognition()">🎙️ Record My Voice</button>
+      
+      <div style="font-size:0.8rem; color:#facc15; margin-top:8px;">Your Voice Transcription:</div>
+      <div class="transcript-box" id="student-transcript"><em>Click record and start speaking...</em></div>
+    </div>
+
+    <!-- FEEDBACK BOX -->
+    <div class="feedback-box" id="feedback"></div>
+
+    <!-- NAVIGATION BUTTONS -->
+    <div class="nav-controls">
+      <button class="nav-btn" id="prev-btn" onclick="previousStep()" disabled>Previous</button>
+      <button class="nav-btn" id="next-btn" onclick="nextStep()">Next Question</button>
+    </div>
+
+    <div class="footer">
+      © Developed for educational excellence By Coach Carlos O
+    </div>
+  </div>
+
+  <script>
+    const hotelModules = [
+      {
+        title: "Hotel Conversation 1 (Greeting & Registration)",
+        dialogues: [
+          {
+            tourist: "Good afternoon. I have a reservation.",
+            touristEs: "Buenas tardes. Tengo una reservación.",
+            choices: [
+              { text: "Good afternoon! Welcome to our hotel. May I have your name, please?", textEs: "¡Buenas tardes! Bienvenido a nuestro hotel. ¿Me da su nombre, por favor?", correct: true },
+              { text: "No, we have no rooms.", textEs: "No, no tenemos habitaciones.", correct: false },
+              { text: "Goodbye, see you tomorrow.", textEs: "Adiós, nos vemos mañana.", correct: false }
+            ],
+            pedagogicalFeedback: "'Good afternoon! Welcome to our hotel...' warmly welcomes the guest and requests identification."
+          },
+          {
+            tourist: "My name is John Smith.",
+            touristEs: "Mi nombre es John Smith.",
+            choices: [
+              { text: "Thank you, Mr. Smith. Yes, I see your reservation for two nights.", textEs: "Gracias, Sr. Smith. Sí, veo su reserva por dos noches.", correct: true },
+              { text: "I don't know who you are.", textEs: "No sé quién es usted.", correct: false },
+              { text: "Please leave the building.", textEs: "Por favor abandone el edificio.", correct: false }
+            ],
+            pedagogicalFeedback: "'Thank you, Mr. Smith. Yes, I see your reservation...' confirms identity and reservation status."
+          },
+          {
+            tourist: "Can I check in now?",
+            touristEs: "¿Puedo hacer el check-in ahora?",
+            choices: [
+              { text: "Yes, of course. Please fill out this registration form.", textEs: "Sí, por supuesto. Por favor complete este formulario de registro.", correct: true },
+              { text: "No, come back next week.", textEs: "No, vuelva la próxima semana.", correct: false },
+              { text: "Check-in is impossible.", textEs: "El check-in es imposible.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, of course. Please fill out this registration form' initiates standard intake procedures."
+          },
+          {
+            tourist: "Here is my passport.",
+            touristEs: "Aquí está mi pasaporte.",
+            choices: [
+              { text: "Thank you. Here is your keycard for Room 402. Enjoy your stay!", textEs: "Gracias. Aquí tiene su tarjeta para la Habitación 402. ¡Disfrute su estancia!", correct: true },
+              { text: "I don't need this.", textEs: "No necesito esto.", correct: false },
+              { text: "That is a bad picture.", textEs: "Esa es una mala foto.", correct: false }
+            ],
+            pedagogicalFeedback: "'Thank you. Here is your keycard...' completes registration and provides room access."
+          }
+        ]
+      },
+      {
+        title: "Hotel Conversation 2 (Asking for Room Information & Amenities)",
+        dialogues: [
+          {
+            tourist: "Excuse me, where is my room?",
+            touristEs: "Disculpe, ¿dónde está mi habitación?",
+            choices: [
+              { text: "Your room is on the fourth floor. You can take the elevator over there.", textEs: "Su habitación está en el cuarto piso. Puede tomar el ascensor de allá.", correct: true },
+              { text: "It is somewhere outside.", textEs: "Está en algún lugar afuera.", correct: false },
+              { text: "I cannot tell you.", textEs: "No puedo decirle.", correct: false }
+            ],
+            pedagogicalFeedback: "'Your room is on the fourth floor...' gives clear spatial directions."
+          },
+          {
+            tourist: "Does the room have air conditioning?",
+            touristEs: "¿La habitación tiene aire acondicionado?",
+            choices: [
+              { text: "Yes, all our rooms have air conditioning and heating.", textEs: "Sí, todas nuestras habitaciones tienen aire acondicionado y calefacción.", correct: true },
+              { text: "No, use a paper fan.", textEs: "No, use un abanico de papel.", correct: false },
+              { text: "Why do you need air?", textEs: "¿Por qué necesita aire?", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, all our rooms have air conditioning...' validates room features politely."
+          },
+          {
+            tourist: "Is there a safe in the room?",
+            touristEs: "¿Hay una caja fuerte en la habitación?",
+            choices: [
+              { text: "Yes, there is a electronic safe inside the closet.", textEs: "Sí, hay una caja fuerte electrónica dentro del armario.", correct: true },
+              { text: "No, hide your money under the bed.", textEs: "No, esconda su dinero debajo de la cama.", correct: false },
+              { text: "Safes are dangerous.", textEs: "Las cajas fuertes son peligrosas.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, there is an electronic safe inside the closet' explains security amenity location."
+          },
+          {
+            tourist: "Great, thank you very much!",
+            touristEs: "¡Genial, muchas gracias!",
+            choices: [
+              { text: "You're welcome! Let us know if you need anything else.", textEs: "¡De nada! Avísenos si necesita algo más.", correct: true },
+              { text: "Stop talking to me.", textEs: "Deje de hablar conmigo.", correct: false },
+              { text: "Pay me for answers.", textEs: "Págueme por las respuestas.", correct: false }
+            ],
+            pedagogicalFeedback: "'You're welcome! Let us know if you need anything else' provides helpful customer service support."
+          }
+        ]
+      },
+      {
+        title: "Hotel Conversation 3 (Asking for Breakfast Information)",
+        dialogues: [
+          {
+            tourist: "Is breakfast included in my booking?",
+            touristEs: "¿El desayuno está incluido en mi reserva?",
+            choices: [
+              { text: "Yes, breakfast is included in your room rate.", textEs: "Sí, el desayuno está incluido en la tarifa de su habitación.", correct: true },
+              { text: "No, we don't serve food here.", textEs: "No, no servimos comida aquí.", correct: false },
+              { text: "Eat at home.", textEs: "Coma en casa.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, breakfast is included...' verifies account rate details."
+          },
+          {
+            tourist: "What time is breakfast served?",
+            touristEs: "¿A qué hora se sirve el desayuno?",
+            choices: [
+              { text: "Breakfast is served from 6:30 AM to 10:00 AM.", textEs: "El desayuno se sirve de 6:30 AM a 10:00 AM.", correct: true },
+              { text: "Breakfast is at midnight.", textEs: "El desayuno es a la medianoche.", correct: false },
+              { text: "We serve breakfast once a month.", textEs: "Servimos desayuno una vez al mes.", correct: false }
+            ],
+            pedagogicalFeedback: "'Breakfast is served from 6:30 AM to 10:00 AM' gives standard dining hours."
+          },
+          {
+            tourist: "Where is the restaurant located?",
+            touristEs: "¿Dónde queda el restaurante?",
+            choices: [
+              { text: "It is on the ground floor, right next to the lobby.", textEs: "Está en la planta baja, justo al lado del lobby.", correct: true },
+              { text: "It is in another country.", textEs: "Está en otro país.", correct: false },
+              { text: "On top of the roof chimney.", textEs: "Encima de la chimenea del techo.", correct: false }
+            ],
+            pedagogicalFeedback: "'It is on the ground floor...' clarifies hotel facility placement."
+          },
+          {
+            tourist: "Thank you for the information.",
+            touristEs: "Gracias por la información.",
+            choices: [
+              { text: "My pleasure! Have a delicious morning.", textEs: "¡Con gusto! Que tenga una deliciosa mañana.", correct: true },
+              { text: "Don't ask questions.", textEs: "No haga preguntas.", correct: false },
+              { text: "You are confusing me.", textEs: "Me está confundiendo.", correct: false }
+            ],
+            pedagogicalFeedback: "'My pleasure!...' finishes the inquiry pleasantly."
+          }
+        ]
+      },
+      {
+        title: "Hotel Conversation 4 (Requesting Extra Room Items)",
+        dialogues: [
+          {
+            tourist: "Hello, could I get extra towels for room 210?",
+            touristEs: "Hola, ¿podría tener toallas adicionales para la habitación 210?",
+            choices: [
+              { text: "Certainly! How many extra towels do you need?", textEs: "¡Ciertamente! ¿Cuántas toallas adicionales necesita?", correct: true },
+              { text: "No, towels are expensive.", textEs: "No, las toallas son costosas.", correct: false },
+              { text: "Bring your own towels next time.", textEs: "Traiga sus propias toallas la próxima vez.", correct: false }
+            ],
+            pedagogicalFeedback: "'Certainly! How many extra towels...' acknowledges and processes request politely."
+          },
+          {
+            tourist: "Two towels, please. And an extra pillow if possible.",
+            touristEs: "Dos toallas, por favor. Y una almohada extra si es posible.",
+            choices: [
+              { text: "No problem at all. Housekeeping will bring them shortly.", textEs: "Sin problema alguno. El personal de limpieza se los llevará pronto.", correct: true },
+              { text: "Pillows are forbidden.", textEs: "Las almohadas están prohibidas.", correct: false },
+              { text: "Go find them yourself.", textEs: "Vaya a buscarlas usted mismo.", correct: false }
+            ],
+            pedagogicalFeedback: "'No problem at all. Housekeeping will bring them shortly' provides clear execution steps."
+          },
+          {
+            tourist: "How long will that take?",
+            touristEs: "¿Cuánto tiempo tomará eso?",
+            choices: [
+              { text: "They should arrive in about 10 minutes.", textEs: "Deberían llegar en unos 10 minutos.", correct: true },
+              { text: "Next year around December.", textEs: "El próximo año alrededor de diciembre.", correct: false },
+              { text: "Never.", textEs: "Nunca.", correct: false }
+            ],
+            pedagogicalFeedback: "'They should arrive in about 10 minutes' sets reasonable expectations."
+          },
+          {
+            tourist: "Thank you so much!",
+            touristEs: "¡Muchas gracias!",
+            choices: [
+              { text: "You are welcome. Enjoy your evening!", textEs: "De nada. ¡Disfrute su tarde!", correct: true },
+              { text: "Whatever.", textEs: "Lo que sea.", correct: false },
+              { text: "Don't talk to me.", textEs: "No me hable.", correct: false }
+            ],
+            pedagogicalFeedback: "'You are welcome. Enjoy your evening!' closes politely."
+          }
+        ]
+      },
+      {
+        title: "Hotel Conversation 5 (Asking for the Wi-Fi Password)",
+        dialogues: [
+          {
+            tourist: "Excuse me, is Wi-Fi available here?",
+            touristEs: "Disculpe, ¿hay Wi-Fi disponible aquí?",
+            choices: [
+              { text: "Yes, free Wi-Fi is available throughout the hotel.", textEs: "Sí, hay Wi-Fi gratuito en todo el hotel.", correct: true },
+              { text: "No, internet is illegal here.", textEs: "No, internet es ilegal aquí.", correct: false },
+              { text: "What is Wi-Fi?", textEs: "¿Qué es Wi-Fi?", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, free Wi-Fi is available...' explains connectivity access."
+          },
+          {
+            tourist: "What is the network name and password?",
+            touristEs: "¿Cuál es el nombre de red y la contraseña?",
+            choices: [
+              { text: "The network is 'HotelGuest' and the password is on your keycard folder.", textEs: "La red es 'HotelGuest' y la contraseña está en la funda de su tarjeta.", correct: true },
+              { text: "Guess the network name.", textEs: "Adivine el nombre de red.", correct: false },
+              { text: "Password is top secret.", textEs: "La contraseña es supersecreta.", correct: false }
+            ],
+            pedagogicalFeedback: "'The network is 'HotelGuest'...' gives direct connection instruction."
+          },
+          {
+            tourist: "Is it fast enough for video calls?",
+            touristEs: "¿Es lo suficientemente rápida para videollamadas?",
+            choices: [
+              { text: "Yes, we have high-speed fiber internet.", textEs: "Sí, tenemos internet de alta velocidad por fibra.", correct: true },
+              { text: "No, it takes 4 hours to load an email.", textEs: "No, toma 4 horas cargar un correo.", correct: false },
+              { text: "Video calls aren't real.", textEs: "Las videollamadas no son reales.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, we have high-speed fiber internet' affirms quality connection capabilities."
+          },
+          {
+            tourist: "Awesome, thanks!",
+            touristEs: "¡Genial, gracias!",
+            choices: [
+              { text: "Glad to help! Let us know if you have connection issues.", textEs: "¡Gusto en ayudar! Avísenos si tiene problemas de conexión.", correct: true },
+              { text: "Go away now.", textEs: "Váyase ahora.", correct: false },
+              { text: "Pay $100 for saying thanks.", textEs: "Pague $100 por dar las gracias.", correct: false }
+            ],
+            pedagogicalFeedback: "'Glad to help!...' maintains supportive service."
+          }
+        ]
+      },
+      {
+        title: "Hotel Conversation 6 (Reporting a Problem in the Room)",
+        dialogues: [
+          {
+            tourist: "Excuse me. I have a problem with my room.",
+            touristEs: "Disculpe. Tengo un problema con mi habitación.",
+            choices: [
+              { text: "I'm sorry to hear that. What is the problem?", textEs: "Lamento escuchar eso. ¿Cuál es el problema?", correct: true },
+              { text: "That is not my problem.", textEs: "Ese no es mi problema.", correct: false },
+              { text: "Your room is very nice.", textEs: "Su habitación es muy agradable.", correct: false }
+            ],
+            pedagogicalFeedback: "'I'm sorry to hear that. What is the problem?' expresses empathy and asks for details."
+          },
+          {
+            tourist: "The air conditioner is not working.",
+            touristEs: "El aire acondicionado no funciona.",
+            choices: [
+              { text: "I'm sorry. We will send someone to check it.", textEs: "Lo siento. Enviaremos a alguien a revisarlo.", correct: true },
+              { text: "It is fine, open a window.", textEs: "Está bien, abra una ventana.", correct: false },
+              { text: "We do not fix things here.", textEs: "No reparamos cosas aquí.", correct: false }
+            ],
+            pedagogicalFeedback: "'I'm sorry. We will send someone to check it' apologizes and promises a solution."
+          },
+          {
+            tourist: "How long will it take?",
+            touristEs: "¿Cuánto tiempo tardará?",
+            choices: [
+              { text: "It should take about 15 minutes.", textEs: "Debería tomar unos 15 minutos.", correct: true },
+              { text: "It will take 3 years.", textEs: "Tardará 3 años.", correct: false },
+              { text: "I don't care.", textEs: "No me importa.", correct: false }
+            ],
+            pedagogicalFeedback: "'It should take about 15 minutes' gives a polite estimated timeframe."
+          },
+          {
+            tourist: "Thank you for your help.",
+            touristEs: "Gracias por su ayuda.",
+            choices: [
+              { text: "You're welcome.", textEs: "De nada.", correct: true },
+              { text: "Never mind.", textEs: "No importa.", correct: false },
+              { text: "See you next year.", textEs: "Nos vemos el próximo año.", correct: false }
+            ],
+            pedagogicalFeedback: "'You're welcome' offers a standard polite reply."
+          }
+        ]
+      },
+      {
+        title: "Hotel Conversation 7 (Asking for a Taxi)",
+        dialogues: [
+          {
+            tourist: "Good morning. Can you call a taxi for me?",
+            touristEs: "Buenos días. ¿Puede llamarme un taxi?",
+            choices: [
+              { text: "Of course. Where would you like to go?", textEs: "Por supuesto. ¿A dónde le gustaría ir?", correct: true },
+              { text: "No, walk instead.", textEs: "No, camine mejor.", correct: false },
+              { text: "I don't have a phone.", textEs: "No tengo teléfono.", correct: false }
+            ],
+            pedagogicalFeedback: "'Of course. Where would you like to go?' agrees politely and asks for destination."
+          },
+          {
+            tourist: "I would like to go to a restaurant in the city center.",
+            touristEs: "Me gustaría ir a un restaurante en el centro de la ciudad.",
+            choices: [
+              { text: "Certainly. I can call a taxi for you.", textEs: "Con gusto. Puedo llamar a un taxi por usted.", correct: true },
+              { text: "That is too far.", textEs: "Eso está demasiado lejos.", correct: false },
+              { text: "You should stay here.", textEs: "Debería quedarse aquí.", correct: false }
+            ],
+            pedagogicalFeedback: "'Certainly. I can call a taxi for you' confirms taxi arrangement."
+          },
+          {
+            tourist: "How long will it take?",
+            touristEs: "¿Cuánto tiempo tardará?",
+            choices: [
+              { text: "About ten minutes.", textEs: "Unos diez minutos.", correct: true },
+              { text: "Ten hours.", textEs: "Diez horas.", correct: false },
+              { text: "It will never arrive.", textEs: "Nunca llegará.", correct: false }
+            ],
+            pedagogicalFeedback: "'About ten minutes' provides arrival estimate."
+          },
+          {
+            tourist: "Thank you.",
+            touristEs: "Gracias.",
+            choices: [
+              { text: "My pleasure.", textEs: "Es un placer.", correct: true },
+              { text: "Don't thank me.", textEs: "No me dé las gracias.", correct: false },
+              { text: "Goodbye forever.", textEs: "Adiós para siempre.", correct: false }
+            ],
+            pedagogicalFeedback: "'My pleasure' is a courteous standard response."
+          }
+        ]
+      },
+      {
+        title: "Hotel Conversation 8 (Asking for Tourist Information)",
+        dialogues: [
+          {
+            tourist: "Excuse me. What can I visit near the hotel?",
+            touristEs: "Disculpe. ¿Qué puedo visitar cerca del hotel?",
+            choices: [
+              { text: "There are several interesting places nearby.", textEs: "Hay varios lugares interesantes cerca.", correct: true },
+              { text: "Nothing is open today.", textEs: "Nada está abierto hoy.", correct: false },
+              { text: "You must stay inside.", textEs: "Debe quedarse adentro.", correct: false }
+            ],
+            pedagogicalFeedback: "'There are several interesting places nearby' indicates local options."
+          },
+          {
+            tourist: "What do you recommend?",
+            touristEs: "¿Qué me recomienda?",
+            choices: [
+              { text: "I recommend visiting the historic area and the local tourist attractions.", textEs: "Le recomiendo visitar el centro histórico y las atracciones turísticas locales.", correct: true },
+              { text: "I recommend staying in your bed.", textEs: "Le recomiendo quedarse en su cama.", correct: false },
+              { text: "I don't have any ideas.", textEs: "No tengo ninguna idea.", correct: false }
+            ],
+            pedagogicalFeedback: "'I recommend visiting the historic area...' gives clear recommendations."
+          },
+          {
+            tourist: "How can I get there?",
+            touristEs: "¿Cómo puedo llegar allá?",
+            choices: [
+              { text: "You can walk, take a taxi, or use public transportation.", textEs: "Puede ir caminando, tomar un taxi o usar el transporte público.", correct: true },
+              { text: "You need a helicopter.", textEs: "Necesita un helicóptero.", correct: false },
+              { text: "You cannot go there.", textEs: "No puede ir allá.", correct: false }
+            ],
+            pedagogicalFeedback: "'You can walk, take a taxi...' outlines standard transportation choices."
+          },
+          {
+            tourist: "Can you recommend a restaurant too?",
+            touristEs: "¿Puede recomendarme un restaurante también?",
+            choices: [
+              { text: "Of course. I can recommend a good local restaurant.", textEs: "Por supuesto. Puedo recomendarle un buen restaurante local.", correct: true },
+              { text: "No, cooking is better.", textEs: "No, cocinar es mejor.", correct: false },
+              { text: "We don't eat here.", textEs: "Nosotros no comemos aquí.", correct: false }
+            ],
+            pedagogicalFeedback: "'Of course. I can recommend a good local restaurant' assists with dining options."
+          },
+          {
+            tourist: "That's very helpful. Thank you!",
+            touristEs: "Eso es de mucha ayuda. ¡Muchas gracias!",
+            choices: [
+              { text: "You're very welcome.", textEs: "De nada / Con mucho gusto.", correct: true },
+              { text: "Don't mention it.", textEs: "Ni lo mencione.", correct: false },
+              { text: "Goodbye now.", textEs: "Adiós por ahora.", correct: false }
+            ],
+            pedagogicalFeedback: "'You're very welcome' completes interaction politely."
+          }
+        ]
+      },
+      {
+        title: "Hotel Conversation 9 (Checking Out)",
+        dialogues: [
+          {
+            tourist: "Good morning.",
+            touristEs: "Buenos días.",
+            choices: [
+              { text: "Good morning. Are you checking out?", textEs: "Buenos días. ¿Va a hacer el checkout / entregar la habitación?", correct: true },
+              { text: "Are you staying longer?", textEs: "¿Se va a quedar más tiempo?", correct: false },
+              { text: "Good night, go back to bed.", textEs: "Buenas noches, vuelva a la cama.", correct: false }
+            ],
+            pedagogicalFeedback: "'Good morning. Are you checking out?' verifies departure status."
+          },
+          {
+            tourist: "Yes, I am.",
+            touristEs: "Sí, así es.",
+            choices: [
+              { text: "What is your room number?", textEs: "¿Cuál es su número de habitación?", correct: true },
+              { text: "Where are your keys?", textEs: "¿Dónde están sus llaves?", correct: false },
+              { text: "What is your home address?", textEs: "¿Cuál es la dirección de su casa?", correct: false }
+            ],
+            pedagogicalFeedback: "'What is your room number?' verifies guest account details."
+          },
+          {
+            tourist: "Room 305.",
+            touristEs: "Habitación 305.",
+            choices: [
+              { text: "Did you use anything from the minibar?", textEs: "¿Consumió algo del minibar?", correct: true },
+              { text: "Did you sleep well?", textEs: "¿Durmió bien?", correct: false },
+              { text: "Did you buy a new car?", textEs: "¿Compró un carro nuevo?", correct: false }
+            ],
+            pedagogicalFeedback: "'Did you use anything from the minibar?' checks incidental charges."
+          },
+          {
+            tourist: "No, I didn't.",
+            touristEs: "No, no consumí nada.",
+            choices: [
+              { text: "Your total is 250,000 pesos.", textEs: "Su total es 250.000 pesos.", correct: true },
+              { text: "Your total is free today.", textEs: "Su total es gratis hoy.", correct: false },
+              { text: "Please pay one million dollars.", textEs: "Por favor pague un millón de dólares.", correct: false }
+            ],
+            pedagogicalFeedback: "'Your total is 250,000 pesos' states invoice total clearly."
+          },
+          {
+            tourist: "Can I pay by card?",
+            touristEs: "¿Puedo pagar con tarjeta?",
+            choices: [
+              { text: "Yes, of course.", textEs: "Sí, por supuesto.", correct: true },
+              { text: "No, cash only forever.", textEs: "No, solo efectivo para siempre.", correct: false },
+              { text: "Cards are not allowed.", textEs: "No se permiten tarjetas.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, of course' confirms card acceptance."
+          },
+          {
+            tourist: "Here is my card.",
+            touristEs: "Aquí está mi tarjeta.",
+            choices: [
+              { text: "Thank you. Your payment is complete.", textEs: "Gracias. Su pago está completo.", correct: true },
+              { text: "This card doesn't work.", textEs: "Esta tarjeta no funciona.", correct: false },
+              { text: "I will keep your card.", textEs: "Me quedaré con su tarjeta.", correct: false }
+            ],
+            pedagogicalFeedback: "'Thank you. Your payment is complete' closes financial transaction."
+          },
+          {
+            tourist: "Thank you for everything.",
+            touristEs: "Muchas gracias por todo.",
+            choices: [
+              { text: "It was our pleasure. Have a safe trip!", textEs: "Fue un placer. ¡Que tenga un buen viaje!", correct: true },
+              { text: "Don't come back.", textEs: "No vuelva.", correct: false },
+              { text: "Whatever, goodbye.", textEs: "Como sea, adiós.", correct: false }
+            ],
+            pedagogicalFeedback: "'It was our pleasure. Have a safe trip!' bids a warm farewell."
+          }
+        ]
+      },
+      {
+        title: "Hotel Conversation 10 (Leaving Luggage After Check-out)",
+        dialogues: [
+          {
+            tourist: "I have already checked out, but my flight is in the evening.",
+            touristEs: "Ya hice el checkout, pero mi vuelo es por la tarde/noche.",
+            choices: [
+              { text: "I hope you enjoyed your stay. How can I help you with your luggage?", textEs: "Espero que haya disfrutado su estancia. ¿Cómo puedo ayudarle con su equipaje?", correct: true },
+              { text: "Go to the airport now.", textEs: "Vaya al aeropuerto ahora.", correct: false },
+              { text: "Why is your flight late?", textEs: "¿Por qué se retrasó su vuelo?", correct: false }
+            ],
+            pedagogicalFeedback: "'I hope you enjoyed your stay. How can I help...' opens bag assistance."
+          },
+          {
+            tourist: "Can I leave my luggage here for a few hours?",
+            touristEs: "¿Puedo dejar mi equipaje aquí por unas horas?",
+            choices: [
+              { text: "Yes, absolutely. We have a secure luggage room.", textEs: "Sí, absolutamente. Tenemos una habitación de equipaje segura.", correct: true },
+              { text: "No, keep your bags outside on the street.", textEs: "No, deje sus maletas afuera en la calle.", correct: false },
+              { text: "We do not accept bags.", textEs: "No aceptamos maletas.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, absolutely. We have a secure luggage room' grants storage permission."
+          },
+          {
+            tourist: "Is there any extra charge for this service?",
+            touristEs: "¿Hay algún cargo adicional por este servicio?",
+            choices: [
+              { text: "No, luggage storage is completely free for our guests.", textEs: "No, el almacenamiento de equipaje es completamente gratuito para nuestros huéspedes.", correct: true },
+              { text: "Yes, $500 per bag per hour.", textEs: "Sí, $500 por maleta por hora.", correct: false },
+              { text: "Give me your wallet.", textEs: "Dame tu billetera.", correct: false }
+            ],
+            pedagogicalFeedback: "'No, luggage storage is completely free...' clarifies complimentary services."
+          },
+          {
+            tourist: "Here are my two suitcases.",
+            touristEs: "Aquí están mis dos maletas.",
+            choices: [
+              { text: "Thank you. Here is your claim ticket. Please show it when you return.", textEs: "Gracias. Aquí tiene su ticket de reclamo. Muéstrelo cuando regrese.", correct: true },
+              { text: "I will throw these away.", textEs: "Botaré esto a la basura.", correct: false },
+              { text: "These bags are heavy.", textEs: "Estas maletas están pesadas.", correct: false }
+            ],
+            pedagogicalFeedback: "'Thank you. Here is your claim ticket...' establishes holding documentation."
+          },
+          {
+            tourist: "Thank you so much! I will be back around 5 PM.",
+            touristEs: "¡Muchas gracias! Estaré de regreso alrededor de las 5 PM.",
+            choices: [
+              { text: "You're welcome! Enjoy your remaining hours in the city.", textEs: "¡De nada! Disfrute sus horas restantes en la ciudad.", correct: true },
+              { text: "Don't come back late.", textEs: "No regrese tarde.", correct: false },
+              { text: "Goodbye forever.", textEs: "Adiós para siempre.", correct: false }
+            ],
+            pedagogicalFeedback: "'You're welcome! Enjoy your remaining hours...' provides friendly departure courtesy."
+          }
+        ]
+      }
+    ];
+
+    let currentModuleIndex = 0;
+    let currentStep = 0;
+    let selectedCorrectAnswer = "";
+    let isRecording = false;
+    let recognition = null;
+
+    function normalizeVocabulary(text) {
+      let normalized = text.toLowerCase();
+      const homophoneMap = {
+        "problem": "problem", "sorry": "sorry", "air conditioner": "air conditioner",
+        "check": "check", "15": "15", "fifteen": "15", "minutes": "minutes",
+        "about": "about", "you're": "you're", "youre": "you're", "your": "your",
+        "welcome": "welcome", "taxi": "taxi", "city": "city", "center": "center",
+        "restaurant": "restaurant", "certainly": "certainly", "10": "10", "ten": "10",
+        "pleasure": "pleasure", "visit": "visit", "nearby": "nearby", "recommend": "recommend",
+        "luggage": "luggage", "ticket": "ticket", "free": "free", "hours": "hours"
+      };
+
+      for (const [misheard, target] of Object.entries(homophoneMap)) {
+        const regex = new RegExp(misheard.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        normalized = normalized.replace(regex, target);
+      }
+      return normalized;
+    }
+
+    function calculateSimilarity(str1, str2) {
+      const clean1 = normalizeVocabulary(str1);
+      const clean2 = normalizeVocabulary(str2);
+
+      const words1 = clean1.replace(/[^\w\s]/gi, '').split(/\s+/).filter(Boolean);
+      const words2 = clean2.replace(/[^\w\s]/gi, '').split(/\s+/).filter(Boolean);
+      
+      if (words1.length === 0 || words2.length === 0) return 0;
+      
+      let matches = 0;
+      words1.forEach(w => {
+        if (words2.includes(w)) matches++;
+      });
+
+      return Math.round((matches / Math.max(words1.length, words2.length)) * 100);
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = function() {
+        isRecording = true;
+        const recBtn = document.getElementById('rec-btn');
+        recBtn.classList.add('recording');
+        recBtn.innerHTML = '🛑 Listening... Speak now!';
+        document.getElementById('student-transcript').innerText = "Listening to your voice...";
+      };
+
+      recognition.onresult = function(event) {
+        const rawTranscript = event.results[0][0].transcript;
+        const correctedTranscript = normalizeVocabulary(rawTranscript);
+        document.getElementById('student-transcript').innerText = `"${correctedTranscript}"`;
+        evaluatePronunciation(correctedTranscript);
+      };
+
+      recognition.onerror = function() {
+        document.getElementById('student-transcript').innerText = "Microphone error or speech not detected. Please try recording again.";
+        stopRecordingState();
+      };
+
+      recognition.onend = function() {
+        stopRecordingState();
+      };
+    }
+
+    function stopRecordingState() {
+      isRecording = false;
+      const recBtn = document.getElementById('rec-btn');
+      recBtn.classList.remove('recording');
+      recBtn.innerHTML = '🎙️ Record My Voice';
+    }
+
+    function toggleSpeechRecognition() {
+      if (!recognition) {
+        alert("Speech Recognition is not supported by your current browser. Please use Chrome, Edge, or Safari.");
+        return;
+      }
+      if (!isRecording) {
+        try { recognition.start(); } catch (e) { recognition.stop(); }
+      } else {
+        recognition.stop();
+      }
+    }
+
+    function evaluatePronunciation(studentSpeech) {
+      const feedback = document.getElementById('feedback');
+      feedback.style.display = 'block';
+
+      const accuracyScore = calculateSimilarity(selectedCorrectAnswer, studentSpeech);
+      const currentDialogue = hotelModules[currentModuleIndex].dialogues[currentStep];
+
+      if (accuracyScore >= 80) {
+        feedback.style.backgroundColor = '#0369a1';
+        feedback.style.color = '#38bdf8';
+        feedback.style.border = '1px solid #38bdf8';
+        feedback.innerHTML = `
+          <strong>Score: ${accuracyScore}% - Excellent!</strong> 
+          <span class="score-badge" style="background-color:#38bdf8; color:#0f172a;">ACCEPTABLE (&ge;80%)</span><br>
+          Your pronunciation is clear and easy to understand.<br>
+          <em>${currentDialogue.pedagogicalFeedback}</em>
+        `;
+      } else {
+        feedback.style.backgroundColor = '#422006';
+        feedback.style.color = '#fde047';
+        feedback.style.border = '1px solid #ca8a04';
+        feedback.innerHTML = `
+          <strong>Score: ${accuracyScore}% - Below Target (80%)</strong> 
+          <span class="score-badge" style="background-color:#ca8a04; color:#0f172a;">KEEP PRACTICING</span><br>
+          An 80% score is recommended to ensure solid fluency, but feel free to continue practicing or move to the next question whenever you are ready.<br>
+          <em>${currentDialogue.pedagogicalFeedback}</em>
+        `;
+      }
+    }
+
+    function loadStep(index) {
+      const activeModule = hotelModules[currentModuleIndex];
+      const data = activeModule.dialogues[index];
+      
+      document.getElementById('module-title').innerText = activeModule.title;
+      document.getElementById('step-indicator').innerText = `Step ${index + 1} of ${activeModule.dialogues.length}`;
+      document.getElementById('progress').style.width = `${((index + 1) / activeModule.dialogues.length) * 100}%`;
+      
+      document.getElementById('tourist-text').innerText = `"${data.tourist}"`;
+      document.getElementById('tourist-translation').innerText = `(${data.touristEs})`;
+
+      document.getElementById('choices-container').style.display = 'block';
+      document.getElementById('shadowing-section').style.display = 'none';
+      document.getElementById('feedback').style.display = 'none';
+      document.getElementById('student-transcript').innerText = 'Click record and start speaking...';
+
+      const optionsContainer = document.getElementById('options');
+      optionsContainer.innerHTML = '';
+      const shuffledChoices = [...data.choices].sort(() => Math.random() - 0.5);
+
+      shuffledChoices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = choice.text;
+        btn.onclick = () => selectOption(choice, btn);
+        optionsContainer.appendChild(btn);
+      });
+
+      document.getElementById('prev-btn').disabled = (index === 0 && currentModuleIndex === 0);
+      
+      if (index === activeModule.dialogues.length - 1) {
+        if (currentModuleIndex < hotelModules.length - 1) {
+          document.getElementById('next-btn').innerText = "Next Conversation Module";
+        } else {
+          document.getElementById('next-btn').innerText = "Finish All Modules";
+        }
+      } else {
+        document.getElementById('next-btn').innerText = "Next Question";
+      }
+    }
+
+    function playTTS(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.85;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function playCurrentQuestion() {
+      playTTS(hotelModules[currentModuleIndex].dialogues[currentStep].tourist);
+    }
+
+    function playSelectedModel() {
+      playTTS(selectedCorrectAnswer);
+    }
+
+    function selectOption(choice, btnElement) {
+      const allButtons = document.querySelectorAll('.option-btn');
+      
+      if (choice.correct) {
+        btnElement.classList.add('correct');
+        allButtons.forEach(b => b.style.pointerEvents = 'none');
+        selectedCorrectAnswer = choice.text;
+
+        const translationSpan = document.createElement('span');
+        translationSpan.className = 'translation-subtext';
+        translationSpan.innerText = choice.textEs;
+        btnElement.appendChild(translationSpan);
+
+        playTTS(selectedCorrectAnswer);
+
+        setTimeout(() => {
+          document.getElementById('shadowing-section').style.display = 'block';
+        }, 1000);
+
+      } else {
+        btnElement.classList.add('incorrect');
+        const feedback = document.getElementById('feedback');
+        feedback.style.display = 'block';
+        feedback.style.backgroundColor = '#450a0a';
+        feedback.style.color = '#ef4444';
+        feedback.style.border = '1px solid #ef4444';
+        feedback.innerHTML = `<strong>Incorrect option.</strong> Try again to select the correct receptionist response.`;
+      }
+    }
+
+    function changeModule(index) {
+      currentModuleIndex = parseInt(index);
+      currentStep = 0;
+      loadStep(currentStep);
+    }
+
+    function nextStep() {
+      const activeModule = hotelModules[currentModuleIndex];
+      if (currentStep < activeModule.dialogues.length - 1) {
+        currentStep++;
+        loadStep(currentStep);
+      } else if (currentModuleIndex < hotelModules.length - 1) {
+        currentModuleIndex++;
+        document.getElementById('module-select').value = currentModuleIndex;
+        currentStep = 0;
+        loadStep(currentStep);
+      } else {
+        alert("Congratulations! You have completed all 10 A1 Practice Hotel Conversations!");
+      }
+    }
+
+    function previousStep() {
+      if (currentStep > 0) {
+        currentStep--;
+        loadStep(currentStep);
+      } else if (currentModuleIndex > 0) {
+        currentModuleIndex--;
+        document.getElementById('module-select').value = currentModuleIndex;
+        currentStep = hotelModules[currentModuleIndex].dialogues.length - 1;
+        loadStep(currentStep);
+      }
+    }
+
+    window.onload = () => loadStep(0);
+  </script>
+</body>
+</html>
