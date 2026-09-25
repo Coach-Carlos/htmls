@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A1 Practice: Tourist Conversations (25-Module Complete Series)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      /* Taxi-themed NYC crowded street background with dark tint overlay for readability */
+      background: 
+        linear-gradient(
+          to bottom, 
+          rgba(15, 23, 42, 0.82), 
+          rgba(234, 179, 8, 0.25), 
+          rgba(15, 23, 42, 0.90)
+        ),
+        url('https://images.unsplash.com/photo-1506966953602-c20cc11f75e3?q=80&w=1920&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      color: #ffffff;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      border-top: 8px solid #facc15; /* Taxi yellow top border accent */
+    }
+
+    /* Taxi Checkerboard Top Accent Bar */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      background-image: linear-gradient(45deg, #000 25%, transparent 25%), 
+                        linear-gradient(-45deg, #000 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #000 75%), 
+                        linear-gradient(-45deg, transparent 75%, #000 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+      background-color: #facc15;
+    }
+
+    .module-selector {
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 16px;
+      margin-top: 8px;
+    }
+
+    .module-selector label {
+      display: block;
+      color: #facc15;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-bottom: 6px;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    }
+
+    .module-selector select {
+      width: 100%;
+      background-color: #1e293b;
+      color: #ffffff;
+      border: 1px solid #eab308;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background-color: #1e293b;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.75);
+      border: 1px solid #064e3b;
+    }
+
+    .header {
+      border-bottom: 2px solid #064e3b;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .header h1 {
+      color: #facc15;
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      color: #22c55e;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .progress-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      color: #facc15;
+    }
+
+    .progress-bar {
+      width: 70%;
+      background-color: #0f172a;
+      border-radius: 8px;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background-color: #22c55e;
+      transition: width 0.3s ease;
+    }
+
+    .card {
+      background-color: #0f172a;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border-left: 4px solid #facc15;
+    }
+
+    .tourist-label {
+      color: #facc15;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+
+    .tourist-text {
+      font-size: 1.1rem;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .audio-btn {
+      background-color: #064e3b;
+      color: #ffffff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .audio-btn:active {
+      background-color: #22c55e;
+      color: #0f172a;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .option-btn {
+      background-color: #0f172a;
+      color: #ffffff;
+      border: 2px solid #064e3b;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .option-btn.correct {
+      background-color: #064e3b;
+      border-color: #22c55e;
+      color: #22c55e;
+      font-weight: bold;
+    }
+
+    .option-btn.incorrect {
+      background-color: #450a0a;
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    .shadowing-section {
+      display: none;
+      background-color: #0f172a;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #22c55e;
+    }
+
+    .shadowing-section h3 {
+      color: #22c55e;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .rec-btn {
+      background-color: #ef4444;
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .rec-btn.recording {
+      background-color: #facc15;
+      color: #0f172a;
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .transcript-box {
+      width: 100%;
+      background-color: #1e293b;
+      color: #ffffff;
+      border: 1px solid #064e3b;
+      border-radius: 6px;
+      padding: 10px;
+      margin: 10px 0;
+      min-height: 48px;
+      font-size: 0.9rem;
+    }
+
+    .feedback-box {
+      display: none;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .score-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      margin-top: 4px;
+    }
+
+    .nav-controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      background-color: #064e3b;
+      color: #ffffff;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .nav-btn:disabled {
+      background-color: #334155;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      border-top: 1px solid #064e3b;
+      padding-top: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MODULE SELECTOR DROPDOWN -->
+  <div class="module-selector">
+    <label for="module-select">Select Conversation Module / Seleccionar Módulo de Conversación:</label>
+    <select id="module-select" onchange="changeModule(this.value)">
+      <option value="0">Conversación 1: Turista en Mosquera - Conversation 1: Tourist in Mosquera</option>
+      <option value="1">Conversación 2: El Humedal Gualí (Mosquera) - Conversation 2: El Humedal Gualí (Mosquera)</option>
+      <option value="2">Conversación 3: Yendo a un Hotel (Funza) - Conversation 3: Going to a Hotel (Funza)</option>
+      <option value="3">Conversación 4: Yendo a un Restaurante (Madrid) - Conversation 4: Going to a Restaurant (Madrid)</option>
+      <option value="4">Conversación 5: Parque Arqueológico (Facatativá) - Conversation 5: Archaeological Park (Facatativá)</option>
+      <option value="5">Conversación 6: Explorando Compras y Artesanías Locales - Conversation 6: Exploring Local Shopping & Crafts</option>
+      <option value="6">Conversación 7: Pidiendo Indicaciones Locales - Conversation 7: Asking for Local Directions</option>
+      <option value="7">Conversación 8: Excursión de un Día a Parques - Conversation 8: Taking a Day Trip to Parks</option>
+      <option value="8">Conversación 9: Preguntas sobre Seguridad y Taxímetro - Conversation 9: Safety & Taxi Meter Questions</option>
+      <option value="9">Conversación 10: Traslado al Aeropuerto y Salida - Conversation 10: Airport Transfer & Departure</option>
+      <option value="10">Conversación 11: Visitando el Parque Principal de Mosquera - Conversation 11: Visiting Mosquera Central Park</option>
+      <option value="11">Conversación 12: Complejo Cultural y Deportivo de Funza - Conversation 12: Funza Cultural & Sports Complex</option>
+      <option value="12">Conversación 13: Probando Panadería y Pastelería Local - Conversation 13: Trying Local Bakery & Pastries</option>
+      <option value="13">Conversación 14: Cultivo de Flores y Festivales de Madrid - Conversation 14: Madrid Flower Farms & Festivals</option>
+      <option value="14">Conversación 15: Escalada de Roca y Senderismo en Facatativá - Conversation 15: Facatativá Rock Climbing & Hiking</option>
+      <option value="15">Conversación 16: Visita al Mercado de Agricultores Local - Conversation 16: Local Farmers' Market Visit</option>
+      <option value="16">Conversación 17: Excursión al Pueblo de Postres de Sopó - Conversation 17: Day Trip to Sopó Dessert Village</option>
+      <option value="17">Conversación 18: Viaje a la Catedral de Sal de Zipaquirá - Conversation 18: Trip to Zipaquirá Salt Cathedral</option>
+      <option value="18">Conversación 19: Traslado a la Terminal de Buses Regional - Conversation 19: Regional Bus Terminal Transfer</option>
+      <option value="19">Conversación 20: Asistencia Médica y Farmacia - Conversation 20: Medical Assistance & Pharmacy</option>
+      <option value="20">Conversación 21: Pidiendo un Recibo - Conversation 21: Asking for a Receipt</option>
+      <option value="21">Conversación 22: Verificando la Tarifa - Conversation 22: Checking the Fare</option>
+      <option value="22">Conversación 23: El Turista Piensa que la Tarifa es Muy Alta - Conversation 23: Tourist Thinks Fare Is Too High</option>
+      <option value="23">Conversación 24: Preguntando el Precio de un Viaje Más Largo - Conversation 24: Asking for the Price of a Longer Trip</option>
+      <option value="24" selected>Conversación 25: Conversación Completa de Pago - Conversation 25: Complete Payment Conversation</option>
+    </select>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h1>Prepared by Coach Carlos O.</h1>
+      <p id="module-subtitle">A1 Practice: Tourist Conversation 25 - Complete Payment Conversation</p>
+    </div>
+
+    <div class="progress-container">
+      <span id="step-indicator">Step 1 of 5</span>
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+    </div>
+
+    <!-- TOURIST QUESTION -->
+    <div class="card">
+      <div class="tourist-label">👤 Tourist Question:</div>
+      <div class="tourist-text" id="tourist-text">...</div>
+      <button class="audio-btn" onclick="playCurrentQuestion()">🔊 Listen to Tourist</button>
+    </div>
+
+    <!-- DRIVER RESPONSE CHOICES -->
+    <div id="choices-container">
+      <div class="section-title">Select the correct Taxi Driver response:</div>
+      <div class="options-grid" id="options"></div>
+    </div>
+
+    <!-- SHADOWING & SPEECH RECOGNITION SECTION -->
+    <div class="shadowing-section" id="shadowing-section">
+      <h3>🗣️ Practice Shadowing & Pronunciation</h3>
+      <p style="font-size:0.85rem; color:#cbd5e1; margin-bottom:8px;">
+        1. Listen to the driver model.<br>
+        2. Click <strong>"Record My Voice"</strong> and repeat out loud.<br>
+        3. Target score: <strong>80% or higher</strong> recommended for optimal mastery.
+      </p>
+      <button class="audio-btn" style="margin-bottom:10px;" onclick="playSelectedModel()">🔊 Listen Correct Driver Model</button>
+      
+      <button class="rec-btn" id="rec-btn" onclick="toggleSpeechRecognition()">🎙️ Record My Voice</button>
+      
+      <div style="font-size:0.8rem; color:#facc15; margin-top:8px;">Your Voice Transcription:</div>
+      <div class="transcript-box" id="student-transcript"><em>Click record and start speaking...</em></div>
+    </div>
+
+    <!-- FEEDBACK BOX -->
+    <div class="feedback-box" id="feedback"></div>
+
+    <!-- NAVIGATION BUTTONS -->
+    <div class="nav-controls">
+      <button class="nav-btn" id="prev-btn" onclick="previousStep()" disabled>Previous</button>
+      <button class="nav-btn" id="next-btn" onclick="nextStep()">Next Question</button>
+    </div>
+
+    <div class="footer">
+      © Developed for educational excellence By Coach Carlos O
+    </div>
+  </div>
+
+  <script>
+    // COMBINED DIALOGUE MODULES (1 THROUGH 25)
+    const modules = [
+      {
+        title: "A1 Practice: Tourist Conversation 1 in Mosquera",
+        dialogues: [
+          {
+            tourist: "Hola. ¿Puede llevarme a un lugar turístico en Mosquera? / Hello. Can you take me to a tourist place in Mosquera?",
+            ttsTourist: "Hello. Can you take me to a tourist place in Mosquera?",
+            choices: [
+              { text: "Por supuesto. ¿A dónde le gustaría ir? / Of course. Where would you like to go?", ttsText: "Of course. Where would you like to go?", correct: true },
+              { text: "No, I am busy right now.", ttsText: "No, I am busy right now.", correct: false },
+              { text: "Yes, I like Mosquera very much.", ttsText: "Yes, I like Mosquera very much.", correct: false }
+            ],
+            pedagogicalFeedback: "When a tourist asks for a destination, 'Of course. Where would you like to go?' is the polite and professional way to accept the ride."
+          },
+          {
+            tourist: "Me gustaría visitar un lugar bonito cerca de Mosquera. / I would like to visit a nice place near Mosquera.",
+            ttsTourist: "I would like to visit a nice place near Mosquera.",
+            choices: [
+              { text: "Le recomiendo el Humedal Ciénaga del Gualí. / I recommend the Humedal Ciénaga del Gualí.", ttsText: "I recommend the Humedal Ciénaga del Gualí.", correct: true },
+              { text: "The hotel is over there.", ttsText: "The hotel is over there.", correct: false },
+              { text: "I don't know any place.", ttsText: "I don't know any place.", correct: false }
+            ],
+            pedagogicalFeedback: "Using 'I recommend...' helps you suggest local tourist attractions clearly to visitors."
+          },
+          {
+            tourist: "¿Cuánto tiempo toma? / How long does it take?",
+            ttsTourist: "How long does it take?",
+            choices: [
+              { text: "Aproximadamente 15 minutos, dependiendo del tráfico. / About 15 minutes, depending on traffic.", ttsText: "About 15 minutes, depending on traffic.", correct: true },
+              { text: "It costs twenty dollars.", ttsText: "It costs twenty dollars.", correct: false },
+              { text: "Yes, it takes place now.", ttsText: "Yes, it takes place now.", correct: false }
+            ],
+            pedagogicalFeedback: "When asked 'How long...', respond with time estimates ('About 15 minutes') rather than prices or places."
+          },
+          {
+            tourist: "Genial. Vamos, por favor. / Great. Let's go, please.",
+            ttsTourist: "Great. Let's go, please.",
+            choices: [
+              { text: "Claro. ¡Bienvenido a Mosquera! / Sure. Welcome to Mosquera!", ttsText: "Sure. Welcome to Mosquera!", correct: true },
+              { text: "Goodbye, have a safe trip.", ttsText: "Goodbye, have a safe trip.", correct: false },
+              { text: "That is too expensive.", ttsText: "That is too expensive.", correct: false }
+            ],
+            pedagogicalFeedback: "'Sure. Welcome to...' creates a welcoming environment for tourists starting their ride."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 2 in Mosquera (El Humedal Gualí)",
+        dialogues: [
+          {
+            tourist: "Disculpe. Quiero visitar el Humedal Gualí. / Excuse me. I want to visit El Humedal Gualí.",
+            ttsTourist: "Excuse me. I want to visit El Humedal Gualí.",
+            choices: [
+              { text: "No hay problema. ¿Es esta su primera visita? / No problem. Is this your first visit?", ttsText: "No problem. Is this your first visit?", correct: true },
+              { text: "I am going home now.", ttsText: "I am going home now.", correct: false },
+              { text: "El Humedal Gualí is closed forever.", ttsText: "El Humedal Gualí is closed forever.", correct: false }
+            ],
+            pedagogicalFeedback: "Responding with 'No problem. Is this your first visit?' acknowledges the request warmly and starts a friendly conversation."
+          },
+          {
+            tourist: "Sí, lo es. / Yes, it is.",
+            ttsTourist: "Yes, it is.",
+            choices: [
+              { text: "¡Qué bien! Es un buen lugar para ver la naturaleza y las aves. / Nice! It is a good place to see nature and birds.", ttsText: "Nice! It is a good place to see nature and birds.", correct: true },
+              { text: "I don't like birds at all.", ttsText: "I don't like birds at all.", correct: false },
+              { text: "It is a very bad place.", ttsText: "It is a very bad place.", correct: false }
+            ],
+            pedagogicalFeedback: "Sharing key highlights like 'a good place to see nature and birds' helps build enthusiasm for local attractions."
+          },
+          {
+            tourist: "Eso suena genial. ¿Está lejos? / That sounds great. Is it far?",
+            ttsTourist: "That sounds great. Is it far?",
+            choices: [
+              { text: "No, está bastante cerca. / No, it is quite close.", ttsText: "No, it is quite close.", correct: true },
+              { text: "Yes, it takes 5 hours by plane.", ttsText: "Yes, it takes 5 hours by plane.", correct: false },
+              { text: "I don't know where it is.", ttsText: "I don't know where it is.", correct: false }
+            ],
+            pedagogicalFeedback: "'No, it is quite close' reassures the tourist about proximity using basic A1 vocabulary."
+          },
+          {
+            tourist: "Gracias. / Thank you.",
+            ttsTourist: "Thank you.",
+            choices: [
+              { text: "De nada. / You're welcome.", ttsText: "You're welcome.", correct: true },
+              { text: "No, thank you.", ttsText: "No, thank you.", correct: false },
+              { text: "See you yesterday.", ttsText: "See you yesterday.", correct: false }
+            ],
+            pedagogicalFeedback: "'You're welcome' is the standard polite response to 'Thank you'."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 3 in Funza (Going to a Hotel)",
+        dialogues: [
+          {
+            tourist: "Hola. ¿Puede llevarme a un hotel en Funza? / Hello. Can you take me to a hotel in Funza?",
+            ttsTourist: "Hello. Can you take me to a hotel in Funza?",
+            choices: [
+              { text: "Sí, por supuesto. ¿Tiene el nombre del hotel? / Yes, of course. Do you have the name of the hotel?", ttsText: "Yes, of course. Do you have the name of the hotel?", correct: true },
+              { text: "No, I am sleeping right now.", ttsText: "No, I am sleeping right now.", correct: false },
+              { text: "Funza is very far away from Colombia.", ttsText: "Funza is very far away from Colombia.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, of course. Do you have the name of the hotel?' confirms your willingness to take the passenger while requesting necessary information."
+          },
+          {
+            tourist: "Sí. Es el Hotel San Pedro. / Yes. It is Hotel San Pedro.",
+            ttsTourist: "Yes. It is Hotel San Pedro.",
+            choices: [
+              { text: "Por favor muéstreme la dirección. / Please show me the address.", ttsText: "Please show me the address.", correct: true },
+              { text: "I don't want to see it.", ttsText: "I don't want to see it.", correct: false },
+              { text: "Your hotel is red.", ttsText: "Your hotel is red.", correct: false }
+            ],
+            pedagogicalFeedback: "Politely asking 'Please show me the address' ensures you navigate to the exact location without confusion."
+          },
+          {
+            tourist: "Aquí está. / Here it is.",
+            ttsTourist: "Here it is.",
+            choices: [
+              { text: "Gracias. Conozco la zona. / Thank you. I know the area.", ttsText: "Thank you. I know the area.", correct: true },
+              { text: "No, this is wrong.", ttsText: "No, this is wrong.", correct: false },
+              { text: "Good night, see you later.", ttsText: "Good night, see you later.", correct: false }
+            ],
+            pedagogicalFeedback: "'Thank you. I know the area' reassures the passenger that they are in good hands."
+          },
+          {
+            tourist: "¿Cuánto cuesta el taxi? / How much is the taxi?",
+            ttsTourist: "How much is the taxi?",
+            choices: [
+              { text: "La tarifa es aproximadamente de 15,000 pesos. / The fare is approximately 15,000 pesos.", ttsText: "The fare is approximately 15,000 pesos.", correct: true },
+              { text: "It is 2 o'clock in the afternoon.", ttsText: "It is 2 o'clock in the afternoon.", correct: false },
+              { text: "Yes, I like taxis.", ttsText: "Yes, I like taxis.", correct: false }
+            ],
+            pedagogicalFeedback: "Responding to 'How much...' requires providing the estimated price or fare using currency units."
+          },
+          {
+            tourist: "Está bien. Gracias. / Okay. Thank you.",
+            ttsTourist: "Okay. Thank you.",
+            choices: [
+              { text: "Con mucho gusto. / My pleasure.", ttsText: "My pleasure.", correct: true },
+              { text: "You are welcome not.", ttsText: "You are welcome not.", correct: false },
+              { text: "I am fine, thanks.", ttsText: "I am fine, thanks.", correct: false }
+            ],
+            pedagogicalFeedback: "'My pleasure' is a polite, professional alternative to 'You're welcome' when responding to customer thanks."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 4 in Madrid (Going to a Restaurant)",
+        dialogues: [
+          {
+            tourist: "Disculpe. ¿Puede recomendarme un buen restaurante en Madrid? / Excuse me. Can you recommend a good restaurant in Madrid?",
+            ttsTourist: "Excuse me. Can you recommend a good restaurant in Madrid?",
+            choices: [
+              { text: "Sí. ¿Qué tipo de comida le gusta? / Yes. What kind of food do you like?", ttsText: "Yes. What kind of food do you like?", correct: true },
+              { text: "No, I am eating lunch right now.", ttsText: "No, I am eating lunch right now.", correct: false },
+              { text: "Madrid is a very small town.", ttsText: "Madrid is a very small town.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes. What kind of food do you like?' shows willingness to give recommendations based on customer preferences."
+          },
+          {
+            tourist: "Me gusta la comida colombiana. / I like Colombian food.",
+            ttsTourist: "I like Colombian food.",
+            choices: [
+              { text: "Puedo llevarlo a un buen restaurante colombiano. / I can take you to a good Colombian restaurant.", ttsText: "I can take you to a good Colombian restaurant.", correct: true },
+              { text: "I don't like food at all.", ttsText: "I don't like food at all.", correct: false },
+              { text: "We are staying at home.", ttsText: "We are staying at home.", correct: false }
+            ],
+            pedagogicalFeedback: "Confirming 'I can take you to a good Colombian restaurant' offers an immediate solution tailored to the tourist's request."
+          },
+          {
+            tourist: "¿Es costoso? / Is it expensive?",
+            ttsTourist: "Is it expensive?",
+            choices: [
+              { text: "Tiene precios razonables. / It has reasonable prices.", ttsText: "It has reasonable prices.", correct: true },
+              { text: "Yes, it is midnight.", ttsText: "Yes, it is midnight.", correct: false },
+              { text: "It is 20 kilometers away.", ttsText: "It is 20 kilometers away.", correct: false }
+            ],
+            pedagogicalFeedback: "When asked about price levels, responding with 'It has reasonable prices' directly addresses cost concerns."
+          },
+          {
+            tourist: "Excelente. Por favor lléveme allí. / Excellent. Please take me there.",
+            ttsTourist: "Excellent. Please take me there.",
+            choices: [
+              { text: "Con gusto. / Certainly.", ttsText: "Certainly.", correct: true },
+              { text: "I am sorry, goodbye.", ttsText: "I am sorry, goodbye.", correct: false },
+              { text: "No thank you.", ttsText: "No thank you.", correct: false }
+            ],
+            pedagogicalFeedback: "'Certainly' is a polite, formal agreement to carry out a passenger's request."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 5 in Facatativá",
+        dialogues: [
+          {
+            tourist: "Me gustaría visitar Facatativá. / I would like to visit Facatativá.",
+            ttsTourist: "I would like to visit Facatativá.",
+            choices: [
+              { text: "Con gusto. ¿Viene por turismo? / Certainly. Are you visiting for tourism?", ttsText: "Certainly. Are you visiting for tourism?", correct: true },
+              { text: "No, Facatativá does not exist.", ttsText: "No, Facatativá does not exist.", correct: false },
+              { text: "I am going to sleep now.", ttsText: "I am going to sleep now.", correct: false }
+            ],
+            pedagogicalFeedback: "'Certainly. Are you visiting for tourism?' is a welcoming line that helps clarify the passenger's intent."
+          },
+          {
+            tourist: "Sí. Quiero ver lugares interesantes. / Yes. I want to see interesting places.",
+            ttsTourist: "Yes. I want to see interesting places.",
+            choices: [
+              { text: "Le recomiendo el Parque Arqueológico de Facatativá. / I recommend the Archaeological Park of Facatativá.", ttsText: "I recommend the Archaeological Park of Facatativá.", correct: true },
+              { text: "There are no places here.", ttsText: "There are no places here.", correct: false },
+              { text: "I am going home now.", ttsText: "I am going home now.", correct: false }
+            ],
+            pedagogicalFeedback: "Recommending 'the Archaeological Park of Facatativá' points out the primary local attraction directly."
+          },
+          {
+            tourist: "¿Qué puedo ver allí? / What can I see there?",
+            ttsTourist: "What can I see there?",
+            choices: [
+              { text: "Puede ver rocas, naturaleza y sitios arqueológicos antiguos. / You can see rocks, nature, and ancient archaeological sites.", ttsText: "You can see rocks, nature, and ancient archaeological sites.", correct: true },
+              { text: "You can see aeroplanes and boats.", ttsText: "You can see aeroplanes and boats.", correct: false },
+              { text: "It is 5 o'clock in the morning.", ttsText: "It is 5 o'clock in the morning.", correct: false }
+            ],
+            pedagogicalFeedback: "Describing features like 'rocks, nature, and ancient archaeological sites' informs the tourist of what to expect."
+          },
+          {
+            tourist: "¡Maravilloso! / Wonderful!",
+            ttsTourist: "Wonderful!",
+            choices: [
+              { text: "Puedo llevarlo allí. / I can take you there.", ttsText: "I can take you there.", correct: true },
+              { text: "I don't like driving.", ttsText: "I don't like driving.", correct: false },
+              { text: "The car is blue.", ttsText: "The car is blue.", correct: false }
+            ],
+            pedagogicalFeedback: "'I can take you there' directly offers your service to drive the passenger to their chosen destination."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 6 - Shopping & Crafts",
+        dialogues: [
+          {
+            tourist: "¿Dónde puedo comprar recuerdos y artesanías locales por aquí? / Where can I buy local souvenirs and handicrafts around here?",
+            ttsTourist: "Where can I buy local souvenirs and handicrafts around here?",
+            choices: [
+              { text: "Hay un gran mercado artesanal cerca de la plaza central. / There is a great artisan market near the central plaza.", ttsText: "There is a great artisan market near the central plaza.", correct: true },
+              { text: "We don't sell anything in this town.", ttsText: "We don't sell anything in this town.", correct: false },
+              { text: "You must fly to another country for shopping.", ttsText: "You must fly to another country for shopping.", correct: false }
+            ],
+            pedagogicalFeedback: "Directing tourists to local artisan markets helps them find authentic regional products quickly."
+          },
+          {
+            tourist: "¿Aceptan tarjetas de crédito o solo efectivo? / Do they accept credit cards or cash only?",
+            ttsTourist: "Do they accept credit cards or cash only?",
+            choices: [
+              { text: "La mayoría de tiendas aceptan efectivo, pero algunos vendedores más grandes reciben tarjetas. / Most shops accept cash, but some larger vendors take cards.", ttsText: "Most shops accept cash, but some larger vendors take cards.", correct: true },
+              { text: "They only accept gold coins.", ttsText: "They only accept gold coins.", correct: false },
+              { text: "Money is not used here.", ttsText: "Money is not used here.", correct: false }
+            ],
+            pedagogicalFeedback: "Providing practical payment information helps visitors prepare the correct currency."
+          },
+          {
+            tourist: "¿Puede esperarme mientras compro? / Can you wait for me while I shop?",
+            ttsTourist: "Can you wait for me while I shop?",
+            choices: [
+              { text: "Sí, puedo esperar aquí durante 20 minutos. / Yes, I can wait here for 20 minutes.", ttsText: "Yes, I can wait here for 20 minutes.", correct: true },
+              { text: "No, I am driving away right now.", ttsText: "No, I am driving away right now.", correct: false },
+              { text: "Shopping is forbidden.", ttsText: "Shopping is forbidden.", correct: false }
+            ],
+            pedagogicalFeedback: "Setting clear wait-time expectations provides excellent customer service."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 7 - Asking for Directions",
+        dialogues: [
+          {
+            tourist: "¿La plaza principal está lejos de aquí? / Is the main square far from here?",
+            ttsTourist: "Is the main square far from here?",
+            choices: [
+              { text: "No, está a solo cinco minutos en carro. / No, it is just five minutes away by car.", ttsText: "No, it is just five minutes away by car.", correct: true },
+              { text: "Yes, it takes three days to drive there.", ttsText: "Yes, it takes three days to drive there.", correct: false },
+              { text: "I do not know what a main square is.", ttsText: "I do not know what a main square is.", correct: false }
+            ],
+            pedagogicalFeedback: "Giving clear distance/time estimates in minutes reassures tourists."
+          },
+          {
+            tourist: "¿Es seguro caminar por esa zona? / Is it safe to walk around that area?",
+            ttsTourist: "Is it safe to walk around that area?",
+            choices: [
+              { text: "Sí, es muy seguro y popular entre los turistas. / Yes, it is very safe and popular with tourists.", ttsText: "Yes, it is very safe and popular with tourists.", correct: true },
+              { text: "No, nobody goes there ever.", ttsText: "No, nobody goes there ever.", correct: false },
+              { text: "Walking is not allowed in Colombia.", ttsText: "Walking is not allowed in Colombia.", correct: false }
+            ],
+            pedagogicalFeedback: "Reassuring visitors about local safety fosters confidence and hospitality."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 8 - Day Trip to Parks",
+        dialogues: [
+          {
+            tourist: "Quiero pasar la tarde al aire libre en un parque. / I want to spend the afternoon outdoors in a park.",
+            ttsTourist: "I want to spend the afternoon outdoors in a park.",
+            choices: [
+              { text: "Tenemos maravillosos parques ecológicos cerca. / We have wonderful ecological parks nearby.", ttsText: "We have wonderful ecological parks nearby.", correct: true },
+              { text: "There are no trees or parks here.", ttsText: "There are no trees or parks here.", correct: false },
+              { text: "It is better to stay in the car all day.", ttsText: "It is better to stay in the car all day.", correct: false }
+            ],
+            pedagogicalFeedback: "Suggesting outdoor ecological spaces matches the tourist's request effectively."
+          },
+          {
+            tourist: "¿Hay lugares para comer dentro del parque? / Are there place to eat inside the park?",
+            ttsTourist: "Are there place to eat inside the park?",
+            choices: [
+              { text: "Sí, hay pequeñas cafeterías y puestos de comida. / Yes, there are small cafes and food stalls.", ttsText: "Yes, there are small cafes and food stalls.", correct: true },
+              { text: "No, eating food is not allowed in Colombia.", ttsText: "No, eating food is not allowed in Colombia.", correct: false },
+              { text: "Only water is available.", ttsText: "Only water is available.", correct: false }
+            ],
+            pedagogicalFeedback: "Informing passengers about food amenities helps them plan their visit."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 9 - Fare & Safety Questions",
+        dialogues: [
+          {
+            tourist: "¿Utiliza taxímetro o tarifa fija? / Do you use a taximeter or fixed fare?",
+            ttsTourist: "Do you use a taximeter or fixed fare?",
+            choices: [
+              { text: "Usamos una tarjeta de tarifas oficiales para destinos fuera de la ciudad. / We use a official rate card for destinations outside the city.", ttsText: "We use a official rate card for destinations outside the city.", correct: true },
+              { text: "I change the price every minute.", ttsText: "I change the price every minute.", correct: false },
+              { text: "There are no fares in this city.", ttsText: "There are no fares in this city.", correct: false }
+            ],
+            pedagogicalFeedback: "Explaining standard pricing mechanisms builds trust with international guests."
+          },
+          {
+            tourist: "¿Puedo tener un recibo de este viaje? / Can I get a receipt for this trip?",
+            ttsTourist: "Can I get a receipt for this trip?",
+            choices: [
+              { text: "Sí, por supuesto. Puedo escribir un recibo para usted. / Yes, of course. I can write a receipt for you.", ttsText: "Yes, of course. I can write a receipt for you.", correct: true },
+              { text: "Receipts are illegal.", ttsText: "Receipts are illegal.", correct: false },
+              { text: "No, I don't have paper.", ttsText: "No, I don't have paper.", correct: false }
+            ],
+            pedagogicalFeedback: "Offering receipts professionally satisfies business and safety expectations."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 10 - Airport Transfer",
+        dialogues: [
+          {
+            tourist: "¿Puede llevarme al aeropuerto El Dorado mañana por la mañana? / Can you take me to El Dorado Airport tomorrow morning?",
+            ttsTourist: "Can you take me to El Dorado Airport tomorrow morning?",
+            choices: [
+              { text: "Sí, puedo programar una recogida para usted. / Yes, I can schedule a pick-up for you.", ttsText: "Yes, I can schedule a pick-up for you.", correct: true },
+              { text: "The airport is closed forever.", ttsText: "The airport is closed forever.", correct: false },
+              { text: "I don't know where the airport is.", ttsText: "I don't know where the airport is.", correct: false }
+            ],
+            pedagogicalFeedback: "Confirming advance bookings for airport trips is key to professional taxi service."
+          },
+          {
+            tourist: "¿A qué hora deberíamos salir para evitar el tráfico pesado? / What time should we leave to avoid heavy traffic?",
+            ttsTourist: "What time should we leave to avoid heavy traffic?",
+            choices: [
+              { text: "Recomiendo salir antes de las 6:00 AM. / I recommend leaving by 6:00 AM.", ttsText: "I recommend leaving by 6:00 AM.", correct: true },
+              { text: "Leave at midnight next week.", ttsText: "Leave at midnight next week.", correct: false },
+              { text: "Traffic does not exist in Bogota.", ttsText: "Traffic does not exist in Bogota.", correct: false }
+            ],
+            pedagogicalFeedback: "Giving proactive advice about local peak hours prevents passengers from missing flights."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 11 - Mosquera Central Park",
+        dialogues: [
+          {
+            tourist: "¿Puede llevarme al parque principal de Mosquera? / Can you take me to the main park in Mosquera?",
+            ttsTourist: "Can you take me to the main park in Mosquera?",
+            choices: [
+              { text: "¡Sí! El Parque Principal de Mosquera es muy bonito y céntrico. / Yes! Parque Principal de Mosquera is very nice and central.", ttsText: "Yes! Parque Principal de Mosquera is very nice and central.", correct: true },
+              { text: "No, parks are forbidden here.", ttsText: "No, parks are forbidden here.", correct: false },
+              { text: "The park is in another country.", ttsText: "The park is in another country.", correct: false }
+            ],
+            pedagogicalFeedback: "Confirming local central plazas with enthusiasm highlights community pride and clarity."
+          },
+          {
+            tourist: "¿Hay algún buen lugar para tomar café local cerca? / Is there anywhere good to drink local coffee nearby?",
+            ttsTourist: "Is there anywhere good to drink local coffee nearby?",
+            choices: [
+              { text: "Sí, hay varias cafeterías maravillosas alrededor de la plaza. / Yes, there are several wonderful cafes around the square.", ttsText: "Yes, there are several wonderful cafes around the square.", correct: true },
+              { text: "Coffee does not exist in Colombia.", ttsText: "Coffee does not exist in Colombia.", correct: false },
+              { text: "You must drive 10 hours for coffee.", ttsText: "You must drive 10 hours for coffee.", correct: false }
+            ],
+            pedagogicalFeedback: "Informing guests about coffee shops near central squares is essential for Colombian tourism."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 12 - Funza Cultural & Sports Complex",
+        dialogues: [
+          {
+            tourist: "Estoy interesado en ver sitios culturales locales en Funza. / I am interested in seeing local cultural sites in Funza.",
+            ttsTourist: "I am interested in seeing local cultural sites in Funza.",
+            choices: [
+              { text: "Puedo llevarlo al Biblioparque Marqués de San Jorge. / I can take you to the Biblioparque Marqués de San Jorge.", ttsText: "I can take you to the Biblioparque Marqués de San Jorge.", correct: true },
+              { text: "There is no culture in Funza.", ttsText: "There is no culture in Funza.", correct: false },
+              { text: "Books are not allowed in Funza.", ttsText: "Books are not allowed in Funza.", correct: false }
+            ],
+            pedagogicalFeedback: "Recommending key landmarks like Biblioparque Marqués de San Jorge provides great local value."
+          },
+          {
+            tourist: "¿Es un buen lugar para tomar fotografías? / Is it a good place to take photographs?",
+            ttsTourist: "Is it a good place to take photographs?",
+            choices: [
+              { text: "Sí, tiene una hermosa arquitectura moderna y zonas verdes. / Yes, it has beautiful modern architecture and green spaces.", ttsText: "Yes, it has beautiful modern architecture and green spaces.", correct: true },
+              { text: "No, taking photos is impossible.", ttsText: "No, taking photos is impossible.", correct: false },
+              { text: "It is pitch black inside.", ttsText: "It is pitch black inside.", correct: false }
+            ],
+            pedagogicalFeedback: "Describing visual highlights reassures tourists looking for photo opportunities."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 13 - Trying Local Bakery & Pastries",
+        dialogues: [
+          {
+            tourist: "Quiero probar la repostería tradicional colombiana. ¿A dónde debería ir? / I want to try traditional Colombian pastries. Where should I go?",
+            ttsTourist: "I want to try traditional Colombian pastries. Where should I go?",
+            choices: [
+              { text: "Lo dejaré en una de las mejores panaderías locales para almojábanas y pandebonos. / I will drop you off at a top local bakery for almojábanas and pandebono.", ttsText: "I will drop you off at a top local bakery for almojábanas and pandebono.", correct: true },
+              { text: "We only sell soup here.", ttsText: "We only sell soup here.", correct: false },
+              { text: "Bakeries are closed all year.", ttsText: "Bakeries are closed all year.", correct: false }
+            ],
+            pedagogicalFeedback: "Naming specific local snacks like almojábanas or pandebonos adds authentic cultural hospitality."
+          },
+          {
+            tourist: "¿Está fresco a esta hora del día? / Is it fresh this time of day?",
+            ttsTourist: "Is it fresh this time of day?",
+            choices: [
+              { text: "Sí, hornean lotes frescos cada hora. / Yes, they bake fresh batches every single hour.", ttsText: "Yes, they bake fresh batches every single hour.", correct: true },
+              { text: "No, it was made three years ago.", ttsText: "No, it was made three years ago.", correct: false },
+              { text: "Everything is frozen permanently.", ttsText: "Everything is frozen permanently.", correct: false }
+            ],
+            pedagogicalFeedback: "Confirming freshness enhances customer confidence in food recommendations."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 14 - Madrid Flower Farms & Festivals",
+        dialogues: [
+          {
+            tourist: "Escuché que Madrid es famosa por la producción de flores. ¿Es cierto? / I heard Madrid is famous for flower production. Is that true?",
+            ttsTourist: "I heard Madrid is famous for flower production. Is that true?",
+            choices: [
+              { text: "¡Sí! Madrid es conocida como la capital de las flores de la región. / Yes! Madrid is known as the flower capital of the region.", ttsText: "Yes! Madrid is known as the flower capital of the region.", correct: true },
+              { text: "No, flowers cannot grow in Madrid.", ttsText: "No, flowers cannot grow in Madrid.", correct: false },
+              { text: "Madrid only produces heavy machinery.", ttsText: "Madrid only produces heavy machinery.", correct: false }
+            ],
+            pedagogicalFeedback: "Sharing regional pride facts builds engaging rapport with tourists."
+          },
+          {
+            tourist: "¿Pueden los turistas visitar los cultivos de flores por aquí? / Can tourists visit flower farms around here?",
+            ttsTourist: "Can tourists visit flower farms around here?",
+            choices: [
+              { text: "Algunos cultivos ofrecen visitas guiadas si reserva con anticipación. / Some farms offer guided tours if you book ahead.", ttsText: "Some farms offer guided tours if you book ahead.", correct: true },
+              { text: "No, tourists are never allowed to see flowers.", ttsText: "No, tourists are never allowed to see flowers.", correct: false },
+              { text: "Only bees can visit flower farms.", ttsText: "Only bees can visit flower farms.", correct: false }
+            ],
+            pedagogicalFeedback: "Explaining tour availability helps visitors plan specialized activities."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 15 - Facatativá Rock Climbing & Hiking",
+        dialogues: [
+          {
+            tourist: "Me gusta el senderismo y la aventura al aire libre. ¿Qué hay disponible en Facatativá? / I like hiking and outdoor adventure. What is available in Facatativá?",
+            ttsTourist: "I like hiking and outdoor adventure. What is available in Facatativá?",
+            choices: [
+              { text: "Las Piedras del Tunjo ofrecen excelentes caminos para caminar y grandes formaciones rocosas. / Piedras del Tunjo offers great walking paths and large rock formations.", ttsText: "Piedras del Tunjo offers great walking paths and large rock formations.", correct: true },
+              { text: "There are no rocks or hills in Colombia.", ttsText: "There are no rocks or hills in Colombia.", correct: false },
+              { text: "Walking outdoors is not allowed.", ttsText: "Walking outdoors is not allowed.", correct: false }
+            ],
+            pedagogicalFeedback: "Matching active sports preferences with local landmarks like Piedras del Tunjo is ideal."
+          },
+          {
+            tourist: "¿Debería llevar zapatos cómodos para caminar? / Should I bring comfortable walking shoes?",
+            ttsTourist: "Should I bring comfortable walking shoes?",
+            choices: [
+              { text: "Sí, se recomiendan mucho unos buenos zapatos o botas de caminar. / Yes, good walking shoes or boots are highly recommended.", ttsText: "Yes, good walking shoes or boots are highly recommended.", correct: true },
+              { text: "No, you must walk barefoot.", ttsText: "No, you must walk barefoot.", correct: false },
+              { text: "Heavy dress shoes are required.", ttsText: "Heavy dress shoes are required.", correct: false }
+            ],
+            pedagogicalFeedback: "Giving practical clothing advice ensures guest comfort and safety."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 16 - Local Farmers' Market Visit",
+        dialogues: [
+          {
+            tourist: "¿Dónde puedo ver fruta tropical fresca de Colombia? / Where can I see fresh tropical fruit from Colombia?",
+            ttsTourist: "Where can I see fresh tropical fruit from Colombia?",
+            choices: [
+              { text: "Puedo llevarlo a la plaza de mercado local. / I can drive you to the local plaza de mercado.", ttsText: "I can drive you to the local plaza de mercado.", correct: true },
+              { text: "Fruits are not grown in this country.", ttsText: "Fruits are not grown in this country.", correct: false },
+              { text: "The market only opens once every decade.", ttsText: "The market only opens once every decade.", correct: false }
+            ],
+            pedagogicalFeedback: "Directing guests to local 'plazas de mercado' exposes them to rich authentic culture."
+          },
+          {
+            tourist: "¿Qué fruta me recomienda probar? / What fruit do you recommend I try?",
+            ttsTourist: "What fruit do you recommend I try?",
+            choices: [
+              { text: "¡Debería probar lulo, maracuyá o granadilla! / You should try Lulo, Maracuyá, or Granadilla!", ttsText: "You should try Lulo, Maracuyá, or Granadilla!", correct: true },
+              { text: "We do not have named fruits.", ttsText: "We do not have named fruits.", correct: false },
+              { text: "Only apples exist here.", ttsText: "Only apples exist here.", correct: false }
+            ],
+            pedagogicalFeedback: "Naming iconic Colombian fruits like Lulo and Granadilla enriches the tourist's experience."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 17 - Day Trip to Sopó Dessert Village",
+        dialogues: [
+          {
+            tourist: "¿Podemos hacer una excursión de un día a Sopó para probar los famosos postres? / Can we take a day trip to Sopó to try famous desserts?",
+            ttsTourist: "Can we take a day trip to Sopó to try famous desserts?",
+            choices: [
+              { text: "Sí, puedo llevarlo a la Cabaña de Alpina en Sopó. / Yes, I can take you to the Cabaña de Alpina in Sopó.", ttsText: "Yes, I can take you to the Cabaña de Alpina in Sopó.", correct: true },
+              { text: "Sopó is located on another continent.", ttsText: "Sopó is located on another continent.", correct: false },
+              { text: "Desserts are not allowed on trip days.", ttsText: "Desserts are not allowed on trip days.", correct: false }
+            ],
+            pedagogicalFeedback: "Identifying popular regional day trips like Sopó expands driver service offerings."
+          },
+          {
+            tourist: "¿Cuánto tiempo dura el trayecto desde aquí? / How long is the drive from here?",
+            ttsTourist: "How long is the drive from here?",
+            choices: [
+              { text: "Toma entre 45 y 60 minutos según el tráfico. / It takes about 45 to 60 minutes depending on traffic.", ttsText: "It takes about 45 to 60 minutes depending on traffic.", correct: true },
+              { text: "It takes 20 seconds.", ttsText: "It takes 20 seconds.", correct: false },
+              { text: "It takes three months.", ttsText: "It takes three months.", correct: false }
+            ],
+            pedagogicalFeedback: "Providing realistic inter-town travel times helps visitors manage schedule expectations."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 18 - Trip to Zipaquirá Salt Cathedral",
+        dialogues: [
+          {
+            tourist: "¿La Catedral de Sal de Zipaquirá está lejos de esta zona? / Is Zipaquirá Salt Cathedral far from this area?",
+            ttsTourist: "Is Zipaquirá Salt Cathedral far from this area?",
+            choices: [
+              { text: "Está a 1 hora aproximadamente. ¡Es una de las principales maravillas de Colombia! / It is about 1 hour away. It is one of Colombia's top wonders!", ttsText: "It is about 1 hour away. It is one of Colombia's top wonders!", correct: true },
+              { text: "The Salt Cathedral is underwater in the ocean.", ttsText: "The Salt Cathedral is underwater in the ocean.", correct: false },
+              { text: "Zipaquirá is closed to visitors.", ttsText: "Zipaquirá is closed to visitors.", correct: false }
+            ],
+            pedagogicalFeedback: "Promoting world-famous nearby sites like the Salt Cathedral shows great tourist awareness."
+          },
+          {
+            tourist: "¿Puede esperarme allí y llevarme de regreso más tarde? / Can you wait for me there and drive me back later?",
+            ttsTourist: "Can you wait for me there and drive me back later?",
+            choices: [
+              { text: "Sí, podemos acordar una tarifa de ida y vuelta y una tarifa de espera. / Yes, we can agree on a round-trip rate and waiting fee.", ttsText: "Yes, we can agree on a round-trip rate and waiting fee.", correct: true },
+              { text: "No, once you leave the car I disappear.", ttsText: "No, once you leave the car I disappear.", correct: false },
+              { text: "Taxis cannot stop near salt.", ttsText: "Taxis cannot stop near salt.", correct: false }
+            ],
+            pedagogicalFeedback: "Offering full-day or round-trip waiting arrangements is standard for out-of-town trips."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 19 - Regional Bus Terminal Transfer",
+        dialogues: [
+          {
+            tourist: "¿Puede dejarme en la terminal de buses regional? / Can you drop me off at the regional bus terminal?",
+            ttsTourist: "Can you drop me off at the regional bus terminal?",
+            choices: [
+              { text: "Sí, puedo llevarlo directo a la entrada de la terminal. / Yes, I can take you straight to the terminal entrance.", ttsText: "Yes, I can take you straight to the terminal entrance.", correct: true },
+              { text: "Buses are not running this century.", ttsText: "Buses are not running this century.", correct: false },
+              { text: "I can only drive in circles.", ttsText: "I can only drive in circles.", correct: false }
+            ],
+            pedagogicalFeedback: "Terminal drops require straightforward confirmation and smooth door-to-door delivery."
+          },
+          {
+            tourist: "¿Dónde compro los tiquetes para viajes intermunicipales? / Where do I buy tickets for inter-city travel?",
+            ttsTourist: "Where do I buy tickets for inter-city travel?",
+            choices: [
+              { text: "Dentro del hall principal de la terminal, en las taquillas oficiales. / Inside the main terminal hall at the official ticket counters.", ttsText: "Inside the main terminal hall at the official ticket counters.", correct: true },
+              { text: "You must buy tickets from random strangers on the road.", ttsText: "You must buy tickets from random strangers on the road.", correct: false },
+              { text: "Tickets are not required for buses.", ttsText: "Tickets are not required for buses.", correct: false }
+            ],
+            pedagogicalFeedback: "Directing tourists to official ticket counters ensures passenger safety and prevents scams."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 20 - Medical Assistance & Pharmacy",
+        dialogues: [
+          {
+            tourist: "Me siento mal. ¿Puede llevarme a una farmacia o clínica médica? / I am feeling unwell. Can you take me to a pharmacy or medical clinic?",
+            ttsTourist: "I am feeling unwell. Can you take me to a pharmacy or medical clinic?",
+            choices: [
+              { text: "Sí, lo llevaré a la farmacia abierta más cercana de inmediato. / Yes, I will take you to the nearest open pharmacy right away.", ttsText: "Yes, I will take you to the nearest open pharmacy right away.", correct: true },
+              { text: "No, health is not important.", ttsText: "No, health is not important.", correct: false },
+              { text: "Pharmacies do not sell medicine here.", ttsText: "Pharmacies do not sell medicine here.", correct: false }
+            ],
+            pedagogicalFeedback: "Immediate, empathetic responses in health scenarios establish essential safety and trust."
+          },
+          {
+            tourist: "¿Las farmacias abren hasta tarde por aquí? / Are pharmacies open late around here?",
+            ttsTourist: "Are pharmacies open late around here?",
+            choices: [
+              { text: "Sí, muchas farmacias permanecen abiertas las 24 horas o hasta tarde en la noche. / Yes, many pharmacies stay open 24 hours or late into the evening.", ttsText: "Yes, many pharmacies stay open 24 hours or late into the evening.", correct: true },
+              { text: "Pharmacies only open 5 minutes a day.", ttsText: "Pharmacies only open 5 minutes a day.", correct: false },
+              { text: "Medicine is unavailable at night.", ttsText: "Medicine is unavailable at night.", correct: false }
+            ],
+            pedagogicalFeedback: "Reassuring visitors about 24-hour pharmacy services calms anxious passengers."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 21 - Asking for a Receipt",
+        dialogues: [
+          {
+            tourist: "¿Me da un recibo, por favor? / Can I have a receipt, please?",
+            ttsTourist: "Can I have a receipt, please?",
+            choices: [
+              { text: "Sí, por supuesto. / Yes, of course.", ttsText: "Yes, of course.", correct: true },
+              { text: "No, I don't give receipts.", ttsText: "No, I don't give receipts.", correct: false },
+              { text: "A receipt is not necessary.", ttsText: "A receipt is not necessary.", correct: false }
+            ],
+            pedagogicalFeedback: "Responding politely with 'Yes, of course' shows professional service when fulfilling customer paperwork requests."
+          },
+          {
+            tourist: "Gracias. Aquí está el pago. / Thank you. Here is the payment.",
+            ttsTourist: "Thank you. Here is the payment.",
+            choices: [
+              { text: "De nada. / You're welcome.", ttsText: "You're welcome.", correct: true },
+              { text: "No problem.", ttsText: "No problem.", correct: true },
+              { text: "Give me more money.", ttsText: "Give me more money.", correct: false }
+            ],
+            pedagogicalFeedback: "Using courteous phrases like 'You're welcome' or 'No problem' maintains a polite customer service tone."
+          },
+          {
+            tourist: "¡Que tenga un buen día! / Have a nice day!",
+            ttsTourist: "Have a nice day!",
+            choices: [
+              { text: "¡Gracias, igualmente! / Thank you, you too!", ttsText: "Thank you, you too!", correct: true },
+              { text: "Yes, I will.", ttsText: "Yes, I will.", correct: false },
+              { text: "Goodbye forever.", ttsText: "Goodbye forever.", correct: false }
+            ],
+            pedagogicalFeedback: "'Thank you, you too!' is the standard polite reply to well-wishing upon departure."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 22 - Checking the Fare",
+        dialogues: [
+          {
+            tourist: "Disculpe, ¿puede decirme la tarifa? / Excuse me, can you tell me the fare?",
+            ttsTourist: "Excuse me, can you tell me the fare?",
+            choices: [
+              { text: "Por supuesto. / Of course.", ttsText: "Of course.", correct: true },
+              { text: "I don't know the fare.", ttsText: "I don't know the fare.", correct: false },
+              { text: "Pay me later.", ttsText: "Pay me later.", correct: false }
+            ],
+            pedagogicalFeedback: "'Of course' immediately confirms that you are ready to provide pricing information clear and directly."
+          },
+          {
+            tourist: "¿Cuánto cuesta ir a Mosquera? / How much is it to Mosquera?",
+            ttsTourist: "How much is it to Mosquera?",
+            choices: [
+              { text: "El total es 35,000 pesos. / The total is 35,000 pesos.", ttsText: "The total is 35,000 pesos.", correct: true },
+              { text: "It is free today.", ttsText: "It is free today.", correct: false },
+              { text: "I will tell you at the end.", ttsText: "I will tell you at the end.", correct: false }
+            ],
+            pedagogicalFeedback: "Stating 'The total is 35,000 pesos' gives the passenger clear numerical expectations using proper local currency."
+          },
+          {
+            tourist: "Muchas gracias. / Thank you very much.",
+            ttsTourist: "Thank you very much.",
+            choices: [
+              { text: "De nada. / You're welcome.", ttsText: "You're welcome.", correct: true },
+              { text: "It's nothing.", ttsText: "It's nothing.", correct: false },
+              { text: "Don't mention it.", ttsText: "Don't mention it.", correct: false }
+            ],
+            pedagogicalFeedback: "'You're welcome' remains the clearest and most standard response for non-native drivers interacting with tourists."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 23 - Tourist Thinks Fare Is Too High",
+        dialogues: [
+          {
+            tourist: "¿La tarifa es de 40,000 pesos? / Is the fare 40,000 pesos?",
+            ttsTourist: "Is the fare 40,000 pesos?",
+            choices: [
+              { text: "Sí. La tarifa es de 40,000 pesos. / Yes. The fare is 40,000 pesos.", ttsText: "Yes. The fare is 40,000 pesos.", correct: true },
+              { text: "No, it is 100,000 pesos.", ttsText: "No, it is 100,000 pesos.", correct: false },
+              { text: "I don't care about the price.", ttsText: "I don't care about the price.", correct: false }
+            ],
+            pedagogicalFeedback: "Clearly repeating the exact price confirms clarity and prevents simple numerical misunderstandings."
+          },
+          {
+            tourist: "Eso me parece un poco costoso para este viaje. / That seems a bit expensive for this trip.",
+            ttsTourist: "That seems a bit expensive for this trip.",
+            choices: [
+              { text: "Entiendo. La distancia fue mayor debido al tráfico. / I understand. The distance was longer because of the traffic.", ttsText: "I understand. The distance was longer because of the traffic.", correct: true },
+              { text: "Then get out of my car.", ttsText: "Then get out of my car.", correct: false },
+              { text: "You must pay whatever I say.", ttsText: "You must pay whatever I say.", correct: false }
+            ],
+            pedagogicalFeedback: "Empathizing with 'I understand' followed by a calm reason like traffic helps de-escalate price concerns professionally."
+          },
+          {
+            tourist: "De acuerdo, entiendo. Aquí está el dinero. / Okay, I understand. Here is the money.",
+            ttsTourist: "Okay, I understand. Here is the money.",
+            choices: [
+              { text: "Gracias por su comprensión. / Thank you for your understanding.", ttsText: "Thank you for your understanding.", correct: true },
+              { text: "Finally you pay.", ttsText: "Finally you pay.", correct: false },
+              { text: "Give me a tip now.", ttsText: "Give me a tip now.", correct: false }
+            ],
+            pedagogicalFeedback: "'Thank you for your understanding' reinforces mutual respect after addressing a price query."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 24 - Asking for the Price of a Longer Trip",
+        dialogues: [
+          {
+            tourist: "¿Cuánto cuesta un viaje a Facatativá? / How much does a trip to Facatativá cost?",
+            ttsTourist: "How much does a trip to Facatativá cost?",
+            choices: [
+              { text: "Depende del destino y del tráfico. / It depends on the destination and the traffic.", ttsText: "It depends on the destination and the traffic.", correct: true },
+              { text: "It costs one million pesos.", ttsText: "It costs one million pesos.", correct: false },
+              { text: "I cannot drive to Facatativá.", ttsText: "I cannot drive to Facatativá.", correct: false }
+            ],
+            pedagogicalFeedback: "Explaining that costs 'depend on the destination and traffic' accurately sets expectations for longer inter-city journeys."
+          },
+          {
+            tourist: "¿Puede darme una estimación? / Can you give me an estimate?",
+            ttsTourist: "Can you give me an estimate?",
+            choices: [
+              { text: "Sí. Puedo darles un precio aproximado. / Yes. I can give you an approximate price.", ttsText: "Yes. I can give you an approximate price.", correct: true },
+              { text: "No, I cannot give estimates.", ttsText: "No, I cannot give estimates.", correct: false },
+              { text: "Estimates are against the law.", ttsText: "Estimates are against the law.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes. I can give you an approximate price' shows cooperation while keeping room for meter or traffic variations."
+          },
+          {
+            tourist: "Eso suena bien. Gracias. / That sounds good. Thank you.",
+            ttsTourist: "That sounds good. Thank you.",
+            choices: [
+              { text: "De nada. Iniciemos el viaje. / You're welcome. Let's start the trip.", ttsText: "You're welcome. Let's start the trip.", correct: true },
+              { text: "Okay, goodbye then.", ttsText: "Okay, goodbye then.", correct: false },
+              { text: "Wait here for three hours.", ttsText: "Wait here for three hours.", correct: false }
+            ],
+            pedagogicalFeedback: "Pairing 'You're welcome' with an action statement like 'Let's start the trip' keeps the interaction moving smoothly."
+          }
+        ]
+      },
+      {
+        title: "A1 Practice: Tourist Conversation 25 - Complete Payment Conversation",
+        dialogues: [
+          {
+            tourist: "¿Cuánto le debo? / How much do I owe you?",
+            ttsTourist: "How much do I owe you?",
+            choices: [
+              { text: "La tarifa es de 32,000 pesos. / The fare is 32,000 pesos.", ttsText: "The fare is 32,000 pesos.", correct: true },
+              { text: "You owe me 500 dollars.", ttsText: "You owe me 500 dollars.", correct: false },
+              { text: "I don't accept money.", ttsText: "I don't accept money.", correct: false }
+            ],
+            pedagogicalFeedback: "Responding directly to 'How much do I owe you?' with 'The fare is...' provides immediate clarity."
+          },
+          {
+            tourist: "Aquí tiene un billete de 50,000 pesos. / Here is a 50,000 pesos bill.",
+            ttsTourist: "Here is a 50,000 pesos bill.",
+            choices: [
+              { text: "Gracias. Permítame darle su cambio. / Thank you. Let me give you your change.", ttsText: "Thank you. Let me give you your change.", correct: true },
+              { text: "I will keep all of this.", ttsText: "I will keep all of this.", correct: false },
+              { text: "This note is not real.", ttsText: "This note is not real.", correct: false }
+            ],
+            pedagogicalFeedback: "Acknowledging larger bills politely with 'Let me give you your change' builds essential transactional trust."
+          },
+          {
+            tourist: "Gracias. / Thank you.",
+            ttsTourist: "Thank you.",
+            choices: [
+              { text: "Su cambio es de 18,000 pesos. / Your change is 18,000 pesos.", ttsText: "Your change is 18,000 pesos.", correct: true },
+              { text: "Keep the rest for me.", ttsText: "Keep the rest for me.", correct: false },
+              { text: "No change for you today.", ttsText: "No change for you today.", correct: false }
+            ],
+            pedagogicalFeedback: "Explicitly stating the change amount ('Your change is 18,000 pesos') ensures complete clarity during cash handovers."
+          },
+          {
+            tourist: "¡Muchas gracias! / Thank you very much!",
+            ttsTourist: "Thank you very much!",
+            choices: [
+              { text: "¡De nada! ¡Que tenga un excelente día en Cundinamarca! / You're welcome! Have a great day in Cundinamarca!", ttsText: "You're welcome! Have a great day in Cundinamarca!", correct: true },
+              { text: "Don't come back.", ttsText: "Don't come back.", correct: false },
+              { text: "Yes, whatever.", ttsText: "Yes, whatever.", correct: false }
+            ],
+            pedagogicalFeedback: "Ending with a cheerful regional wish ('Have a great day in Cundinamarca!') leaves a positive, welcoming impression."
+          },
+          {
+            tourist: "¡Hasta luego! / Goodbye!",
+            ttsTourist: "Goodbye!",
+            choices: [
+              { text: "¡Hasta luego! ¡Disfrute su visita a Cundinamarca! / Goodbye! Enjoy your visit to Cundinamarca!", ttsText: "Goodbye! Enjoy your visit to Cundinamarca!", correct: true },
+              { text: "Hello friend!", ttsText: "Hello friend!", correct: false },
+              { text: "See you ten years later.", ttsText: "See you ten years later.", correct: false }
+            ],
+            pedagogicalFeedback: "'Goodbye! Enjoy your visit...' is an ideal warm farewell phrase to finish a completed trip."
+          }
+        ]
+      }
+    ];
+
+    let currentModuleIndex = 24; // Defaults to Module 25 as requested
+    let currentStep = 0;
+    let selectedCorrectAnswer = "";
+    let selectedCorrectTTSSpeech = "";
+    let isRecording = false;
+    let recognition = null;
+
+    // Normalizer function for speech recognition accuracy
+    function normalizeVocabulary(text) {
+      let normalized = text.toLowerCase();
+      const homophoneMap = {
+        "fair": "fare",
+        "fear": "fare",
+        "passos": "pesos",
+        "payso": "pesos",
+        "paysos": "pesos",
+        "certainly": "certainly",
+        "curtainly": "certainly",
+        "facatativa": "facatativá",
+        "sopo": "sopó"
+      };
+
+      for (const [misheard, target] of Object.entries(homophoneMap)) {
+        const regex = new RegExp(misheard.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        normalized = normalized.replace(regex, target);
+      }
+      return normalized;
+    }
+
+    function calculateSimilarity(str1, str2) {
+      const clean1 = normalizeVocabulary(str1);
+      const clean2 = normalizeVocabulary(str2);
+
+      const words1 = clean1.replace(/[^\w\s]/gi, '').split(/\s+/).filter(Boolean);
+      const words2 = clean2.replace(/[^\w\s]/gi, '').split(/\s+/).filter(Boolean);
+      
+      if (words1.length === 0 || words2.length === 0) return 0;
+      
+      let matches = 0;
+      words1.forEach(w => {
+        if (words2.includes(w)) matches++;
+      });
+
+      return Math.round((matches / Math.max(words1.length, words2.length)) * 100);
+    }
+
+    // Speech Recognition Setup
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = function() {
+        isRecording = true;
+        const recBtn = document.getElementById('rec-btn');
+        recBtn.classList.add('recording');
+        recBtn.innerHTML = '🛑 Listening... Speak now!';
+        document.getElementById('student-transcript').innerText = "Listening to your voice...";
+      };
+
+      recognition.onresult = function(event) {
+        const rawTranscript = event.results[0][0].transcript;
+        const correctedTranscript = normalizeVocabulary(rawTranscript);
+        document.getElementById('student-transcript').innerText = `"${correctedTranscript}"`;
+        evaluatePronunciation(correctedTranscript);
+      };
+
+      recognition.onerror = function() {
+        document.getElementById('student-transcript').innerText = "Microphone error or speech not detected. Please try recording again.";
+        stopRecordingState();
+      };
+
+      recognition.onend = function() {
+        stopRecordingState();
+      };
+    }
+
+    function stopRecordingState() {
+      isRecording = false;
+      const recBtn = document.getElementById('rec-btn');
+      recBtn.classList.remove('recording');
+      recBtn.innerHTML = '🎙️ Record My Voice';
+    }
+
+    function toggleSpeechRecognition() {
+      if (!recognition) {
+        alert("Speech Recognition is not supported by your current browser. Please use Chrome, Edge, or Safari.");
+        return;
+      }
+
+      if (!isRecording) {
+        try {
+          recognition.start();
+        } catch (e) {
+          recognition.stop();
+        }
+      } else {
+        recognition.stop();
+      }
+    }
+
+    function evaluatePronunciation(studentSpeech) {
+      const feedback = document.getElementById('feedback');
+      feedback.style.display = 'block';
+
+      const accuracyScore = calculateSimilarity(selectedCorrectTTSSpeech || selectedCorrectAnswer, studentSpeech);
+      const currentDialogue = modules[currentModuleIndex].dialogues[currentStep];
+
+      if (accuracyScore >= 80) {
+        feedback.style.backgroundColor = '#064e3b';
+        feedback.style.color = '#22c55e';
+        feedback.style.border = '1px solid #22c55e';
+        feedback.innerHTML = `
+          <strong>Score: ${accuracyScore}% - Excellent!</strong> 
+          <span class="score-badge" style="background-color:#22c55e; color:#0f172a;">ACCEPTABLE (&ge;80%)</span><br>
+          Your pronunciation is clear and easy to understand.<br>
+          <em>${currentDialogue.pedagogicalFeedback}</em>
+        `;
+      } else {
+        feedback.style.backgroundColor = '#422006';
+        feedback.style.color = '#fde047';
+        feedback.style.border = '1px solid #ca8a04';
+        feedback.innerHTML = `
+          <strong>Score: ${accuracyScore}% - Below Target (80%)</strong> 
+          <span class="score-badge" style="background-color:#ca8a04; color:#0f172a;">KEEP PRACTICING</span><br>
+          An 80% score is recommended to ensure solid fluency, but feel free to continue practicing or move to the next question whenever you are ready.<br>
+          <em>${currentDialogue.pedagogicalFeedback}</em>
+        `;
+      }
+    }
+
+    function changeModule(index) {
+      currentModuleIndex = parseInt(index);
+      currentStep = 0;
+      loadStep(currentStep);
+    }
+
+    function loadStep(index) {
+      const activeModule = modules[currentModuleIndex];
+      const data = activeModule.dialogues[index];
+
+      document.getElementById('module-subtitle').innerText = activeModule.title;
+      document.getElementById('step-indicator').innerText = `Step ${index + 1} of ${activeModule.dialogues.length}`;
+      document.getElementById('progress').style.width = `${((index + 1) / activeModule.dialogues.length) * 100}%`;
+      document.getElementById('tourist-text').innerText = `"${data.tourist}"`;
+
+      document.getElementById('choices-container').style.display = 'block';
+      document.getElementById('shadowing-section').style.display = 'none';
+      document.getElementById('feedback').style.display = 'none';
+      document.getElementById('student-transcript').innerText = 'Click record and start speaking...';
+
+      const optionsContainer = document.getElementById('options');
+      optionsContainer.innerHTML = '';
+      const shuffledChoices = [...data.choices].sort(() => Math.random() - 0.5);
+
+      shuffledChoices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = choice.text;
+        btn.onclick = () => selectOption(choice, btn);
+        optionsContainer.appendChild(btn);
+      });
+
+      document.getElementById('prev-btn').disabled = index === 0;
+      document.getElementById('next-btn').innerText = index === activeModule.dialogues.length - 1 ? "Finish Conversation" : "Next Question";
+    }
+
+    function playTTS(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.85;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function playCurrentQuestion() {
+      const currentDialogue = modules[currentModuleIndex].dialogues[currentStep];
+      playTTS(currentDialogue.ttsTourist || currentDialogue.tourist);
+    }
+
+    function playSelectedModel() {
+      playTTS(selectedCorrectTTSSpeech || selectedCorrectAnswer);
+    }
+
+    function selectOption(choice, btnElement) {
+      const allButtons = document.querySelectorAll('.option-btn');
+      
+      if (choice.correct) {
+        btnElement.classList.add('correct');
+        allButtons.forEach(b => b.style.pointerEvents = 'none');
+        selectedCorrectAnswer = choice.text;
+        selectedCorrectTTSSpeech = choice.ttsText || choice.text;
+
+        playTTS(selectedCorrectTTSSpeech);
+
+        setTimeout(() => {
+          document.getElementById('shadowing-section').style.display = 'block';
+        }, 1000);
+
+      } else {
+        btnElement.classList.add('incorrect');
+        const feedback = document.getElementById('feedback');
+        feedback.style.display = 'block';
+        feedback.style.backgroundColor = '#450a0a';
+        feedback.style.color = '#ef4444';
+        feedback.style.border = '1px solid #ef4444';
+        feedback.innerHTML = `<strong>Incorrect option.</strong> Try again to select the correct driver response.`;
+      }
+    }
+
+    function nextStep() {
+      const activeModule = modules[currentModuleIndex];
+      if (currentStep < activeModule.dialogues.length - 1) {
+        currentStep++;
+        loadStep(currentStep);
+      } else {
+        if (currentModuleIndex < modules.length - 1) {
+          alert(`Great job! You completed '${activeModule.title}'. Moving to Conversation ${currentModuleIndex + 2}!`);
+          currentModuleIndex++;
+          document.getElementById('module-select').value = currentModuleIndex;
+          currentStep = 0;
+          loadStep(currentStep);
+        } else {
+          alert("Congratulations! You have completed all 25 Tourist Conversation Practice Modules!");
+        }
+      }
+    }
+
+    function previousStep() {
+      if (currentStep > 0) {
+        currentStep--;
+        loadStep(currentStep);
+      }
+    }
+
+    window.onload = () => loadStep(0);
+  </script>
+</body>
+</html>
