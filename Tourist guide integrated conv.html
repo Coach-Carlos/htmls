@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A1 Practice: Tourist Guide Conversations (1 to 10)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), 
+                  url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+      background-size: cover;
+      color: #ffffff;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      background-color: rgba(2, 44, 34, 0.88);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      border: 1px solid #10b981;
+      backdrop-filter: blur(8px);
+    }
+
+    .header {
+      border-bottom: 2px solid #10b981;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .header h1 {
+      color: #facc15;
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    }
+
+    .header p {
+      color: #6ee7b7;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .module-select-container {
+      margin-bottom: 16px;
+    }
+
+    .module-select-container label {
+      display: block;
+      color: #facc15;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .module-select {
+      width: 100%;
+      padding: 10px;
+      background-color: rgba(6, 78, 59, 0.9);
+      color: #ffffff;
+      border: 1px solid #10b981;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .progress-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      color: #facc15;
+      font-weight: bold;
+    }
+
+    .progress-bar {
+      width: 70%;
+      background-color: rgba(6, 78, 59, 0.8);
+      border-radius: 8px;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background-color: #34d399;
+      transition: width 0.3s ease;
+    }
+
+    .card {
+      background-color: rgba(6, 78, 59, 0.88);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border-left: 4px solid #facc15;
+    }
+
+    .guide-context {
+      color: #6ee7b7;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      font-style: italic;
+      border-bottom: 1px solid #047857;
+      padding-bottom: 8px;
+    }
+
+    .tourist-label {
+      color: #facc15;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+
+    .tourist-text {
+      font-size: 1.1rem;
+      line-height: 1.4;
+      margin-bottom: 4px;
+    }
+
+    .translation-text {
+      font-size: 0.95rem;
+      color: #a7f3d0;
+      font-style: italic;
+      margin-bottom: 12px;
+    }
+
+    .audio-btn {
+      background-color: #047857;
+      color: #ffffff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      justify-content: center;
+      transition: background-color 0.2s;
+    }
+
+    .audio-btn:hover {
+      background-color: #059669;
+    }
+
+    .audio-btn:active {
+      background-color: #34d399;
+      color: #022c22;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: #ffffff;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .option-btn {
+      background-color: rgba(6, 78, 59, 0.88);
+      color: #ffffff;
+      border: 2px solid #047857;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .option-btn:hover {
+      border-color: #34d399;
+      background-color: rgba(6, 78, 59, 0.95);
+    }
+
+    .option-btn .option-trans {
+      display: block;
+      font-size: 0.85rem;
+      color: #a7f3d0;
+      font-style: italic;
+      margin-top: 4px;
+      font-weight: normal;
+    }
+
+    .option-btn.correct {
+      background-color: rgba(4, 120, 87, 0.95);
+      border-color: #34d399;
+      color: #34d399;
+      font-weight: bold;
+    }
+
+    .option-btn.incorrect {
+      background-color: rgba(69, 10, 10, 0.95);
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    .shadowing-section {
+      display: none;
+      background-color: rgba(6, 78, 59, 0.92);
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #34d399;
+    }
+
+    .shadowing-section h3 {
+      color: #34d399;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .rec-btn {
+      background-color: #ef4444;
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .rec-btn.recording {
+      background-color: #facc15;
+      color: #022c22;
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .transcript-box {
+      width: 100%;
+      background-color: rgba(2, 44, 34, 0.9);
+      color: #ffffff;
+      border: 1px solid #047857;
+      border-radius: 6px;
+      padding: 10px;
+      margin: 10px 0;
+      min-height: 48px;
+      font-size: 0.9rem;
+    }
+
+    .feedback-box {
+      display: none;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .score-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      margin-top: 4px;
+    }
+
+    .nav-controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      background-color: #047857;
+      color: #ffffff;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      flex: 1;
+      transition: background-color 0.2s;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background-color: #059669;
+    }
+
+    .nav-btn:disabled {
+      background-color: rgba(2, 44, 34, 0.8);
+      color: #047857;
+      cursor: not-allowed;
+    }
+
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #6ee7b7;
+      border-top: 1px solid #047857;
+      padding-top: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>Prepared by Coach Carlos O.</h1>
+      <p id="module-title">A1 Practice: Tourist Guide Master Suite</p>
+    </div>
+
+    <!-- MODULE SELECTION DROPDOWN -->
+    <div class="module-select-container">
+      <label for="module-dropdown">Select Practice Conversation Module:</label>
+      <select id="module-dropdown" class="module-select" onchange="switchModule(this.value)">
+        <option value="0">1: Mosquera - Location & Climate</option>
+        <option value="1">2: Mosquera - Historical Roots</option>
+        <option value="2">3: Mosquera - Parks & Recreation</option>
+        <option value="3">4: Mosquera - Eco-Tourism & Desert</option>
+        <option value="4">5: Funza - Ancestral Heritage</option>
+        <option value="5">6: Funza - Transportation</option>
+        <option value="6">7: Madrid - Floriculture Industry</option>
+        <option value="7">8: Madrid - Traditional Dining</option>
+        <option value="8">9: Sabana Occidente - Inter-Municipal Travel</option>
+        <option value="9">10: Sabana Occidente - Regional Overview</option>
+      </select>
+    </div>
+
+    <div class="progress-container">
+      <span id="step-indicator">Step 1 of 4</span>
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+    </div>
+
+    <!-- TOURIST QUESTION CARD -->
+    <div class="card">
+      <div class="guide-context" id="guide-context"></div>
+      <div class="tourist-label">👤 Tourist Phrase:</div>
+      <div class="tourist-text" id="tourist-text">...</div>
+      <div class="translation-text" id="tourist-translation">...</div>
+      <button class="audio-btn" onclick="playCurrentQuestion()">🔊 Listen to Tourist</button>
+    </div>
+
+    <!-- GUIDE RESPONSE CHOICES -->
+    <div id="choices-container">
+      <div class="section-title">Select the correct Tourist Guide response:</div>
+      <div class="options-grid" id="options"></div>
+    </div>
+
+    <!-- SHADOWING & SPEECH RECOGNITION SECTION -->
+    <div class="shadowing-section" id="shadowing-section">
+      <h3>🗣️ Practice Shadowing & Pronunciation</h3>
+      <p style="font-size:0.85rem; color:#d1fae5; margin-bottom:8px;">
+        1. Listen to the guide model.<br>
+        2. Click <strong>"Record My Voice"</strong> and repeat out loud.<br>
+        3. Target score: <strong>80% or higher</strong> recommended for optimal mastery.
+      </p>
+      <button class="audio-btn" style="margin-bottom:10px;" onclick="playSelectedModel()">🔊 Listen Correct Guide Model</button>
+      
+      <button class="rec-btn" id="rec-btn" onclick="toggleSpeechRecognition()">🎙️ Record My Voice</button>
+      
+      <div style="font-size:0.8rem; color:#facc15; margin-top:8px;">Your Voice Transcription:</div>
+      <div class="transcript-box" id="student-transcript"><em>Click record and start speaking...</em></div>
+    </div>
+
+    <!-- FEEDBACK BOX -->
+    <div class="feedback-box" id="feedback"></div>
+
+    <!-- NAVIGATION BUTTONS -->
+    <div class="nav-controls">
+      <button class="nav-btn" id="prev-btn" onclick="previousStep()" disabled>Previous</button>
+      <button class="nav-btn" id="next-btn" onclick="nextStep()">Next Question</button>
+    </div>
+
+    <div class="footer">
+      © Developed for educational excellence By Coach Carlos O
+    </div>
+  </div>
+
+  <script>
+    const modules = [
+      {
+        title: "Conversation 1: Mosquera (Location & Climate)",
+        dialogueSequence: [
+          {
+            guidePrompt: "",
+            tourist: "Where is Mosquera located?",
+            touristTrans: "¿Dónde está ubicado Mosquera?",
+            choices: [
+              { text: "Mosquera is in Cundinamarca, Colombia, very close to Bogotá.", trans: "Mosquera está en Cundinamarca, Colombia, muy cerca de Bogotá.", correct: true },
+              { text: "Mosquera is a beach town in the Caribbean.", correct: false },
+              { text: "It is located in South America near the Amazon river only.", correct: false }
+            ],
+            pedagogicalFeedback: "'Mosquera is in Cundinamarca, Colombia, very close to Bogotá' gives accurate geographical placement."
+          },
+          {
+            guidePrompt: "🌿 Tourist Guide: \"Mosquera is in Cundinamarca, Colombia, very close to Bogotá.\"",
+            tourist: "How is the climate here?",
+            touristTrans: "¿Cómo es el clima aquí?",
+            choices: [
+              { text: "The weather is cool and temperate, usually around 14°C.", trans: "El clima es fresco y templado, por lo general alrededor de los 14 °C.", correct: true },
+              { text: "It is extremely hot and tropical all year.", correct: false },
+              { text: "It snows heavily every single day.", correct: false }
+            ],
+            pedagogicalFeedback: "'The weather is cool and temperate, usually around 14°C' gives accurate climatic information."
+          },
+          {
+            guidePrompt: "",
+            tourist: "Should I bring a jacket for the evening?",
+            touristTrans: "¿Debería traer una chaqueta para la tarde/noche?",
+            choices: [
+              { text: "Yes, it gets cold in the afternoon and evening.", trans: "Sí, hace frío por la tarde y por la noche.", correct: true },
+              { text: "No, you only need swimwear.", correct: false },
+              { text: "No, it is always burning hot at night.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, it gets cold in the afternoon and evening' provides practical advice for travelers."
+          },
+          {
+            guidePrompt: "",
+            tourist: "Thank you for the advice!",
+            touristTrans: "¡Gracias por el consejo!",
+            choices: [
+              { text: "You're welcome! Enjoy your visit to Mosquera.", trans: "¡De nada! Disfrute de su visita a Mosquera.", correct: true },
+              { text: "Do not talk to me.", correct: false },
+              { text: "Goodbye forever.", correct: false }
+            ],
+            pedagogicalFeedback: "'You're welcome! Enjoy your visit to Mosquera' closes with courteous host hospitality."
+          }
+        ]
+      },
+      {
+        title: "Conversation 2: Mosquera (Historical Roots)",
+        dialogueSequence: [
+          {
+            guidePrompt: "",
+            tourist: "Who lived in this region originally?",
+            touristTrans: "¿Quiénes vivían originalmente en esta región?",
+            choices: [
+              { text: "The Muisca indigenous people lived in this region originally.", trans: "Los indígenas Muiscas vivían originalmente en esta región.", correct: true },
+              { text: "Ancient Romans built the first towns here.", correct: false },
+              { text: "Nobody lived here before the year 2000.", correct: false }
+            ],
+            pedagogicalFeedback: "'The Muisca indigenous people lived in this region originally' accurately attributes local indigenous history."
+          },
+          {
+            guidePrompt: "🌿 Tourist Guide: \"The Muisca indigenous people lived in this region originally.\"",
+            tourist: "When was Mosquera officially founded as a municipality?",
+            touristTrans: "¿Cuándo fue fundado oficialmente Mosquera como municipio?",
+            choices: [
+              { text: "It was founded in 1861 by Tomás Cipriano de Mosquera.", trans: "Fue fundado en 1861 por Tomás Cipriano de Mosquera.", correct: true },
+              { text: "It was founded last year.", correct: false },
+              { text: "It was founded in 1492 by Christopher Columbus.", correct: false }
+            ],
+            pedagogicalFeedback: "'It was founded in 1861 by Tomás Cipriano de Mosquera' accurately highlights municipal origins."
+          },
+          {
+            guidePrompt: "",
+            tourist: "Are there historical monuments in town?",
+            touristTrans: "¿Hay monumentos históricos en el pueblo?",
+            choices: [
+              { text: "Yes, you can visit the central park and historic churches.", trans: "Sí, puede visitar el parque central e iglesias históricas.", correct: true },
+              { text: "No, all buildings were demolished.", correct: false },
+              { text: "There are only modern skyscrapers here.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, you can visit the central park and historic churches' points to key architectural sights."
+          },
+          {
+            guidePrompt: "",
+            tourist: "Great! I love learning local history.",
+            touristTrans: "¡Genial! Me encanta aprender sobre la historia local.",
+            choices: [
+              { text: "It's my pleasure to share our heritage with you!", trans: "¡Es un placer compartir nuestro patrimonio con usted!", correct: true },
+              { text: "History is boring, stop asking.", correct: false },
+              { text: "Pay me one hundred dollars now.", correct: false }
+            ],
+            pedagogicalFeedback: "'It's my pleasure to share our heritage with you!' establishes positive professional rapport."
+          }
+        ]
+      },
+      {
+        title: "Conversation 3: Mosquera (Parks & Recreation)",
+        dialogueSequence: [
+          {
+            guidePrompt: "",
+            tourist: "Are there nice parks for families in Mosquera?",
+            touristTrans: "¿Hay parques bonitos para familias en Mosquera?",
+            choices: [
+              { text: "Yes, Parque Cultural Ecoturístico Villa de Las Palmas is very popular.", trans: "Sí, el Parque Cultural Ecoturístico Villa de Las Palmas es muy popular.", correct: true },
+              { text: "No, parks are forbidden in this region.", correct: false },
+              { text: "We only have industrial factories here.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, Parque Cultural Ecoturístico Villa de Las Palmas is very popular' recommends a major recreational site."
+          },
+          {
+            guidePrompt: "🌿 Tourist Guide: \"Yes, Parque Cultural Ecoturístico Villa de Las Palmas is very popular.\"",
+            tourist: "What activities can we do there?",
+            touristTrans: "¿Qué actividades podemos hacer allí?",
+            choices: [
+              { text: "You can walk, ride bicycles, and enjoy outdoor sports.", trans: "Puede caminar, andar en bicicleta y disfrutar de deportes al aire libre.", correct: true },
+              { text: "You can fly commercial airplanes.", correct: false },
+              { text: "Only sleeping is allowed in the park.", correct: false }
+            ],
+            pedagogicalFeedback: "'You can walk, ride bicycles, and enjoy outdoor sports' outlines key family activities."
+          },
+          {
+            guidePrompt: "",
+            tourist: "Is the park safe for children?",
+            touristTrans: "¿Es seguro el parque para los niños?",
+            choices: [
+              { text: "Yes, it is very family-friendly and well maintained.", trans: "Sí, es muy apto para familias y está bien mantenido.", correct: true },
+              { text: "No, it is extremely dangerous.", correct: false },
+              { text: "Children are not allowed inside.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, it is very family-friendly and well maintained' gives reassuring safety information."
+          },
+          {
+            guidePrompt: "",
+            tourist: "Wonderful! We will visit it this afternoon.",
+            touristTrans: "¡Maravilloso! Lo visitaremos esta tarde.",
+            choices: [
+              { text: "Have a wonderful time enjoying the park!", trans: "¡Que tenga un excelente tiempo disfrutando del parque!", correct: true },
+              { text: "Do not go there.", correct: false },
+              { text: "I don't care what you do.", correct: false }
+            ],
+            pedagogicalFeedback: "'Have a wonderful time enjoying the park!' offers polite closure."
+          }
+        ]
+      },
+      {
+        title: "Conversation 4: Mosquera (Eco-Tourism & Desert)",
+        dialogueSequence: [
+          {
+            guidePrompt: "",
+            tourist: "Is there a desert ecosystem near Mosquera?",
+            touristTrans: "¿Hay un ecosistema desértico cerca de Mosquera?",
+            choices: [
+              { text: "Yes, the Sabrinsky Desert is a unique natural attraction nearby.", trans: "Sí, el desierto de Sabrinsky es una atracción natural única muy cerca.", correct: true },
+              { text: "No, this region is entirely covered in ice.", correct: false },
+              { text: "Deserts do not exist in Colombia.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, the Sabrinsky Desert is a unique natural attraction nearby' introduces a distinct regional eco-tourist attraction."
+          },
+          {
+            guidePrompt: "🌿 Tourist Guide: \"Yes, the Sabrinsky Desert is a unique natural attraction nearby.\"",
+            tourist: "What makes the Sabrinsky Desert special?",
+            touristTrans: "¿Qué hace especial al desierto de Sabrinsky?",
+            choices: [
+              { text: "It has colorful soil formations and great hiking trails.", trans: "Tiene formaciones de terreno de colores y excelentes senderos para caminatas.", correct: true },
+              { text: "It is filled with ocean water and corals.", correct: false },
+              { text: "It contains active volcanoes.", correct: false }
+            ],
+            pedagogicalFeedback: "'It has colorful soil formations and great hiking trails' describes key landscape features."
+          },
+          {
+            guidePrompt: "",
+            tourist: "Do I need a tour guide to go hiking there?",
+            touristTrans: "¿Necesito un guía turístico para hacer senderismo allí?",
+            choices: [
+              { text: "It is recommended to hire a local guide for safe navigation.", trans: "Se recomienda contratar a un guía local para orientarse de manera segura.", correct: true },
+              { text: "No, anyone can get lost safely.", correct: false },
+              { text: "Hiking is strictly illegal.", correct: false }
+            ],
+            pedagogicalFeedback: "'It is recommended to hire a local guide for safe navigation' promotes safe eco-tourism practices."
+          },
+          {
+            guidePrompt: "",
+            tourist: "Thanks! I will arrange a guided hike.",
+            touristTrans: "¡Gracias! Organizaré una caminata guiada.",
+            choices: [
+              { text: "Awesome! You will love the desert views.", trans: "¡Asombroso! Le encantarán las vistas del desierto.", correct: true },
+              { text: "Cancel your plans immediately.", correct: false },
+              { text: "Good luck, you will need it.", correct: false }
+            ],
+            pedagogicalFeedback: "'Awesome! You will love the desert views' maintains encouraging host tone."
+          }
+        ]
+      },
+      {
+        title: "Conversation 5: Funza (Ancestral Heritage)",
+        dialogueSequence: [
+          {
+            guidePrompt: "",
+            tourist: "What is the key history of Funza?",
+            touristTrans: "¿Cuál es la historia clave de Funza?",
+            choices: [
+              { text: "It's a historic Muisca center. Check out the central square and cultural house.", trans: "Es un centro histórico Muisca. Visite la plaza central y la casa de la cultura.", correct: true },
+              { text: "It was built yesterday by modern architects.", correct: false },
+              { text: "There is no history here.", correct: false }
+            ],
+            pedagogicalFeedback: "'It's a historic Muisca center. Check out the central square and cultural house' provides essential cultural history."
+          },
+          {
+            guidePrompt: "🌿 Tourist Guide: \"It's a historic Muisca center. Check out the central square and cultural house.\"",
+            tourist: "That's fascinating! Are there indigenous artifacts on display?",
+            touristTrans: "¡Eso es fascinante! ¿Hay artefactos indígenas en exhibición?",
+            choices: [
+              { text: "Yes, the cultural house features Muisca pottery and historical exhibits.", trans: "Sí, la casa de la cultura cuenta con cerámica Muisca y exhibiciones históricas.", correct: true },
+              { text: "No, we only display futuristic computers.", correct: false },
+              { text: "All artifacts are locked away permanently.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, the cultural house features Muisca pottery and historical exhibits' highlights local ancestral heritage assets."
+          },
+          {
+            guidePrompt: "",
+            tourist: "Is entrance to the cultural house free?",
+            touristTrans: "¿La entrada a la casa de la cultura es gratuita?",
+            choices: [
+              { text: "Yes, entry is free for all visitors and tourists.", trans: "Sí, la entrada es gratuita para todos los visitantes y turistas.", correct: true },
+              { text: "No, it costs one million pesos per person.", correct: false },
+              { text: "You must trade gold items to enter.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, entry is free for all visitors and tourists' clearly explains admission policies."
+          },
+          {
+            guidePrompt: "",
+            tourist: "Excellent! Where is it located?",
+            touristTrans: "¡Excelente! ¿Dónde está ubicada?",
+            choices: [
+              { text: "It is located right on the main plaza, next to the church.", trans: "Está ubicada justo en la plaza principal, al lado de la iglesia.", correct: true },
+              { text: "It is located in another country.", correct: false },
+              { text: "Nobody knows its location.", correct: false }
+            ],
+            pedagogicalFeedback: "'It is located right on the main plaza, next to the church' gives accurate orientation directions."
+          }
+        ]
+      },
+      {
+        title: "Conversation 6: Funza (Transportation)",
+        dialogueSequence: [
+          {
+            guidePrompt: "",
+            tourist: "How do I get here from Bogotá?",
+            touristTrans: "¿Cómo llego aquí desde Bogotá?",
+            choices: [
+              { text: "Take a regional bus from Portal de la 80. It takes 30 to 45 minutes.", trans: "Tome un autobús regional desde el Portal de la 80. Toma de 30 a 45 minutos.", correct: true },
+              { text: "You must take an international flight.", correct: false },
+              { text: "There are no buses from Bogotá.", correct: false }
+            ],
+            pedagogicalFeedback: "'Take a regional bus from Portal de la 80. It takes 30 to 45 minutes' provides accurate route guidance."
+          },
+          {
+            guidePrompt: "🌿 Tourist Guide: \"Take a regional bus from Portal de la 80. It takes 30 to 45 minutes.\"",
+            tourist: "That sounds convenient! Where does the bus drop us off in Funza?",
+            touristTrans: "¡Suena conveniente! ¿Dónde nos deja el autobús en Funza?",
+            choices: [
+              { text: "It stops near the main park, right in the center of town.", trans: "Para cerca del parque principal, justo en el centro del pueblo.", correct: true },
+              { text: "It stops in another country.", correct: false },
+              { text: "It drops you off on the highway far away.", correct: false }
+            ],
+            pedagogicalFeedback: "'It stops near the main park, right in the center of town' identifies central drop-off points."
+          },
+          {
+            guidePrompt: "",
+            tourist: "How frequently do the buses run back to Bogotá?",
+            touristTrans: "¿Con qué frecuencia salen los autobuses de regreso a Bogotá?",
+            choices: [
+              { text: "Buses run every 10 to 15 minutes throughout the day.", trans: "Los autobuses salen cada 10 o 15 minutos durante todo el día.", correct: true },
+              { text: "Buses only run once a week.", correct: false },
+              { text: "There are no return buses.", correct: false }
+            ],
+            pedagogicalFeedback: "'Buses run every 10 to 15 minutes throughout the day' offers practical transit info."
+          },
+          {
+            guidePrompt: "",
+            tourist: "Excellent! That makes planning our trip very easy.",
+            touristTrans: "¡Excelente! Eso hace que planificar nuestro viaje sea muy fácil.",
+            choices: [
+              { text: "Have a safe trip, and enjoy your time exploring Funza!", trans: "¡Buen viaje y disfrute su tiempo explorando Funza!", correct: true },
+              { text: "Do not travel today.", correct: false },
+              { text: "Good luck getting home.", correct: false }
+            ],
+            pedagogicalFeedback: "'Have a safe trip, and enjoy your time exploring Funza!' closes with warm hospitality."
+          }
+        ]
+      },
+      {
+        title: "Conversation 7: Madrid (Floriculture Industry)",
+        dialogueSequence: [
+          {
+            guidePrompt: "",
+            tourist: "Is Madrid famous for flower farming?",
+            touristTrans: "¿Madrid es famosa por el cultivo de flores?",
+            choices: [
+              { text: "Yes! It's a major hub for exporting roses and carnations.", trans: "¡Sí! Es un centro principal para la exportación de rosas y claveles.", correct: true },
+              { text: "No, Madrid only produces heavy industrial machinery.", correct: false },
+              { text: "We do not grow any plants in this area.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes! It's a major hub for exporting roses and carnations' highlights regional floriculture export status."
+          },
+          {
+            guidePrompt: "🌿 Tourist Guide: \"Yes! It's a major hub for exporting roses and carnations.\"",
+            tourist: "Can we visit one of the flower farms or greenhouses?",
+            touristTrans: "¿Podemos visitar una de las fincas de flores o invernaderos?",
+            choices: [
+              { text: "Some farms offer guided eco-tours if you book in advance.", trans: "Algunas fincas ofrecen recorridos ecológicos guiados si reserva con anticipación.", correct: true },
+              { text: "Greenhouses are illegal for tourists to visit.", correct: false },
+              { text: "All farms are permanently closed to everyone.", correct: false }
+            ],
+            pedagogicalFeedback: "'Some farms offer guided eco-tours if you book in advance' informs about agritourism possibilities."
+          },
+          {
+            guidePrompt: "",
+            tourist: "Which types of flowers are most popular here?",
+            touristTrans: "¿Qué tipos de flores son los más populares aquí?",
+            choices: [
+              { text: "Roses, carnations, and chrysanthemums are the main species grown here.", trans: "Las rosas, los claveles y los crisantemos son las principales especies cultivadas aquí.", correct: true },
+              { text: "Only artificial plastic flowers are grown here.", correct: false },
+              { text: "Pine trees and cacti are the primary crops.", correct: false }
+            ],
+            pedagogicalFeedback: "'Roses, carnations, and chrysanthemums are the main species grown here' details key crops."
+          },
+          {
+            guidePrompt: "",
+            tourist: "When is the flower harvesting season?",
+            touristTrans: "¿Cuándo es la temporada de cosecha de flores?",
+            choices: [
+              { text: "Harvesting happens year-round, but peaks right before Valentine's Day and Mother's Day.", trans: "La cosecha se realiza durante todo el año, pero alcanza su punto máximo justo antes del Día de San Valentín y el Día de la Madre.", correct: true },
+              { text: "Harvesting only takes place once every ten years.", correct: false },
+              { text: "Flowers are only harvested during winter snowstorms.", correct: false }
+            ],
+            pedagogicalFeedback: "'Harvesting happens year-round, but peaks right before Valentine's Day and Mother's Day' explains global demand cycles."
+          }
+        ]
+      },
+      {
+        title: "Conversation 8: Madrid (Traditional Dining)",
+        dialogueSequence: [
+          {
+            guidePrompt: "",
+            tourist: "Where can I eat traditional lunch near the park?",
+            touristTrans: "¿Dónde puedo comer un almuerzo tradicional cerca del parque?",
+            choices: [
+              { text: "Try local restaurants around the central park for sancocho de gallina.", trans: "Pruebe los restaurantes locales alrededor del parque central para comer sancocho de gallina.", correct: true },
+              { text: "We do not have any food in town.", correct: false },
+              { text: "You can only eat fast food near the highway.", correct: false }
+            ],
+            pedagogicalFeedback: "'Try local restaurants around the central park for sancocho de gallina' recommends authentic local dining."
+          },
+          {
+            guidePrompt: "🌿 Tourist Guide: \"Try local restaurants around the central park for sancocho de gallina.\"",
+            tourist: "What is sancocho de gallina made of?",
+            touristTrans: "¿De qué está hecho el sancocho de gallina?",
+            choices: [
+              { text: "It's a rich chicken soup with potatoes, plantains, yucca, and corn.", trans: "Es una sopa sustanciosa de gallina con papas, plátanos, yuca y maíz.", correct: true },
+              { text: "It is a sweet chocolate cake.", correct: false },
+              { text: "It's raw fish with lemon juice.", correct: false }
+            ],
+            pedagogicalFeedback: "'It's a rich chicken soup with potatoes, plantains, yucca, and corn' describes regional dish ingredients."
+          },
+          {
+            guidePrompt: "",
+            tourist: "That sounds delicious! What time do they serve lunch?",
+            touristTrans: "¡Suena delicioso! ¿A qué hora sirven el almuerzo?",
+            choices: [
+              { text: "Most restaurants serve traditional lunch from 12:00 PM to 2:30 PM.", trans: "La mayoría de los restaurantes sirven el almuerzo tradicional de 12:00 PM a 2:30 PM.", correct: true },
+              { text: "Lunch is served at midnight only.", correct: false },
+              { text: "Restaurants are open for 10 minutes only.", correct: false }
+            ],
+            pedagogicalFeedback: "'Most restaurants serve traditional lunch from 12:00 PM to 2:30 PM' gives useful temporal orientation."
+          },
+          {
+            guidePrompt: "",
+            tourist: "Perfect! Thank you for the wonderful recommendation.",
+            touristTrans: "¡Perfecto! Muchas gracias por la excelente recomendación.",
+            choices: [
+              { text: "You're welcome! Enjoy your authentic meal in Madrid.", trans: "¡De nada! Disfrute de su comida auténtica en Madrid.", correct: true },
+              { text: "Do not eat anything today.", correct: false },
+              { text: "I don't care.", correct: false }
+            ],
+            pedagogicalFeedback: "'You're welcome! Enjoy your authentic meal in Madrid' concludes with proper courtesy."
+          }
+        ]
+      },
+      {
+        title: "Conversation 9: Sabana Occidente (Inter-Municipal Travel)",
+        dialogueSequence: [
+          {
+            guidePrompt: "",
+            tourist: "Is it easy to travel between Mosquera, Funza, and Madrid?",
+            touristTrans: "¿Es fácil viajar entre Mosquera, Funza y Madrid?",
+            choices: [
+              { text: "Yes, local inter-municipal buses connect all three towns in 10 to 15 minutes.", trans: "Sí, los autobuses intermunicipales locales conectan los tres pueblos en 10 a 15 minutos.", correct: true },
+              { text: "No, you need a helicopter to travel between these towns.", correct: false },
+              { text: "The roads are completely closed permanently.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, local inter-municipal buses connect all three towns in 10 to 15 minutes' clarifies close inter-municipal connectivity."
+          },
+          {
+            guidePrompt: "🌿 Tourist Guide: \"Yes, local inter-municipal buses connect all three towns in 10 to 15 minutes.\"",
+            tourist: "How much does a short bus ride between these towns cost?",
+            touristTrans: "¿Cuánto cuesta un viaje corto en autobús entre estos pueblos?",
+            choices: [
+              { text: "It costs around 3,000 to 4,000 Colombian pesos per ride.", trans: "Cuesta alrededor de 3.000 a 4.000 pesos colombianos por trayecto.", correct: true },
+              { text: "It costs one thousand US dollars.", correct: false },
+              { text: "Buses are completely free for everyone always.", correct: false }
+            ],
+            pedagogicalFeedback: "'It costs around 3,000 to 4,000 Colombian pesos per ride' gives standard realistic transit fare estimates."
+          },
+          {
+            guidePrompt: "",
+            tourist: "Do I need to buy tickets online in advance?",
+            touristTrans: "¿Necesito comprar los billetes/pasajes en línea con anticipación?",
+            choices: [
+              { text: "No, you can pay directly in cash when boarding the bus.", trans: "No, puede pagar directamente en efectivo al subir al autobús.", correct: true },
+              { text: "Yes, online reservations are required three months prior.", correct: false },
+              { text: "You can only pay with gold coins.", correct: false }
+            ],
+            pedagogicalFeedback: "'No, you can pay directly in cash when boarding the bus' explains realistic local payment customs."
+          },
+          {
+            guidePrompt: "",
+            tourist: "That is super convenient. Thanks for explaining!",
+            touristTrans: "Eso es superconveniente. ¡Gracias por explicarlo!",
+            choices: [
+              { text: "Happy to help! Have a smooth ride across Sabana Occidente.", trans: "¡Con gusto! Que tenga un viaje tranquilo por la Sabana Occidente.", correct: true },
+              { text: "Stop talking to me.", correct: false },
+              { text: "You will regret taking the bus.", correct: false }
+            ],
+            pedagogicalFeedback: "'Happy to help! Have a smooth ride across Sabana Occidente' offers enthusiastic regional guidance."
+          }
+        ]
+      },
+      {
+        title: "Conversation 10: Sabana Occidente (Regional Overview)",
+        dialogueSequence: [
+          {
+            guidePrompt: "",
+            tourist: "What makes Sabana Occidente a great tourist destination?",
+            touristTrans: "¿Qué hace de la Sabana Occidente un gran destino turístico?",
+            choices: [
+              { text: "It offers rich Muisca history, beautiful flower farms, and vibrant parks close to Bogotá.", trans: "Ofrece una rica historia Muisca, hermosas fincas floricultoras y parques consolidados muy cerca de Bogotá.", correct: true },
+              { text: "It is an empty desert with no culture or inhabitants.", correct: false },
+              { text: "It is an island surrounded by the Pacific Ocean.", correct: false }
+            ],
+            pedagogicalFeedback: "'It offers rich Muisca history, beautiful flower farms, and vibrant parks close to Bogotá' synthesizes core regional assets."
+          },
+          {
+            guidePrompt: "🌿 Tourist Guide: \"It offers rich Muisca history, beautiful flower farms, and vibrant parks close to Bogotá.\"",
+            tourist: "How many days should we stay to experience all three towns?",
+            touristTrans: "¿Cuántos días deberíamos quedarnos para conocer los tres pueblos?",
+            choices: [
+              { text: "A weekend or 2 to 3 days is ideal to experience the whole circuit.", trans: "Un fin de semana o de 2 a 3 días es ideal para recorrer todo el circuito.", correct: true },
+              { text: "You need at least six months.", correct: false },
+              { text: "Five minutes is more than enough.", correct: false }
+            ],
+            pedagogicalFeedback: "'A weekend or 2 to 3 days is ideal to experience the whole circuit' gives realistic travel planning guidance."
+          },
+          {
+            guidePrompt: "",
+            tourist: "What souvenir should I buy before leaving?",
+            touristTrans: "¿Qué recuerdo/souvenir debería comprar antes de irme?",
+            choices: [
+              { text: "Consider buying fresh local flowers, artisan handicrafts, or regional pastries.", trans: "Considere comprar flores frescas locales, artesanías hechas a mano o repostería regional.", correct: true },
+              { text: "Buy heavy industrial iron beams.", correct: false },
+              { text: "There are no products available for purchase.", correct: false }
+            ],
+            pedagogicalFeedback: "'Consider buying fresh local flowers, artisan handicrafts, or regional pastries' highlights popular authentic local souvenirs."
+          },
+          {
+            guidePrompt: "",
+            tourist: "Thank you so much! You have been an outstanding guide.",
+            touristTrans: "¡Muchas gracias! Ha sido un guía excepcional.",
+            choices: [
+              { text: "Thank you! It was my absolute pleasure. Welcome to Sabana Occidente!", trans: "¡Gracias a usted! Fue todo un placer. ¡Bienvenido a la Sabana Occidente!", correct: true },
+              { text: "Finally, you are leaving.", correct: false },
+              { text: "I don't care about your feedback.", correct: false }
+            ],
+            pedagogicalFeedback: "'Thank you! It was my absolute pleasure. Welcome to Sabana Occidente!' ends the 10-part series with professional warmth."
+          }
+        ]
+      }
+    ];
+
+    let currentModuleIndex = 0;
+    let currentStep = 0;
+    let selectedCorrectAnswer = "";
+    let isRecording = false;
+    let recognition = null;
+
+    function normalizeVocabulary(text) {
+      let normalized = text.toLowerCase();
+      const homophoneMap = {
+        "mosquera": "mosquera",
+        "bogota": "bogotá",
+        "bogotá": "bogotá",
+        "climate": "climate",
+        "temperate": "temperate",
+        "cold": "cold",
+        "muisca": "muisca",
+        "indigenous": "indigenous",
+        "founded": "founded",
+        "park": "park",
+        "parque": "parque",
+        "desert": "desert",
+        "sabrinsky": "sabrinsky",
+        "funza": "funza",
+        "heritage": "heritage",
+        "cultural": "cultural",
+        "bus": "bus",
+        "portal": "portal",
+        "madrid": "madrid",
+        "flowers": "flowers",
+        "roses": "roses",
+        "carnations": "carnations",
+        "sancocho": "sancocho",
+        "gallina": "gallina",
+        "sabana": "sabana",
+        "occidente": "occidente",
+        "pesos": "pesos"
+      };
+
+      for (const [misheard, target] of Object.entries(homophoneMap)) {
+        const regex = new RegExp(misheard.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        normalized = normalized.replace(regex, target);
+      }
+      return normalized;
+    }
+
+    function calculateSimilarity(str1, str2) {
+      const clean1 = normalizeVocabulary(str1);
+      const clean2 = normalizeVocabulary(str2);
+
+      const words1 = clean1.replace(/[^\w\s]/gi, '').split(/\s+/).filter(Boolean);
+      const words2 = clean2.replace(/[^\w\s]/gi, '').split(/\s+/).filter(Boolean);
+      
+      if (words1.length === 0 || words2.length === 0) return 0;
+      
+      let matches = 0;
+      words1.forEach(w => {
+        if (words2.includes(w)) matches++;
+      });
+
+      return Math.round((matches / Math.max(words1.length, words2.length)) * 100);
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = function() {
+        isRecording = true;
+        const recBtn = document.getElementById('rec-btn');
+        recBtn.classList.add('recording');
+        recBtn.innerHTML = '🛑 Listening... Speak now!';
+        document.getElementById('student-transcript').innerText = "Listening to your voice...";
+      };
+
+      recognition.onresult = function(event) {
+        const rawTranscript = event.results[0][0].transcript;
+        const correctedTranscript = normalizeVocabulary(rawTranscript);
+        document.getElementById('student-transcript').innerText = `"${correctedTranscript}"`;
+        evaluatePronunciation(correctedTranscript);
+      };
+
+      recognition.onerror = function(event) {
+        document.getElementById('student-transcript').innerText = "Microphone error or speech not detected. Please try recording again.";
+        stopRecordingState();
+      };
+
+      recognition.onend = function() {
+        stopRecordingState();
+      };
+    }
+
+    function stopRecordingState() {
+      isRecording = false;
+      const recBtn = document.getElementById('rec-btn');
+      recBtn.classList.remove('recording');
+      recBtn.innerHTML = '🎙️ Record My Voice';
+    }
+
+    function toggleSpeechRecognition() {
+      if (!recognition) {
+        alert("Speech Recognition is not supported by your current browser. Please use Chrome, Edge, or Safari.");
+        return;
+      }
+
+      if (!isRecording) {
+        try {
+          recognition.start();
+        } catch (e) {
+          recognition.stop();
+        }
+      } else {
+        recognition.stop();
+      }
+    }
+
+    function evaluatePronunciation(studentSpeech) {
+      const feedback = document.getElementById('feedback');
+      feedback.style.display = 'block';
+
+      const accuracyScore = calculateSimilarity(selectedCorrectAnswer, studentSpeech);
+      const currentData = modules[currentModuleIndex].dialogueSequence[currentStep];
+
+      if (accuracyScore >= 80) {
+        feedback.style.backgroundColor = 'rgba(4, 120, 87, 0.95)';
+        feedback.style.color = '#34d399';
+        feedback.style.border = '1px solid #34d399';
+        feedback.innerHTML = `
+          <strong>Score: ${accuracyScore}% - Excellent!</strong> 
+          <span class="score-badge" style="background-color:#34d399; color:#022c22;">ACCEPTABLE (&ge;80%)</span><br>
+          Your pronunciation is clear and easy to understand.<br>
+          <em>${currentData.pedagogicalFeedback}</em>
+        `;
+      } else {
+        feedback.style.backgroundColor = 'rgba(66, 32, 6, 0.95)';
+        feedback.style.color = '#fde047';
+        feedback.style.border = '1px solid #ca8a04';
+        feedback.innerHTML = `
+          <strong>Score: ${accuracyScore}% - Below Target (80%)</strong> 
+          <span class="score-badge" style="background-color:#ca8a04; color:#022c22;">KEEP PRACTICING</span><br>
+          An 80% score is recommended to ensure solid fluency, but feel free to continue practicing or move to the next question whenever you are ready.<br>
+          <em>${currentData.pedagogicalFeedback}</em>
+        `;
+      }
+    }
+
+    function switchModule(moduleIdx) {
+      currentModuleIndex = parseInt(moduleIdx);
+      currentStep = 0;
+      document.getElementById('module-title').innerText = `A1 Practice: ${modules[currentModuleIndex].title}`;
+      loadStep(currentStep);
+    }
+
+    function loadStep(index) {
+      const moduleData = modules[currentModuleIndex];
+      const data = moduleData.dialogueSequence[index];
+      
+      document.getElementById('step-indicator').innerText = `Step ${index + 1} of ${moduleData.dialogueSequence.length}`;
+      document.getElementById('progress').style.width = `${((index + 1) / moduleData.dialogueSequence.length) * 100}%`;
+      
+      const guideContextEl = document.getElementById('guide-context');
+      if (data.guidePrompt) {
+        guideContextEl.innerText = data.guidePrompt;
+        guideContextEl.style.display = 'block';
+      } else {
+        guideContextEl.style.display = 'none';
+      }
+
+      document.getElementById('tourist-text').innerText = `"${data.tourist}"`;
+      document.getElementById('tourist-translation').innerText = `"${data.touristTrans}"`;
+
+      document.getElementById('choices-container').style.display = 'block';
+      document.getElementById('shadowing-section').style.display = 'none';
+      document.getElementById('feedback').style.display = 'none';
+      document.getElementById('student-transcript').innerText = 'Click record and start speaking...';
+
+      const optionsContainer = document.getElementById('options');
+      optionsContainer.innerHTML = '';
+      const shuffledChoices = [...data.choices].sort(() => Math.random() - 0.5);
+
+      shuffledChoices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        
+        const transHTML = choice.trans ? `<span class="option-trans">${choice.trans}</span>` : '';
+        btn.innerHTML = `${choice.text} ${transHTML}`;
+        
+        btn.onclick = () => selectOption(choice, btn);
+        optionsContainer.appendChild(btn);
+      });
+
+      document.getElementById('prev-btn').disabled = index === 0;
+      document.getElementById('next-btn').innerText = index === moduleData.dialogueSequence.length - 1 ? "Finish Conversation" : "Next Question";
+    }
+
+    function playTTS(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.85;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function playCurrentQuestion() {
+      playTTS(modules[currentModuleIndex].dialogueSequence[currentStep].tourist);
+    }
+
+    function playSelectedModel() {
+      playTTS(selectedCorrectAnswer);
+    }
+
+    function selectOption(choice, btnElement) {
+      const allButtons = document.querySelectorAll('.option-btn');
+      
+      if (choice.correct) {
+        btnElement.classList.add('correct');
+        allButtons.forEach(b => b.style.pointerEvents = 'none');
+        selectedCorrectAnswer = choice.text;
+
+        playTTS(selectedCorrectAnswer);
+
+        setTimeout(() => {
+          document.getElementById('shadowing-section').style.display = 'block';
+        }, 1000);
+
+      } else {
+        btnElement.classList.add('incorrect');
+        const feedback = document.getElementById('feedback');
+        feedback.style.display = 'block';
+        feedback.style.backgroundColor = 'rgba(69, 10, 10, 0.95)';
+        feedback.style.color = '#ef4444';
+        feedback.style.border = '1px solid #ef4444';
+        feedback.innerHTML = `<strong>Incorrect option.</strong> Try again to select the correct response.`;
+      }
+    }
+
+    function nextStep() {
+      const sequenceLength = modules[currentModuleIndex].dialogueSequence.length;
+      if (currentStep < sequenceLength - 1) {
+        currentStep++;
+        loadStep(currentStep);
+      } else {
+        if (currentModuleIndex < modules.length - 1) {
+          alert(`Great job! You completed '${modules[currentModuleIndex].title}'. Moving to the next conversation.`);
+          currentModuleIndex++;
+          document.getElementById('module-dropdown').value = currentModuleIndex;
+          switchModule(currentModuleIndex);
+        } else {
+          alert("Congratulations! You have completed all 10 tourist guide conversation modules in the Master Suite!");
+        }
+      }
+    }
+
+    function previousStep() {
+      if (currentStep > 0) {
+        currentStep--;
+        loadStep(currentStep);
+      }
+    }
+
+    window.onload = () => switchModule(0);
+  </script>
+</body>
+</html>
