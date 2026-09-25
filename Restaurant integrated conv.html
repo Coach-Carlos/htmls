@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A1 Practice: Complete Restaurant Conversations (1 to 10)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      /* Vibrant full-colored background with an appetizing free Unsplash food photo */
+      background: linear-gradient(
+          rgba(20, 10, 15, 0.65), 
+          rgba(40, 12, 20, 0.75)
+        ), 
+        url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat fixed;
+      color: #ffffff;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      background-color: rgba(28, 8, 14, 0.94);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+      border: 1px solid #9f1239;
+    }
+
+    .header {
+      border-bottom: 2px solid #9f1239;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .header h1 {
+      color: #f59e0b;
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      color: #fb7185;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .selector-container {
+      margin-bottom: 16px;
+    }
+
+    .selector-container label {
+      display: block;
+      font-size: 0.85rem;
+      color: #f59e0b;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    .selector-container select {
+      width: 100%;
+      background-color: #3b0712;
+      color: #ffffff;
+      border: 1px solid #9f1239;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .progress-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      color: #f59e0b;
+    }
+
+    .progress-bar {
+      width: 70%;
+      background-color: #3b0712;
+      border-radius: 8px;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background-color: #fb7185;
+      transition: width 0.3s ease;
+    }
+
+    .card {
+      background-color: rgba(50, 12, 22, 0.9);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border-left: 4px solid #f59e0b;
+    }
+
+    .context-label {
+      color: #fb7185;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      font-style: italic;
+      border-bottom: 1px solid #881337;
+      padding-bottom: 8px;
+    }
+
+    .speaker-label {
+      color: #f59e0b;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+
+    .speaker-text {
+      font-size: 1.1rem;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .audio-btn {
+      background-color: #be123c;
+      color: #ffffff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .audio-btn:hover {
+      background-color: #e11d48;
+    }
+
+    .audio-btn:active {
+      background-color: #fb7185;
+      color: #1c080e;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .option-btn {
+      background-color: rgba(45, 10, 20, 0.9);
+      color: #ffffff;
+      border: 2px solid #881337;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: border-color 0.2s ease;
+    }
+
+    .option-btn:hover {
+      border-color: #be123c;
+    }
+
+    .option-btn.correct {
+      background-color: #881337;
+      border-color: #fb7185;
+      color: #ffe4e6;
+      font-weight: bold;
+    }
+
+    .option-btn.incorrect {
+      background-color: #450a0a;
+      border-color: #ef4444;
+      color: #fca5a5;
+    }
+
+    .translation-subtext {
+      font-size: 0.85rem;
+      color: #f59e0b;
+      font-weight: normal;
+      font-style: italic;
+    }
+
+    .shadowing-section {
+      display: none;
+      background-color: rgba(45, 10, 20, 0.9);
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #fb7185;
+    }
+
+    .shadowing-section h3 {
+      color: #fb7185;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .rec-btn {
+      background-color: #dc2626;
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .rec-btn.recording {
+      background-color: #f59e0b;
+      color: #1c080e;
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .transcript-box {
+      width: 100%;
+      background-color: #1c080e;
+      color: #ffffff;
+      border: 1px solid #881337;
+      border-radius: 6px;
+      padding: 10px;
+      margin: 10px 0;
+      min-height: 48px;
+      font-size: 0.9rem;
+    }
+
+    .feedback-box {
+      display: none;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .score-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      margin-top: 4px;
+    }
+
+    .nav-controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      background-color: #be123c;
+      color: #ffffff;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background-color: #e11d48;
+    }
+
+    .nav-btn:disabled {
+      background-color: #3b0712;
+      color: #881337;
+      cursor: not-allowed;
+    }
+
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #fb7185;
+      border-top: 1px solid #881337;
+      padding-top: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>Prepared by Coach Carlos O.</h1>
+      <p id="module-title">A1 Practice: Complete Restaurant Package</p>
+    </div>
+
+    <!-- MODULE SELECTOR -->
+    <div class="selector-container">
+      <label for="module-select">Select Conversation Practice / Seleccionar Práctica:</label>
+      <select id="module-select" onchange="changeModule(this.value)">
+        <option value="0">Conversation 1: Host / Arriving & Seating (Llegada y Asignación de Mesa)</option>
+        <option value="1">Conversation 2: Waiter / Ordering Food & Drinks (Pedir Comida y Bebidas)</option>
+        <option value="2">Conversation 3: Cashier / Paying the Bill (Pagar la Cuenta)</option>
+        <option value="3">Conversation 4: Bartender / Ordering Drinks (Pedir Bebidas en la Barra)</option>
+        <option value="4">Conversation 5: Busser / Clearing Table & Water (Limpieza de Mesa y Agua)</option>
+        <option value="5">Conversation 6: Delivery Driver / Receiving Order (Recibir Pedido a Domicilio)</option>
+        <option value="6">Conversation 7: Chef / Special Dietary Request (Solicitud Dietética Especial)</option>
+        <option value="7">Conversation 8: Sommelier / Wine Pairing Recommendation (Recomendación de Maridaje de Vinos)</option>
+        <option value="8">Conversation 9: Manager / Resolving an Issue (Resolver un Problema)</option>
+        <option value="9">Conversation 10: Manager / Asking for Recommendations (Pedir Recomendaciones)</option>
+      </select>
+    </div>
+
+    <div class="progress-container">
+      <span id="step-indicator">Step 1 of 6</span>
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+    </div>
+
+    <!-- PROMPT CARD -->
+    <div class="card">
+      <div class="context-label" id="context-label"></div>
+      <div class="speaker-label" id="speaker-label">👤 Tourist Phrase:</div>
+      <div class="speaker-text" id="speaker-text">...</div>
+      <button class="audio-btn" onclick="playCurrentQuestion()">🔊 Listen Prompt</button>
+    </div>
+
+    <!-- RESPONSE CHOICES -->
+    <div id="choices-container">
+      <div class="section-title">Select the correct response:</div>
+      <div class="options-grid" id="options"></div>
+    </div>
+
+    <!-- SHADOWING & SPEECH RECOGNITION SECTION -->
+    <div class="shadowing-section" id="shadowing-section">
+      <h3>🗣️ Practice Shadowing & Pronunciation</h3>
+      <p style="font-size:0.85rem; color:#ffe4e6; margin-bottom:8px;">
+        1. Listen to the model response.<br>
+        2. Click <strong>"Record My Voice"</strong> and repeat out loud.<br>
+        3. Target score: <strong>80% or higher</strong> recommended for optimal mastery.
+      </p>
+      <button class="audio-btn" style="margin-bottom:10px;" onclick="playSelectedModel()">🔊 Listen Correct Model</button>
+      
+      <button class="rec-btn" id="rec-btn" onclick="toggleSpeechRecognition()">🎙️ Record My Voice</button>
+      
+      <div style="font-size:0.8rem; color:#f59e0b; margin-top:8px;">Your Voice Transcription:</div>
+      <div class="transcript-box" id="student-transcript"><em>Click record and start speaking...</em></div>
+    </div>
+
+    <!-- FEEDBACK BOX -->
+    <div class="feedback-box" id="feedback"></div>
+
+    <!-- NAVIGATION BUTTONS -->
+    <div class="nav-controls">
+      <button class="nav-btn" id="prev-btn" onclick="previousStep()" disabled>Previous</button>
+      <button class="nav-btn" id="next-btn" onclick="nextStep()">Next Question</button>
+    </div>
+
+    <div class="footer">
+      © Developed for educational excellence By Coach Carlos O
+    </div>
+  </div>
+
+  <script>
+    const allModules = [
+      // CONVERSATION 1
+      {
+        title: "A1 Practice: Restaurant Conversation 1 (Host / Seating — Llegada y Asignación de Mesa)",
+        dialogues: [
+          {
+            context: "",
+            tourist: "Good evening! Do you have a table for two?",
+            touristEs: "(¡Buenas noches! ¿Tiene una mesa para dos?)",
+            choices: [
+              { text: "Good evening! Yes, right this way, please.", textEs: "(¡Buenas noches! Sí, por aquí, por favor.)", correct: true },
+              { text: "No, we are closed forever.", correct: false },
+              { text: "I don't care.", correct: false }
+            ],
+            pedagogicalFeedback: "'Good evening! Yes, right this way, please' is a warm and standard greeting used by hosts."
+          },
+          {
+            context: " Host: \"Good evening! Yes, right this way, please.\"",
+            tourist: "Thank you. Can we sit near the window?",
+            touristEs: "(Gracias. ¿Podemos sentarnos cerca de la ventana?)",
+            choices: [
+              { text: "Certainly, this window table is available.", textEs: "(Ciertamente, esta mesa junto a la ventana está disponible.)", correct: true },
+              { text: "No, window seats are illegal.", correct: false },
+              { text: "Sit on the floor.", correct: false }
+            ],
+            pedagogicalFeedback: "'Certainly, this window table is available' accommodates guest seating preferences politely."
+          },
+          {
+            context: " Host: \"Certainly, this window table is available.\"",
+            tourist: "Great! Could we get menus, please?",
+            touristEs: "(¡Genial! ¿Podría traernos los menúes, por favor?)",
+            choices: [
+              { text: "Here are your menus. Your server will be right with you.", textEs: "(Aquí tienen sus menúes. Su mesero estará con ustedes en un momento.)", correct: true },
+              { text: "No menus today.", correct: false },
+              { text: "Read the wall.", correct: false }
+            ],
+            pedagogicalFeedback: "'Here are your menus. Your server will be right with you' hands over the menu and sets expectation for service."
+          },
+          {
+            context: " Host: \"Here are your menus. Your server will be right with you.\"",
+            tourist: "Thank you very much.",
+            touristEs: "(Muchas gracias.)",
+            choices: [
+              { text: "You're very welcome! Enjoy your evening.", textEs: "(¡De nada! Disfruten de su velada.)", correct: true },
+              { text: "Stop talking.", correct: false },
+              { text: "Bye.", correct: false }
+            ],
+            pedagogicalFeedback: "'You're very welcome! Enjoy your evening' completes the seating process cordially."
+          }
+        ]
+      },
+      // CONVERSATION 2
+      {
+        title: "A1 Practice: Restaurant Conversation 2 (Waiter / Ordering — Pedir Comida y Bebidas)",
+        dialogues: [
+          {
+            context: "",
+            tourist: "Excuse me, we are ready to order.",
+            touristEs: "(Disculpe, estamos listos para ordenar.)",
+            choices: [
+              { text: "What can I get started for you today?", textEs: "(¿Con qué puedo empezar a servirles el día de hoy?)", correct: true },
+              { text: "I am busy, wait an hour.", correct: false },
+              { text: "Why?", correct: false }
+            ],
+            pedagogicalFeedback: "'What can I get started for you today?' is the standard open question servers use to take orders."
+          },
+          {
+            context: " Waiter: \"What can I get started for you today?\"",
+            tourist: "I would like the grilled chicken, please.",
+            touristEs: "(Me gustaría el pollo a la parrilla, por favor.)",
+            choices: [
+              { text: "Great choice! Would you like rice or salad with that?", textEs: "(¡Excelente opción! ¿Desea arroz o ensalada con eso?)", correct: true },
+              { text: "Chicken is sold out forever.", correct: false },
+              { text: "That sounds terrible.", correct: false }
+            ],
+            pedagogicalFeedback: "'Great choice! Would you like rice or salad with that?' guides the guest through side dish choices."
+          },
+          {
+            context: " Waiter: \"Great choice! Would you like rice or salad with that?\"",
+            tourist: "Salad, please. And to drink, just sparkling water.",
+            touristEs: "(Ensalada, por favor. Y para beber, solo agua con gas.)",
+            choices: [
+              { text: "Perfect. I will bring your drink right away.", textEs: "(Perfecto. Traeré su bebida de inmediato.)", correct: true },
+              { text: "No water for you.", correct: false },
+              { text: "Drink coffee instead.", correct: false }
+            ],
+            pedagogicalFeedback: "'Perfect. I will bring your drink right away' acknowledges and confirms the drink order."
+          }
+        ]
+      },
+      // CONVERSATION 3
+      {
+        title: "A1 Practice: Restaurant Conversation 3 (Cashier / Paying — Pagar la Cuenta)",
+        dialogues: [
+          {
+            context: "",
+            tourist: "Could we have the bill, please?",
+            touristEs: "(¿Nos podría traer la cuenta, por favor?)",
+            choices: [
+              { text: "Here is your check. Are you paying together or split?", textEs: "(Aquí tiene su cuenta. ¿Van a pagar juntos o por separado?)", correct: true },
+              { text: "Pay me $1000 now.", correct: false },
+              { text: "No bill for you.", correct: false }
+            ],
+            pedagogicalFeedback: "'Here is your check. Are you paying together or split?' handles payment preferences clearly."
+          },
+          {
+            context: " Cashier: \"Here is your check. Are you paying together or split?\"",
+            tourist: "We will pay together. Do you accept credit cards?",
+            touristEs: "(Pagaremos juntos. ¿Aceptan tarjetas de crédito?)",
+            choices: [
+              { text: "Yes, we accept Visa and Mastercard.", textEs: "(Sí, aceptamos Visa y Mastercard.)", correct: true },
+              { text: "Cash only, no cards ever.", correct: false },
+              { text: "Trade me your watch.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, we accept Visa and Mastercard' clarifies accepted payment methods."
+          },
+          {
+            context: " Cashier: \"Yes, we accept Visa and Mastercard.\"",
+            tourist: "Here is my card.",
+            touristEs: "(Aquí está mi tarjeta.)",
+            choices: [
+              { text: "Thank you. Please tap or insert your card here.", textEs: "(Gracias. Por favor acerque o inserte su tarjeta aquí.)", correct: true },
+              { text: "Keep your card.", correct: false },
+              { text: "Throw it away.", correct: false }
+            ],
+            pedagogicalFeedback: "'Thank you. Please tap or insert your card here' directs the customer through the terminal process."
+          }
+        ]
+      },
+      // CONVERSATION 4
+      {
+        title: "A1 Practice: Restaurant Conversation 4 (Bartender / Drinks — Pedir Bebidas en la Barra)",
+        dialogues: [
+          {
+            context: "",
+            tourist: "Hi! What craft beers do you have on tap?",
+            touristEs: "(¡Hola! ¿Qué cervezas artesanales tienen de barril?)",
+            choices: [
+              { text: "We have a local IPA and a wheat beer on tap.", textEs: "(Tenemos una IPA local y una cerveza de trigo de barril.)", correct: true },
+              { text: "We only sell milk.", correct: false },
+              { text: "Look at the roof.", correct: false }
+            ],
+            pedagogicalFeedback: "'We have a local IPA and a wheat beer on tap' specifies drink options directly."
+          },
+          {
+            context: " Bartender: \"We have a local IPA and a wheat beer on tap.\"",
+            tourist: "I'll try the local IPA, please.",
+            touristEs: "(Probaré la IPA local, por favor.)",
+            choices: [
+              { text: "Pint or half-pint for you?", textEs: "(¿Desea una pinta o media pinta?)", correct: true },
+              { text: "Drink it from a bucket.", correct: false },
+              { text: "No beer for you.", correct: false }
+            ],
+            pedagogicalFeedback: "'Pint or half-pint for you?' presents standard serving sizes."
+          }
+        ]
+      },
+      // CONVERSATION 5
+      {
+        title: "A1 Practice: Restaurant Conversation 5 (Busser / Table Service — Limpieza de Mesa y Agua)",
+        dialogues: [
+          {
+            context: "",
+            tourist: "Excuse me, could we get some extra napkins?",
+            touristEs: "(Disculpe, ¿podríamos tener algunas servilletas adicionales?)",
+            choices: [
+              { text: "Here you go! Let me know if you need anything else.", textEs: "(¡Aquí tiene! Avíseme si necesita algo más.)", correct: true },
+              { text: "Use your shirt.", correct: false },
+              { text: "Napkins cost $50.", correct: false }
+            ],
+            pedagogicalFeedback: "'Here you go! Let me know if you need anything else' delivers prompt service politely."
+          },
+          {
+            context: " Busser: \"Here you go! Let me know if you need anything else.\"",
+            tourist: "Could you also clear these empty plates?",
+            touristEs: "(¿Podría también retirar estos platos vacíos?)",
+            choices: [
+              { text: "Of course, I'll take those right away.", textEs: "(Por supuesto, me los llevaré de inmediato.)", correct: true },
+              { text: "Leave them on the floor.", correct: false },
+              { text: "Plates stay forever.", correct: false }
+            ],
+            pedagogicalFeedback: "'Of course, I'll take those right away' maintains a clean dining space."
+          }
+        ]
+      },
+      // CONVERSATION 6
+      {
+        title: "A1 Practice: Restaurant Conversation 6 (Delivery Driver — Recibir Pedido a Domicilio)",
+        dialogues: [
+          {
+            context: "",
+            tourist: "Hello! Is this the delivery for apartment 4B?",
+            touristEs: "(¡Hola! ¿Es esta la entrega para el apartamento 4B?)",
+            choices: [
+              { text: "Yes! Here is your warm order from Casa Pasta.", textEs: "(¡Sí! Aquí está su pedido caliente de Casa Pasta.)", correct: true },
+              { text: "Wrong country.", correct: false },
+              { text: "I ate your food.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes! Here is your warm order from Casa Pasta' confirms identity and delivers order."
+          }
+        ]
+      },
+      // CONVERSATION 7
+      {
+        title: "A1 Practice: Restaurant Conversation 7 (Chef / Dietary — Solicitud Dietética Especial)",
+        dialogues: [
+          {
+            context: "",
+            tourist: "Excuse me, does this dish contain nuts? I have an allergy.",
+            touristEs: "(Disculpe, ¿este plato contiene frutos secos? Tengo una alergia.)",
+            choices: [
+              { text: "No nuts at all. We prepare allergy-safe items separately.", textEs: "(Nada de frutos secos. Preparamos los alimentos para alérgicos por separado.)", correct: true },
+              { text: "Lots of hidden nuts.", correct: false },
+              { text: "I have no idea.", correct: false }
+            ],
+            pedagogicalFeedback: "'No nuts at all. We prepare allergy-safe items separately' gives safety assurance."
+          }
+        ]
+      },
+      // CONVERSATION 8
+      {
+        title: "A1 Practice: Restaurant Conversation 8 (Sommelier / Wine — Recomendación de Maridaje de Vinos)",
+        dialogues: [
+          {
+            context: "",
+            tourist: "Which wine pairs best with the steak?",
+            touristEs: "(¿Qué vino combina mejor con el filete?)",
+            choices: [
+              { text: "I recommend our full-bodied Malbec.", textEs: "(Le recomiendo nuestro Malbec de gran cuerpo.)", correct: true },
+              { text: "Drink apple juice.", correct: false },
+              { text: "All wines taste like water.", correct: false }
+            ],
+            pedagogicalFeedback: "'I recommend our full-bodied Malbec' offers an expert pairing recommendation."
+          }
+        ]
+      },
+      // CONVERSATION 9
+      {
+        title: "A1 Practice: Restaurant Conversation 9 (Manager / Resolving Issue — Resolver un Problema)",
+        dialogues: [
+          {
+            context: "",
+            tourist: "Excuse me, my soup is cold.",
+            touristEs: "(Disculpe, mi sopa está fría.)",
+            choices: [
+              { text: "I am so sorry about that! Let me bring a fresh hot soup immediately.", textEs: "(¡Siento mucho eso! Deje que le traiga una sopa caliente y fresca de inmediato.)", correct: true },
+              { text: "Cold soup builds character.", correct: false },
+              { text: "Eat it anyway.", correct: false }
+            ],
+            pedagogicalFeedback: "'I am so sorry about that! Let me bring a fresh hot soup immediately' addresses complaints with quick care."
+          }
+        ]
+      },
+      // CONVERSATION 10
+      {
+        title: "A1 Practice: Restaurant Conversation 10 (Asking for a Recommendation — Pedir Recomendaciones)",
+        dialogues: [
+          {
+            context: "",
+            tourist: "Excuse me. What is the best local dish in your restaurant?",
+            touristEs: "(Disculpe. ¿Cuál es el mejor plato local en su restaurante?)",
+            choices: [
+              { text: "I recommend our traditional Colombian dishes.", textEs: "(Le recomiendo nuestros platos tradicionales colombianos.)", correct: true },
+              { text: "We do not sell local dishes.", correct: false },
+              { text: "Everything is bad here.", correct: false }
+            ],
+            pedagogicalFeedback: "'I recommend our traditional Colombian dishes' highlights local specialties warmly to visitors."
+          },
+          {
+            context: "",
+            tourist: "Which one is your most popular?",
+            touristEs: "(¿Cuál es el más popular?)",
+            choices: [
+              { text: "Our ajiaco is very popular.", textEs: "(Nuestro ajiaco es muy popular.)", correct: true },
+              { text: "None of them are popular.", correct: false },
+              { text: "We only have water.", correct: false }
+            ],
+            pedagogicalFeedback: "'Our ajiaco is very popular' recommends a specific favorite dish from the menu."
+          },
+          {
+            context: "",
+            tourist: "What is ajiaco?",
+            touristEs: "(¿Qué es el ajiaco?)",
+            choices: [
+              { text: "It is a traditional Colombian soup with chicken and potatoes.", textEs: "(Es una sopa tradicional colombiana con pollo y papas.)", correct: true },
+              { text: "It is a sweet chocolate dessert.", correct: false },
+              { text: "I don't know what it is.", correct: false }
+            ],
+            pedagogicalFeedback: "'It is a traditional Colombian soup with chicken and potatoes' gives a clear, appetizing summary of ingredients."
+          },
+          {
+            context: "",
+            tourist: "Is it good for lunch?",
+            touristEs: "(¿Es bueno para el almuerzo?)",
+            choices: [
+              { text: "Yes, it is an excellent choice for lunch.", textEs: "(Sí, es una opción excelente para el almuerzo.)", correct: true },
+              { text: "No, never eat it for lunch.", correct: false },
+              { text: "It is only for breakfast.", correct: false }
+            ],
+            pedagogicalFeedback: "'Yes, it is an excellent choice for lunch' reassures the customer that the dish fits their dining occasion."
+          },
+          {
+            context: "",
+            tourist: "Great. I'll try it.",
+            touristEs: "(Genial. Lo probaré.)",
+            choices: [
+              { text: "Wonderful. I hope you enjoy it!", textEs: "(Maravilloso. ¡Espero que lo disfrute!)", correct: true },
+              { text: "Don't try it, please.", correct: false },
+              { text: "You made a mistake.", correct: false }
+            ],
+            pedagogicalFeedback: "'Wonderful. I hope you enjoy it!' expresses enthusiasm for the customer's choice."
+          },
+          {
+            context: "Manager: \"Wonderful. I hope you enjoy it!\"",
+            tourist: "Thank you very much!",
+            touristEs: "(¡Muchas gracias!)",
+            choices: [
+              { text: "My pleasure! Enjoy your meal.", textEs: "(¡Con mucho gusto! Disfrute su comida.)", correct: true },
+              { text: "Stop thanking me.", correct: false },
+              { text: "I must go now.", correct: false }
+            ],
+            pedagogicalFeedback: "'My pleasure! Enjoy your meal' politely closes the recommendation interaction."
+          }
+        ]
+      }
+    ];
+
+    let currentModuleIndex = 0;
+    let currentStep = 0;
+    let selectedCorrectAnswer = "";
+    let isRecording = false;
+    let recognition = null;
+
+    function normalizeVocabulary(text) {
+      let normalized = text.toLowerCase();
+      return normalized;
+    }
+
+    function calculateSimilarity(str1, str2) {
+      const clean1 = normalizeVocabulary(str1);
+      const clean2 = normalizeVocabulary(str2);
+
+      const words1 = clean1.replace(/[^\w\s]/gi, '').split(/\s+/).filter(Boolean);
+      const words2 = clean2.replace(/[^\w\s]/gi, '').split(/\s+/).filter(Boolean);
+      
+      if (words1.length === 0 || words2.length === 0) return 0;
+      
+      let matches = 0;
+      words1.forEach(w => {
+        if (words2.includes(w)) matches++;
+      });
+
+      return Math.round((matches / Math.max(words1.length, words2.length)) * 100);
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = function() {
+        isRecording = true;
+        const recBtn = document.getElementById('rec-btn');
+        recBtn.classList.add('recording');
+        recBtn.innerHTML = '🛑 Listening... Speak now!';
+        document.getElementById('student-transcript').innerText = "Listening to your voice...";
+      };
+
+      recognition.onresult = function(event) {
+        const rawTranscript = event.results[0][0].transcript;
+        const correctedTranscript = normalizeVocabulary(rawTranscript);
+        
+        document.getElementById('student-transcript').innerText = `"${correctedTranscript}"`;
+        evaluatePronunciation(correctedTranscript);
+      };
+
+      recognition.onerror = function(event) {
+        document.getElementById('student-transcript').innerText = "Microphone error or speech not detected. Please try recording again.";
+        stopRecordingState();
+      };
+
+      recognition.onend = function() {
+        stopRecordingState();
+      };
+    }
+
+    function stopRecordingState() {
+      isRecording = false;
+      const recBtn = document.getElementById('rec-btn');
+      recBtn.classList.remove('recording');
+      recBtn.innerHTML = '🎙️ Record My Voice';
+    }
+
+    function toggleSpeechRecognition() {
+      if (!recognition) {
+        alert("Speech Recognition is not supported by your current browser. Please use Chrome, Edge, or Safari.");
+        return;
+      }
+
+      if (!isRecording) {
+        try {
+          recognition.start();
+        } catch (e) {
+          recognition.stop();
+        }
+      } else {
+        recognition.stop();
+      }
+    }
+
+    function evaluatePronunciation(studentSpeech) {
+      const feedback = document.getElementById('feedback');
+      feedback.style.display = 'block';
+
+      const accuracyScore = calculateSimilarity(selectedCorrectAnswer, studentSpeech);
+      const currentDialogues = allModules[currentModuleIndex].dialogues;
+
+      if (accuracyScore >= 80) {
+        feedback.style.backgroundColor = '#881337';
+        feedback.style.color = '#ffe4e6';
+        feedback.style.border = '1px solid #fb7185';
+        feedback.innerHTML = `
+          <strong>Score: ${accuracyScore}% - Excellent!</strong> 
+          <span class="score-badge" style="background-color:#fb7185; color:#1c080e;">ACCEPTABLE (&ge;80%)</span><br>
+          Your pronunciation is clear and easy to understand.<br>
+          <em>${currentDialogues[currentStep].pedagogicalFeedback}</em>
+        `;
+      } else {
+        feedback.style.backgroundColor = '#422006';
+        feedback.style.color = '#fde047';
+        feedback.style.border = '1px solid #ca8a04';
+        feedback.innerHTML = `
+          <strong>Score: ${accuracyScore}% - Below Target (80%)</strong> 
+          <span class="score-badge" style="background-color:#ca8a04; color:#1c080e;">KEEP PRACTICING</span><br>
+          An 80% score is recommended to ensure solid fluency, but feel free to continue practicing or move to the next question whenever you are ready.<br>
+          <em>${currentDialogues[currentStep].pedagogicalFeedback}</em>
+        `;
+      }
+    }
+
+    function changeModule(index) {
+      currentModuleIndex = parseInt(index);
+      currentStep = 0;
+      document.getElementById('module-title').innerText = allModules[currentModuleIndex].title;
+      loadStep(0);
+    }
+
+    function loadStep(index) {
+      const moduleData = allModules[currentModuleIndex];
+      const data = moduleData.dialogues[index];
+      
+      document.getElementById('step-indicator').innerText = `Step ${index + 1} of ${moduleData.dialogues.length}`;
+      document.getElementById('progress').style.width = `${((index + 1) / moduleData.dialogues.length) * 100}%`;
+      
+      const contextEl = document.getElementById('context-label');
+      if (data.context) {
+        contextEl.innerText = data.context;
+        contextEl.style.display = 'block';
+      } else {
+        contextEl.style.display = 'none';
+      }
+
+      document.getElementById('speaker-text').innerHTML = `"${data.tourist}" <br><span style="font-size:0.95rem; color:#f59e0b; font-style:italic;">${data.touristEs}</span>`;
+
+      document.getElementById('choices-container').style.display = 'block';
+      document.getElementById('shadowing-section').style.display = 'none';
+      document.getElementById('feedback').style.display = 'none';
+      document.getElementById('student-transcript').innerText = 'Click record and start speaking...';
+
+      const optionsContainer = document.getElementById('options');
+      optionsContainer.innerHTML = '';
+      const shuffledChoices = [...data.choices].sort(() => Math.random() - 0.5);
+
+      shuffledChoices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = choice.text;
+        btn.onclick = () => selectOption(choice, btn);
+        optionsContainer.appendChild(btn);
+      });
+
+      document.getElementById('prev-btn').disabled = index === 0;
+      document.getElementById('next-btn').innerText = index === moduleData.dialogues.length - 1 ? "Finish Conversation" : "Next Question";
+    }
+
+    function playTTS(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.85;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function playCurrentQuestion() {
+      playTTS(allModules[currentModuleIndex].dialogues[currentStep].tourist);
+    }
+
+    function playSelectedModel() {
+      playTTS(selectedCorrectAnswer);
+    }
+
+    function selectOption(choice, btnElement) {
+      const allButtons = document.querySelectorAll('.option-btn');
+      
+      if (choice.correct) {
+        btnElement.classList.add('correct');
+        allButtons.forEach(b => b.style.pointerEvents = 'none');
+        selectedCorrectAnswer = choice.text;
+
+        const translationSpan = document.createElement('span');
+        translationSpan.className = 'translation-subtext';
+        translationSpan.innerText = choice.textEs;
+        btnElement.appendChild(translationSpan);
+
+        playTTS(selectedCorrectAnswer);
+
+        setTimeout(() => {
+          document.getElementById('shadowing-section').style.display = 'block';
+        }, 1000);
+
+      } else {
+        btnElement.classList.add('incorrect');
+        const feedback = document.getElementById('feedback');
+        feedback.style.display = 'block';
+        feedback.style.backgroundColor = '#450a0a';
+        feedback.style.color = '#ef4444';
+        feedback.style.border = '1px solid #ef4444';
+        feedback.innerHTML = `<strong>Incorrect option.</strong> Try again to select the correct response.`;
+      }
+    }
+
+    function nextStep() {
+      const moduleData = allModules[currentModuleIndex];
+      if (currentStep < moduleData.dialogues.length - 1) {
+        currentStep++;
+        loadStep(currentStep);
+      } else {
+        if (currentModuleIndex < allModules.length - 1) {
+          alert(`Great job! You finished Conversation ${currentModuleIndex + 1}. Moving to Conversation ${currentModuleIndex + 2}!`);
+          currentModuleIndex++;
+          document.getElementById('module-select').value = currentModuleIndex;
+          changeModule(currentModuleIndex);
+        } else {
+          alert("Congratulations! You have completed all 10 Restaurant Conversations!");
+        }
+      }
+    }
+
+    function previousStep() {
+      if (currentStep > 0) {
+        currentStep--;
+        loadStep(currentStep);
+      }
+    }
+
+    window.onload = () => changeModule(0);
+  </script>
+</body>
+</html>
