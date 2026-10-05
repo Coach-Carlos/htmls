@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Beginner Fluency Lab | Airport & Customs Q&A</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root { 
+            --primary: #00cec9; 
+            --success: #00b894; 
+            --danger: #ff7675; 
+            --warning: #fdcb6e; 
+            --bg: #0f2334; 
+            --card-bg: rgba(10, 31, 48, 0.95);
+            --accent: #e67e22; 
+        }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: linear-gradient(135deg, #091724, #0f354a, #00cec9); 
+            color: #ecf0f1; 
+            text-align: center; 
+            margin: 0; 
+            min-height: 100vh; 
+            padding-bottom: 80px; 
+        }
+        .container { max-width: 900px; margin: auto; padding: 40px 20px; }
+        h1 { color: var(--warning); text-shadow: 2px 2px #000; font-size: 2.2rem; margin-bottom: 5px; }
+        .branding { color: var(--primary); font-weight: bold; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
+        .sub-branding { color: #a4b0be; font-size: 0.95rem; margin-bottom: 25px; font-style: italic; }
+        .card { 
+            background: var(--card-bg); 
+            padding: 30px; 
+            margin: 20px 0; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7); 
+            border: 2px solid var(--primary); 
+        }
+        .results-box { 
+            background: #040d14; 
+            border-left: 6px solid var(--accent); 
+            padding: 25px; 
+            margin: 20px 0; 
+            border-radius: 12px; 
+            text-align: left; 
+            display: none; 
+        }
+        .syntax-error { color: var(--danger); font-weight: bold; }
+        .correct-word { color: var(--success); font-weight: bold; }
+        .partial-word { color: var(--warning); font-style: italic; border-bottom: 1px dashed var(--warning); }
+        .remedial-tip { 
+            margin-top: 15px; 
+            padding: 12px; 
+            background: rgba(230, 126, 34, 0.15); 
+            border-radius: 8px; 
+            border: 1px solid var(--accent);
+            color: #fff;
+        }
+        select, button { 
+            padding: 14px 28px; border-radius: 10px; margin: 10px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; 
+            font-size: 1rem;
+        }
+        button { background: var(--primary); color: #2c3e50; }
+        button:hover { filter: brightness(1.1); }
+        .btn-record { background: var(--danger); color: white; }
+        .btn-record.recording { background: #d63031; animation: pulse 1.5s infinite; }
+        .btn-next { background: var(--success); color: white; display: none; }
+        .option { 
+            display: block; width: 100%; margin: 12px 0; padding: 18px; background: #0f354a; border-radius: 12px; cursor: pointer; text-align: left; border: 2px solid transparent; color: white; box-sizing: border-box; font-size: 1.05rem;
+        }
+        .option:hover { border-color: var(--warning); background: #13445e; }
+        .correct { background: var(--success) !important; border-color: #fff; }
+        .wrong { background: var(--danger) !important; }
+        footer {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: #040d14; color: #747d8c; padding: 12px 0; font-size: 0.9rem; border-top: 1px solid #13445e; letter-spacing: 1px;
+        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0px rgba(214, 48, 49, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(214, 48, 49, 0); } 100% { box-shadow: 0 0 0 0px rgba(214, 48, 49, 0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">    
+    <h1>Beginner Fluency Lab</h1>    
+    <div class="branding">By Coach Carlos O</div>    
+    <div class="sub-branding">Interactive Listen, Shadow & Speech Verification Module (Airport & Customs)</div>
+    
+    <div id="setup">        
+        <div class="card">            
+            <h3 style="color: var(--primary);">Airport & Customs Questions and Answers</h3>            
+            <p>Listen to each airport question, select the best short answer, and listen to the model accent to shadow it with confidence!</p>
+            <button onclick="startQuiz()" style="width: 100%; max-width: 400px; margin-top: 20px;">Start Practice</button>        
+        </div>    
+    </div>    
+    
+    <div id="quiz-area" style="display:none;">        
+        <div id="progress" style="margin-bottom:15px; color:var(--warning); font-weight:bold; letter-spacing: 1px;"></div>        
+        <div id="quiz"></div>                
+        
+        <div id="resultsBox" class="results-box">            
+            <h4 style="color:var(--primary); margin-top:0;">Speech Feedback:</h4>            
+            <div id="visualFeedback" style="font-size: 1.2rem; line-height: 1.7; margin-bottom: 10px;"></div>            
+            <div id="evaluationText" style="font-weight: bold; color: var(--warning); margin-bottom: 10px;"></div>            
+            <div id="remedialBox"></div>        
+        </div>        
+        
+        <div class="action-buttons">            
+            <button onclick="narrateAnswer()" style="background:var(--warning); color: #2c3e50;">🔊 Model Accent</button>            
+            <button id="recordBtn" class="btn-record" onclick="toggleRecording()">🎤 Verify Fluency</button>            
+            <button id="nextBtn" class="btn-next" onclick="nextQuestion()">Next Question ➜</button>        
+        </div>    
+    </div>
+</div>
+
+<footer>
+    © Developed for educational excellence By Coach Carlos O
+</footer>
+
+<script>
+const synth = window.speechSynthesis;
+let usVoice = null;
+
+function loadNativeVoice() {    
+    if (!synth) return;
+    const voices = synth.getVoices();    
+    usVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha')))               
+              || voices.find(v => v.lang === 'en-US');
+}
+
+if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = loadNativeVoice;
+}
+loadNativeVoice();
+
+function speak(text) {    
+    if (!synth) return;
+    synth.cancel();    
+    if (synth.paused) synth.resume();
+    
+    const msg = new SpeechSynthesisUtterance(text);    
+    if (usVoice) msg.voice = usVoice;    
+    msg.rate = 0.80;
+    synth.speak(msg);
+}
+
+function getSimilarity(s1, s2) {    
+    let longer = s1.length < s2.length ? s2 : s1;    
+    let shorter = s1.length < s2.length ? s1 : s2;    
+    if (longer.length === 0) return 1.0;    
+    const distance = editDistance(longer, shorter);    
+    return (longer.length - distance) / parseFloat(longer.length);
+}
+
+function editDistance(s1, s2) {    
+    s1 = s1.toLowerCase(); s2 = s2.toLowerCase();    
+    let costs = [];    
+    for (let i = 0; i <= s1.length; i++) {        
+        let lastValue = i;        
+        for (let j = 0; j <= s2.length; j++) {            
+            if (i === 0) costs[j] = j;            
+            else {                
+                if (j > 0) {                    
+                    let newValue = costs[j - 1];                    
+                    if (s1.charAt(i - 1) !== s2.charAt(j - 1))                        
+                        newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;                    
+                    costs[j - 1] = lastValue;                    
+                    lastValue = newValue;                
+                }            
+            }        
+        }        
+        if (i > 0) costs[s2.length] = lastValue;    
+    }    
+    return costs[s2.length];
+}
+
+const beginnerQuestions = [        
+    {
+        q: "May I see your passport, please?", 
+        a: "Sure. Here you are.", 
+        o: ["Sure. Here you are.", "I'm flying to Miami.", "Yes, I have one bag.", "No, I'm not."]
+    },        
+    {
+        q: "Where are you flying today?", 
+        a: "I'm flying to Miami.", 
+        o: ["I'm flying to Miami.", "I'm staying for two weeks.", "Sure. Here you are.", "Tourism."]
+    },        
+    {
+        q: "What's the purpose of your trip?", 
+        a: "I'm here on vacation.", 
+        o: ["I'm here on vacation.", "It's 123 Main Street, Miami.", "Yes, I packed them myself.", "About $500."]
+    },        
+    {
+        q: "How long are you staying?", 
+        a: "I'm staying for two weeks.", 
+        o: ["I'm staying for two weeks.", "I'm staying at a hotel in Miami.", "I'm flying to Miami.", "No, I have nothing to declare."]
+    },        
+    {
+        q: "Where are you staying?", 
+        a: "I'm staying at a hotel in Miami.", 
+        o: ["I'm staying at a hotel in Miami.", "I'm staying for two weeks.", "Yes, I do.", "Sure. Here you are."]
+    },        
+    {
+        q: "Do you have a return ticket?", 
+        a: "Yes, I do.", 
+        o: ["Yes, I do.", "No, I'm not.", "About $500.", "I'm here on vacation."]
+    },        
+    {
+        q: "Are you checking any bags?", 
+        a: "Yes, I have one bag.", 
+        o: ["Yes, I have one bag.", "Yes, I packed them myself.", "I'm staying for two weeks.", "No, I don't."]
+    },        
+    {
+        q: "Did you pack your bags yourself?", 
+        a: "Yes, I packed them myself.", 
+        o: ["Yes, I packed them myself.", "Yes, I have one bag.", "No, I'm not.", "It's 123 Main Street, Miami."]
+    },        
+    {
+        q: "Do you have anything to declare?", 
+        a: "No, I have nothing to declare.", 
+        o: ["No, I have nothing to declare.", "Yes, I do.", "Tourism.", "I'm staying at a hotel in Miami."]
+    },        
+    {
+        q: "Are you carrying any food or agricultural products?", 
+        a: "No, I'm not.", 
+        o: ["No, I'm not.", "No, I don't.", "Sure. Here you are.", "About $500."]
+    },        
+    {
+        q: "What is the address where you're staying?", 
+        a: "It's 123 Main Street, Miami.", 
+        o: ["It's 123 Main Street, Miami.", "I'm staying for two weeks.", "I'm here on vacation.", "I'm flying to Miami."]
+    },        
+    {
+        q: "How much cash are you carrying?", 
+        a: "About $500.", 
+        o: ["About $500.", "Yes, I do.", "No, I have nothing to declare.", "Tourism."]
+    }
+];
+
+let currentIdx = 0, recognition;
+
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.onresult = (e) => processNeuralFeedback(e.results[0][0].transcript);    
+    recognition.onend = () => document.getElementById('recordBtn').classList.remove('recording');
+}
+
+function startQuiz() {    
+    if (synth) {
+        synth.cancel();
+        const unlockMsg = new SpeechSynthesisUtterance("");
+        synth.speak(unlockMsg);
+    }
+
+    currentIdx = 0;    
+    document.getElementById('setup').style.display = 'none';    
+    document.getElementById('quiz-area').style.display = 'block';    
+    loadQuestion();
+}
+
+function loadQuestion() {    
+    const data = beginnerQuestions[currentIdx];    
+    document.getElementById('progress').innerText = `AIRPORT & CUSTOMS DRILL: ${currentIdx + 1} / ${beginnerQuestions.length}`;    
+    document.getElementById('quiz').innerHTML = `<div class="card"><h2 style="font-size: 1.4rem; line-height: 1.6; color: var(--warning);">${data.q}</h2></div>`;    
+    document.getElementById('resultsBox').style.display = 'none';    
+    document.getElementById('nextBtn').style.display = 'none';    
+    
+    setTimeout(() => {
+        speak(data.q);
+    }, 150);
+
+    const options = [...data.o].sort(() => Math.random() - 0.5);
+    options.forEach(opt => {        
+        const div = document.createElement('div');        
+        div.className = 'option';        
+        div.textContent = opt;        
+        div.onclick = function() {            
+            if(this.textContent.toLowerCase() === data.a.toLowerCase()) {                
+                document.querySelectorAll('.option').forEach(o => o.classList.remove('correct', 'wrong'));                
+                this.classList.add('correct');                
+                speak(data.a);             
+                document.getElementById('nextBtn').style.display = 'inline-block';            
+            } else { this.classList.add('wrong'); }        
+        };        
+        document.querySelector('#quiz .card').appendChild(div);    
+    });
+}
+
+function toggleRecording() {    
+    if (recognition) { 
+        try {
+            recognition.start(); 
+            document.getElementById('recordBtn').classList.add('recording'); 
+        } catch(e) {
+            recognition.stop();
+        }
+    } else {
+        alert("Speech recognition is not supported in this browser. Please try Google Chrome or Microsoft Edge.");
+    }
+}
+
+function processNeuralFeedback(transcript) {    
+    const data = beginnerQuestions[currentIdx];
+    const target = data.a;    
+    const spoken = transcript.toLowerCase().trim().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");    
+    const cleanTarget = target.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+    
+    let performanceScore = 0;
+    if (spoken === cleanTarget || spoken.includes(cleanTarget) || cleanTarget.includes(spoken)) {
+        performanceScore = 100;
+    } else {
+        let similarity = getSimilarity(cleanTarget, spoken);
+        performanceScore = Math.round(similarity * 100);
+    }
+    
+    const passThreshold = 50;
+
+    document.getElementById('resultsBox').style.display = 'block';    
+    const visual = document.getElementById('visualFeedback');    
+    const evalText = document.getElementById('evaluationText');    
+    const remedial = document.getElementById('remedialBox');    
+
+    if (performanceScore >= 80) {        
+        visual.innerHTML = `You said: "<span class=\"correct-word\">${transcript}</span>"<br>Target: <strong>${target}</strong>`;    
+    } else if (performanceScore >= passThreshold) {        
+        visual.innerHTML = `You said: "<span class=\"partial-word\">${transcript}</span>"<br>Target: <strong>${target}</strong>`;        
+        performanceScore = Math.max(performanceScore, 70);   
+    } else {        
+        visual.innerHTML = `You said: "<span class=\"syntax-error\">${transcript}</span>"<br>Target: <strong>${target}</strong>`;    
+    }    
+
+    evalText.innerText = `Pronunciation Score: ${performanceScore}%`;    
+    remedial.innerHTML = "";    
+    
+    if (performanceScore >= passThreshold) {
+        const tip = document.createElement('div');        
+        tip.className = 'remedial-tip';        
+        tip.innerHTML = "<strong>Coach Carlos O:</strong> Excellent! You are ready to handle real airport and customs interactions with ease.";        
+        remedial.appendChild(tip);        
+        document.getElementById('nextBtn').style.display = 'inline-block';    
+    } else {
+        const tip = document.createElement('div');        
+        tip.className = 'remedial-tip';        
+        tip.innerHTML = "<strong>Coach Carlos O:</strong> Good effort! Listen to 'Model Accent' and try pronouncing the answer again.";        
+        remedial.appendChild(tip);  
+    }
+}
+
+function nextQuestion() {    
+    currentIdx++;    
+    if (currentIdx < beginnerQuestions.length) loadQuestion();    
+    else document.getElementById('quiz-area').innerHTML = "<h1 style='color: var(--success);'>Ready for Takeoff!</h1><p style='font-size:1.2rem;'>You completed all 12 airport and customs questions! You've gained great confidence for your next travel experience.</p><button onclick='location.reload()'>Restart Practice</button>";
+}
+
+function narrateAnswer() { if (beginnerQuestions[currentIdx]) speak(beginnerQuestions[currentIdx].a); }
+</script>
+</body>
+</html>
