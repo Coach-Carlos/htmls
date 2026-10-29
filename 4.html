@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyEnglishEducation - Speech Development (Part 4)</title>
+    <style>
+        :root {
+            --bg-dark-blue: #0a192f;
+            --bg-dark-green: #0d3b2e;
+            --card-bg: #112240;
+            --text-light-green: #64ffda;
+            --text-yellow: #ffd700;
+            --text-white: #ffffff;
+            --confidence-high: #00ff88;  
+            --confidence-med: #ffd700;   
+            --confidence-low: #ff5555;   
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark-blue);
+            color: var(--text-white);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--bg-dark-green);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--text-light-green);
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.2);
+            padding-bottom: 15px;
+        }
+
+        .brand-name {
+            color: var(--text-light-green);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        h1 {
+            color: var(--text-yellow);
+            margin: 0 0 10px 0;
+            font-size: 2rem;
+        }
+
+        p.subtitle {
+            color: var(--text-light-green);
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .settings-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(100, 255, 218, 0.3);
+        }
+
+        .settings-bar label {
+            color: var(--text-yellow);
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .level-select {
+            background-color: var(--bg-dark-blue);
+            color: var(--text-light-green);
+            border: 1px solid var(--text-light-green);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .question-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            color: var(--text-white);
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .btn {
+            background-color: var(--text-light-green);
+            color: var(--bg-dark-blue);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-record {
+            background-color: var(--text-yellow);
+            color: #000;
+        }
+
+        .btn-record.recording {
+            background-color: #ff4d4d;
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 77, 77, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .transcript-title, .feedback-title {
+            color: var(--text-yellow);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .transcript-box {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--text-light-green);
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 60px;
+            font-size: 1.2rem;
+            line-height: 1.5;
+        }
+
+        .interim-text {
+            color: #888;
+            font-style: italic;
+        }
+
+        .feedback-box {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-left: 5px solid var(--text-light-green);
+            border-radius: 8px;
+            padding: 15px;
+            color: var(--text-white);
+            line-height: 1.6;
+        }
+
+        .confidence-indicator {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            margin-left: 10px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--text-light-green);
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .word-high { color: var(--confidence-high); font-weight: bold; }
+        .word-med { color: var(--confidence-med); font-weight: bold; }
+        .word-low { color: var(--confidence-low); font-weight: bold; text-decoration: underline #ff5555; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="brand-name">EasyEnglishEducation</div>
+        <h1>Speech Development</h1>
+        <p class="subtitle">Activity 4: Preferences, Routines & Opinions</p>
+    </header>
+
+    <!-- Strictness Selector Control -->
+    <div class="settings-bar">
+        <label for="cefr-level">Evaluation Level (CEFR):</label>
+        <select id="cefr-level" class="level-select" onchange="updateLevelTarget()">
+            <option value="A1" selected>A1 - Beginner (Encouraging & Basic)</option>
+            <option value="A2">A2 - Elementary (Standard)</option>
+            <option value="B1">B1 - Intermediate (Moderate Precision)</option>
+            <option value="B2">B2 - Upper-Intermediate (Strict)</option>
+            <option value="C1">C1 - Advanced (High Accuracy)</option>
+        </select>
+    </div>
+
+    <!-- Question Box -->
+    <div class="card">
+        <div class="question-box">
+            <div>
+                <span style="color: var(--text-light-green); font-size: 0.9rem;">Question <span id="q-num">31</span> of <span id="q-total">42</span></span>
+                <p class="question-text" id="question-display">Would you rather live in a big city or small town? Why?</p>
+            </div>
+            <button class="btn" id="listen-btn" onclick="playQuestionAudio()">
+                🔊 Listen Question
+            </button>
+        </div>
+        <div class="controls">
+            <button class="btn btn-record" id="record-btn" onclick="toggleRecording()">
+                🎤 Start Speaking
+            </button>
+            <span id="status-text" style="color: var(--text-light-green); font-style: italic;">Ready</span>
+        </div>
+    </div>
+
+    <!-- Live Voice Transcript -->
+    <div class="card">
+        <div class="transcript-title">
+            Your Voice Transcript:
+            <span id="confidence-badge" class="confidence-indicator" style="display:none;"></span>
+        </div>
+        <div class="transcript-box" id="transcript-display">
+            Click "Start Speaking" and state your answer clearly...
+        </div>
+    </div>
+
+    <!-- Teacher Coaching & Feedback -->
+    <div class="card">
+        <div class="feedback-title">Teacher & Psychologist Coaching:</div>
+        <div class="feedback-box" id="feedback-display">
+            I'm listening! Speak up whenever you're ready. Take your time—pauses and small mistakes are a completely normal part of learning!
+        </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="nav-buttons">
+        <button class="btn" id="prev-btn" onclick="navigateQuestion(-1)" disabled>Previous</button>
+        <button class="btn" id="next-btn" onclick="navigateQuestion(1)">Next Question</button>
+    </div>
+</div>
+
+<footer>
+    © Developed for educational excellence By Coach Carlos O
+</footer>
+
+<script>
+    const questionsData = [
+        {
+            q: "Would you rather live in a big city or small town? Why?",
+            keywords: ["rather", "live", "big", "city", "small", "town", "because", "quiet", "opportunities", "jobs", "prefer"],
+            targetLength: 5
+        },
+        {
+            q: "What kind of weather do you like the most? why?",
+            keywords: ["like", "weather", "sunny", "rainy", "warm", "cold", "most", "because", "outside", "beach", "prefer"],
+            targetLength: 4
+        },
+        {
+            q: "What are some of the things you would change about school?",
+            keywords: ["change", "school", "add", "more", "sports", "homework", "classes", "breaks", "time", "food", "would"],
+            targetLength: 4
+        },
+        {
+            q: "What do you normally have for breakfast?",
+            keywords: ["normally", "have", "breakfast", "eggs", "toast", "coffee", "cereal", "fruit", "juice", "milk", "eat"],
+            targetLength: 4
+        },
+        {
+            q: "Which is your favorite place at home?",
+            keywords: ["favorite", "place", "home", "bedroom", "living", "room", "kitchen", "balcony", "comfortable", "quiet", "my"],
+            targetLength: 4
+        },
+        {
+            q: "How are your weekdays different from weekends and holidays?",
+            keywords: ["weekdays", "weekends", "holidays", "study", "work", "relax", "sleep", "friends", "different", "play"],
+            targetLength: 5
+        },
+        {
+            q: "How do you get to school?",
+            keywords: ["get", "school", "by", "bus", "car", "walk", "bike", "take", "drive", "ride", "go"],
+            targetLength: 3
+        },
+        {
+            q: "Have you or someone in your family ever had an accident? Tell me about it.",
+            keywords: ["accident", "family", "fell", "bike", "car", "arm", "hospital", "hurt", "last", "year", "happened"],
+            targetLength: 5
+        },
+        {
+            q: "What are you particularly good at?",
+            keywords: ["good", "at", "playing", "sports", "soccer", "drawing", "cooking", "music", "math", "english", "particularly"],
+            targetLength: 4
+        },
+        {
+            q: "Do you like the traditional music of your country?",
+            keywords: ["like", "traditional", "music", "country", "culture", "history", "instruments", "songs", "dance", "love"],
+            targetLength: 4
+        },
+        {
+            q: "What is a humorous TV show you like to watch?",
+            keywords: ["humorous", "comedy", "show", "watch", "funny", "laugh", "episodes", "series", "like", "tv"],
+            targetLength: 4
+        },
+        {
+            q: "What book stimulates your mind?",
+            keywords: ["book", "stimulates", "mind", "novel", "reading", "think", "mystery", "history", "science", "story"],
+            targetLength: 4
+        }
+    ];
+
+    const strictnessLevels = {
+        'A1': { targetAccuracy: 40, penaltyWeight: 0.5 },
+        'A2': { targetAccuracy: 55, penaltyWeight: 0.8 },
+        'B1': { targetAccuracy: 70, penaltyWeight: 1.0 },
+        'B2': { targetAccuracy: 82, penaltyWeight: 1.2 },
+        'C1': { targetAccuracy: 90, penaltyWeight: 1.5 }
+    };
+
+    let currentIdx = 0;
+    let isRecording = false;
+    let recognition = null;
+    let finalTranscript = '';
+    let silenceTimer = null;
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    function cleanString(str) {
+        return str.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ").trim();
+    }
+
+    function initRecognition() {
+        if (!SpeechRecognition) return null;
+        const instance = new SpeechRecognition();
+        
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        instance.continuous = !isMobile; 
+        instance.interimResults = true; 
+        instance.lang = 'en-US';
+
+        instance.onstart = function() {
+            document.getElementById('status-text').innerText = "Listening...";
+        };
+
+        instance.onresult = function(event) {
+            let interimTranscript = '';
+            
+            // Rebuild final transcript strictly from event payload to prevent repeating
+            finalTranscript = '';
+            for (let i = 0; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript + ' ';
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
+            }
+
+            const transcriptEl = document.getElementById('transcript-display');
+            transcriptEl.innerHTML = finalTranscript + `<span class="interim-text">${interimTranscript}</span>`;
+
+            clearTimeout(silenceTimer);
+            silenceTimer = setTimeout(() => {
+                if (isRecording) {
+                    stopRecording();
+                }
+            }, 6500);
+
+            if (finalTranscript.trim().length > 0) {
+                evaluateSpeechFreeAnswer(finalTranscript.trim());
+            }
+        };
+
+        instance.onerror = function(event) {
+            if (event.error !== 'no-speech') {
+                document.getElementById('status-text').innerText = "Notice: " + event.error;
+            }
+            stopRecordingUI();
+        };
+
+        instance.onend = function() {
+            if (isRecording) {
+                try {
+                    instance.start();
+                } catch(e) {
+                    stopRecordingUI();
+                }
+            }
+        };
+
+        return instance;
+    }
+
+    recognition = initRecognition();
+
+    function speakText(text, rate) {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = rate || 0.9;
+        
+        const voices = window.speechSynthesis.getVoices();
+        const maleVoice = voices.find(v => v.lang.includes('en') && 
+            (v.name.includes('Male') || v.name.includes('David') || v.name.includes('George') || v.name.includes('Natural US')));
+        
+        if (maleVoice) utterance.voice = maleVoice;
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function playQuestionAudio() {
+        speakText(questionsData[currentIdx].q, 0.9);
+    }
+
+    function toggleRecording() {
+        if (!SpeechRecognition) {
+            alert("Speech recognition is not fully supported in this browser. On mobile devices, please use Google Chrome (Android) or Safari (iOS).");
+            return;
+        }
+
+        if (!isRecording) {
+            finalTranscript = '';
+            document.getElementById('transcript-display').innerHTML = '<span class="interim-text">Listening... Take your time to express your answer.</span>';
+            
+            if (!recognition) {
+                recognition = initRecognition();
+            }
+
+            try {
+                isRecording = true;
+                document.getElementById('record-btn').classList.add('recording');
+                document.getElementById('record-btn').innerText = "⏹ Stop Recording";
+                recognition.start();
+            } catch (e) {
+                console.error("Recording start error:", e);
+                try {
+                    recognition.stop();
+                    setTimeout(() => recognition.start(), 100);
+                } catch(err) {
+                    stopRecordingUI();
+                }
+            }
+        } else {
+            stopRecording();
+        }
+    }
+
+    function stopRecording() {
+        isRecording = false;
+        if (recognition) {
+            try { recognition.stop(); } catch(e){}
+        }
+        stopRecordingUI();
+    }
+
+    function stopRecordingUI() {
+        isRecording = false;
+        clearTimeout(silenceTimer);
+        document.getElementById('record-btn').classList.remove('recording');
+        document.getElementById('record-btn').innerText = "🎤 Start Speaking";
+        document.getElementById('status-text').innerText = "Done!";
+    }
+
+    function evaluateSpeechFreeAnswer(transcript) {
+        const level = document.getElementById('cefr-level').value;
+        const config = strictnessLevels[level];
+        const currentData = questionsData[currentIdx];
+
+        const cleanTranscript = cleanString(transcript);
+        const words = cleanTranscript.split(' ').filter(w => w.length > 0);
+
+        let keywordMatches = 0;
+        let wordMarkup = [];
+
+        words.forEach(word => {
+            if (currentData.keywords.includes(word)) {
+                keywordMatches++;
+                wordMarkup.push(`<span class="word-high">${word}</span>`);
+            } else if (word.length <= 2) {
+                wordMarkup.push(`<span class="word-med">${word}</span>`);
+            } else {
+                wordMarkup.push(`<span class="word-low">${word}</span>`);
+            }
+        });
+
+        // Dynamic Score Calculation for Free Answer
+        const lengthScore = Math.min(100, (words.length / currentData.targetLength) * 50);
+        const relevanceScore = Math.min(100, (keywordMatches / Math.max(1, currentData.keywords.length)) * 100);
+        
+        let totalScore = Math.round((lengthScore * 0.5) + (relevanceScore * 0.5));
+        totalScore = Math.max(15, Math.min(100, totalScore));
+
+        document.getElementById('transcript-display').innerHTML = wordMarkup.join(' ');
+
+        const badge = document.getElementById('confidence-badge');
+        let badgeBg = '#00ff88';
+        let badgeColor = '#000';
+
+        if (totalScore < config.targetAccuracy - 15) {
+            badgeBg = '#ff5555';
+            badgeColor = '#fff';
+        } else if (totalScore < config.targetAccuracy) {
+            badgeBg = '#ffd700';
+            badgeColor = '#000';
+        }
+
+        badge.style.display = 'inline-block';
+        badge.style.backgroundColor = badgeBg;
+        badge.style.color = badgeColor;
+        badge.innerText = `${totalScore}% Clarity (${level})`;
+
+        generateKindPedagogicalFeedback(totalScore, level, config.targetAccuracy);
+    }
+
+    function generateKindPedagogicalFeedback(score, level, target) {
+        const feedbackEl = document.getElementById('feedback-display');
+        let message = "";
+
+        if (score >= target) {
+            message = `<strong>Fantastic effort! 🌟 (${level} Level Achieved)</strong><br>Your answer was clear, relevant, and well-expressed. You are building wonderful spoken confidence!`;
+        } else if (score >= target - 20) {
+            message = `<strong>Great attempt! 👍 (${level} Level)</strong><br>I could understand your message clearly! Try adding a few more details to your sentence to make your speech sound even richer.`;
+        } else {
+            message = `<strong>Good try! 💪 Keep going! (${level} Level)</strong><br>Expressing yourself in your own words takes courage. Don't worry about pauses or mistakes—take a deep breath and speak out your ideas!`;
+        }
+
+        feedbackEl.innerHTML = message;
+    }
+
+    function updateLevelTarget() {
+        if (finalTranscript.trim().length > 0) {
+            evaluateSpeechFreeAnswer(finalTranscript.trim());
+        }
+    }
+
+    function updateQuestionUI() {
+        const currentData = questionsData[currentIdx];
+        document.getElementById('q-num').innerText = currentIdx + 31;
+        document.getElementById('q-total').innerText = 42;
+        document.getElementById('question-display').innerText = currentData.q;
+        document.getElementById('transcript-display').innerText = 'Click "Start Speaking" and state your answer clearly...';
+        document.getElementById('feedback-display').innerText = "I'm listening! Speak up whenever you're ready. Take a deep breath and express yourself in your own words!";
+        document.getElementById('confidence-badge').style.display = 'none';
+        document.getElementById('status-text').innerText = "Ready";
+
+        document.getElementById('prev-btn').disabled = (currentIdx === 0);
+        document.getElementById('next-btn').disabled = (currentIdx === questionsData.length - 1);
+    }
+
+    function navigateQuestion(direction) {
+        if (isRecording) {
+            stopRecording();
+        }
+
+        currentIdx += direction;
+        if (currentIdx < 0) currentIdx = 0;
+        if (currentIdx >= questionsData.length) currentIdx = questionsData.length - 1;
+
+        updateQuestionUI();
+    }
+
+    updateQuestionUI();
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = () => {}; 
+    }
+</script>
+
+</body>
+</html>
