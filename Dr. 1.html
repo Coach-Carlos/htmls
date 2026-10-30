@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Clinical Sandbox: Medical Consultation Simulation</title>
+    <style>
+        :root {
+            --bg-slate: #150c1e;
+            --card-blue: #24142c;
+            --accent-teal: #f97316;
+            --accent-soft-green: #ef4444;
+            --accent-highlight: #a855f7;
+            --accent-success: #10b981;
+            --text-light: #faf5ff;
+            --text-muted: #c084fc;
+            --border-glow: #4a2060;
+            --warning: #fbbf24;
+            --error-red: #f87171;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-slate);
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.15) 0%, transparent 50%), 
+                              radial-gradient(circle at 20% 80%, rgba(249, 115, 22, 0.1) 0%, transparent 50%);
+            -webkit-tap-highlight-color: transparent;
+        }
+        header {
+            background-color: rgba(36, 20, 44, 0.5);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-glow);
+            padding: 15px 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-light);
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+        }
+        @media (min-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+        }
+        header p {
+            margin: 6px 0 0 0;
+            color: var(--accent-teal);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        main {
+            max-width: 850px;
+            width: 95%;
+            margin: 20px auto;
+            background-color: var(--card-blue);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(74, 32, 96, 0.3);
+            border: 1px solid var(--border-glow);
+            padding: 20px;
+            box-sizing: border-box;
+            flex: 1;
+        }
+        .progress-tracker {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-glow);
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .step-indicator {
+            display: flex;
+            gap: 8px;
+        }
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--border-glow);
+            transition: all 0.3s ease;
+        }
+        .step-dot.active {
+            background-color: var(--accent-highlight);
+            box-shadow: 0 0 8px var(--accent-highlight);
+        }
+        .step-dot.completed {
+            background-color: var(--accent-success);
+        }
+        .character-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--accent-soft-green), var(--accent-teal));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--text-light);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+            flex-shrink: 0;
+        }
+        .dialogue-bubble {
+            background-color: rgba(21, 12, 30, 0.7);
+            border-left: 4px solid var(--accent-teal);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        .interactive-zone {
+            border-top: 1px solid var(--border-glow);
+            padding-top: 20px;
+        }
+        .instructions {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            font-style: italic;
+            color: #e9d5ff;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .instructions strong {
+            color: var(--accent-highlight);
+            display: block;
+            margin-bottom: 5px;
+        }
+        .audio-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            background-color: transparent;
+            color: var(--text-light);
+            border: 2px solid var(--accent-teal);
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+            touch-action: manipulation;
+            flex: 1;
+            min-width: 140px;
+            max-width: 250px;
+        }
+        .btn:hover:not(:disabled), .btn:active:not(:disabled) {
+            background-color: var(--accent-teal);
+            color: var(--text-light);
+            box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
+            transform: scale(0.98);
+        }
+        .btn:disabled {
+            border-color: #4a2a56;
+            color: #6b437e;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .btn-speaker {
+            background-color: rgba(249, 115, 22, 0.08);
+            border-color: var(--accent-highlight);
+        }
+        .btn-speaker:hover:not(:disabled), .btn-speaker:active:not(:disabled) {
+            background-color: var(--accent-highlight);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+        }
+        .btn-record {
+            border-color: var(--accent-soft-green);
+            color: var(--text-light);
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+        .btn-record:hover:not(:disabled), .btn-record:active:not(:disabled) {
+            background-color: var(--accent-soft-green);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+        }
+        .btn-record.recording {
+            background-color: var(--accent-soft-green);
+            animation: pulse 1.4s infinite;
+        }
+        .status-message {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--warning);
+            min-height: 18px;
+            margin-bottom: 15px;
+            padding: 0 10px;
+        }
+        .transcription-box {
+            display: none;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px dashed var(--border-glow);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .transcription-heading {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+        .transcription-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            font-style: italic;
+            word-wrap: break-word;
+        }
+        .feedback-dashboard {
+            display: none;
+            background: linear-gradient(145deg, rgba(36, 20, 44, 0.9), rgba(21, 12, 30, 0.9));
+            border: 1px solid var(--accent-success);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease forwards;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.15);
+        }
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.3);
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .dashboard-header h3 {
+            margin: 0;
+            color: var(--accent-success);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+        }
+        .encouragement-stars {
+            color: #fbbf24;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+        .feedback-section {
+            margin-bottom: 15px;
+        }
+        .feedback-section h4 {
+            margin: 0 0 6px 0;
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+        .feedback-section p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #d8b4fe;
+            line-height: 1.5;
+        }
+        .coach-note {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--accent-success);
+            padding: 12px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 10px;
+            font-weight: 500;
+            color: #a7f3d0;
+            font-size: 0.9rem;
+        }
+        .suggested-phrasing {
+            background: rgba(168, 85, 247, 0.15);
+            border-left: 4px solid var(--accent-highlight);
+            padding: 10px 15px;
+            margin-top: 10px;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            font-size: 0.95rem;
+            color: #e9d5ff;
+        }
+        .vocab-list {
+            margin-top: 15px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .vocab-list h5 {
+            color: var(--accent-soft-green);
+            margin: 0 0 8px 0;
+            font-size: 0.9rem;
+        }
+        .vocab-list ul {
+            margin: 0;
+            padding-left: 20px;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        .navigation-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            border-top: 1px solid var(--border-glow);
+            padding-top: 20px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn-nav {
+            border-color: #6b437e;
+            color: #c084fc;
+        }
+        .btn-primary {
+            background-color: var(--accent-teal);
+            border-color: var(--accent-teal);
+            color: var(--text-light);
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+        }
+        footer {
+            margin-top: auto;
+            background-color: rgba(21, 12, 30, 0.8);
+            border-top: 1px solid var(--border-glow);
+            padding: 15px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #a855f7;
+            font-weight: 500;
+        }
+        .word-correction { color: #67e8f9; font-weight: bold; }
+        .word-error { color: #fca5a5; text-decoration: line-through; opacity: 0.7; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Clinical Sandbox</h1>
+        <p>Advanced Patient-Doctor Communication &bull; 4-Step Mastery</p>
+    </header>
+
+    <main>
+        <div class="progress-tracker">
+            <span style="font-weight:600;">Practitioner: <span style="color:var(--accent-teal)">Dr. Sterling</span></span>
+            <div class="step-indicator">
+                <div class="step-dot active" id="dot-1" title="Step 1: Symptoms"></div>
+                <div class="step-dot" id="dot-2" title="Step 2: Medical History"></div>
+                <div class="step-dot" id="dot-3" title="Step 3: Requests"></div>
+                <div class="step-dot" id="dot-4" title="Step 4: Closure"></div>
+            </div>
+            <span id="step-label" style="font-weight:600;">Step 1/4: Symptoms</span>
+        </div>
+
+        <div class="character-box">
+            <div class="avatar">DR</div>
+            <div>
+                <strong style="color: var(--accent-teal); font-size: 1.1rem;">Dr. Sterling</strong>
+                <div style="font-size: 0.75rem; color: var(--text-muted);" id="voiceEngineLabel">Initializing Mobile Voice Engine...</div>
+            </div>
+        </div>
+
+        <div class="audio-actions">
+            <button class="btn btn-speaker" id="playProposalBtn" onclick="playAgentVoice()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                Listen to Doctor
+            </button>
+            <button class="btn btn-nav" id="showTextBtn" onclick="revealAgentTextManual()">
+                👁 Show Script
+            </button>
+        </div>
+
+        <div class="dialogue-bubble" id="proposalText">
+            "Good afternoon. Please, have a seat. I see on your chart that you've been feeling under the weather lately. To help me pinpoint the issue, could you describe your primary symptoms? Specifically, how many days this has been going on, and whether you've been tracking a fever?"
+        </div>
+
+        <div class="interactive-zone">
+            <div class="instructions" id="taskInstructions">
+                <strong>Target 1 (Symptoms):</strong> Clearly state your symptoms (e.g., cough, sore throat). Mention how long you've felt sick, and specify if you have a fever. Be precise!
+            </div>
+
+            <div class="controls-container">
+                <div class="audio-actions">
+                    <button class="btn btn-record" id="recordBtn" onclick="toggleRecording()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
+                        <span id="recordText">Record Reply</span>
+                    </button>
+                    <button class="btn" id="playBtn" disabled onclick="playbackUserVoice()">
+                        ▶️ Play My Voice
+                    </button>
+                    <button class="btn" id="analyzeBtn" disabled style="border-color: var(--accent-success); color: var(--accent-success);" onclick="runPedagogicalEvaluation()">
+                        🔬 Coach's Analysis
+                    </button>
+                </div>
+
+                <div class="status-message" id="statusMessage">Awaiting interaction... Tap 'Listen to Doctor' or 'Show Script'.</div>
+
+                <div class="transcription-box" id="transcriptionBox">
+                    <div class="transcription-heading">🎙️ Live Patient Speech Transcription</div>
+                    <div class="transcription-text" id="transcribedText">Your spoken words will appear here...</div>
+                </div>
+
+                <div class="feedback-dashboard" id="feedbackDashboard">
+                    <div class="dashboard-header">
+                        <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Pedagogical Feedback</h3>
+                        <span class="encouragement-stars" id="starRating">⭐⭐⭐</span>
+                    </div>
+                    
+                    <div class="coach-note" id="coachEncouragement">
+                        Great start! Let's review how you handled that interaction.
+                    </div>
+
+                    <div class="feedback-section" style="margin-top: 15px;">
+                        <h4>🎯 Communication Goals</h4>
+                        <p id="metricFeedback">Evaluating your clarity and completeness...</p>
+                    </div>
+                    
+                    <div class="feedback-section">
+                        <h4>📖 Vocabulary & Register Polish</h4>
+                        <p id="vocabularyFeedback">Checking for professional medical phrasing...</p>
+                        <div class="suggested-phrasing" id="suggestedAlternative">...</div>
+                        
+                        <div id="vocabListContainer"></div>
+                    </div>
+                </div>
+
+                <div class="navigation-actions">
+                    <button class="btn btn-nav" onclick="resetTurnState()">⏮ Restart Step</button>
+                    <button class="btn btn-primary" id="submitBtn" disabled onclick="advanceSimulationTurn()">
+                        Continue to Next Step 
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        © Developed for Educational Excellence | Multi-Platform Audio Enabled
+    </footer>
+
+    <script>
+        // App State
+        let isRecording = false;
+        let speechPlayed = false;
+        let textManuallyRevealed = false;
+        let analysisExecuted = false;
+        let simulationTurnIndex = 1;
+        
+        // Media Variables
+        let recognition = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let audioUrl = null;
+        let userAudioElement = new Audio();
+        let hardwareStream = null;
+
+        // Dialogue Engine
+        const dialogueDataTree = {
+            1: {
+                speakerPrompt: "Good afternoon. Please, have a seat. I see on your chart that you've been feeling under the weather lately. To help me pinpoint the issue, could you describe your primary symptoms? Specifically, how many days this has been going on, and whether you've been tracking a fever?",
+                taskPrompt: "<strong>Target 1 (Symptoms):</strong> Clearly state your symptoms (e.g., cough, sore throat). Mention how long you've felt sick, and specify if you have a fever. Be precise!"
+            },
+            2: {
+                speakerPrompt: "Thank you for detailing that. Based on your symptoms, this points toward a standard viral upper respiratory infection. Before we proceed with a treatment plan, are you allergic to any medications? Also, do you have school classes or a work shift you need to attend today?",
+                taskPrompt: "<strong>Target 2 (History & Schedule):</strong> State clearly whether or not you have any medication allergies (e.g., Penicillin, or none). Then, answer the question about your class or work schedule today."
+            },
+            3: {
+                speakerPrompt: "Noted. I will make sure your prescription avoids any issues. Since you mentioned you have obligations today, I advise against attending while you are contagious. Do you need a formal medical excuse note for your absence?",
+                taskPrompt: "<strong>Target 3 (Making a Request):</strong> Politely request a medical excuse note. Use a formal structure like 'Could I please have a note for [X] days?' rather than just saying 'Yeah, I need one'."
+            },
+            4: {
+                speakerPrompt: "I completely understand. I have printed your medical excuse note and sent your prescription to the pharmacy downstairs. Please prioritize bed rest, increase your daily fluids, and call the clinic if your condition worsens. Feel better soon!",
+                taskPrompt: "<strong>Target 4 (Closure):</strong> Express your gratitude to the doctor for their help, acknowledge their instructions, and politely say goodbye to conclude the appointment."
+            }
+        };
+
+        // --- MOBILE SAFE SPEECH RECOGNITION (LAZY INIT) ---
+        function getSpeechRecognitionInstance() {
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRec) {
+                console.warn("Speech Recognition API not natively supported on this browser.");
+                return null;
+            }
+
+            if (!recognition) {
+                recognition = new SpeechRec();
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                recognition.continuous = !isMobile;
+                recognition.interimResults = true;
+                recognition.lang = 'en-US';
+
+                recognition.onresult = (event) => {
+                    let textAccumulator = "";
+                    for (let i = 0; i < event.results.length; ++i) {
+                        textAccumulator += event.results[i][0].transcript;
+                    }
+                    if(textAccumulator.trim() !== "") {
+                        document.getElementById('transcribedText').innerText = textAccumulator;
+                    }
+                };
+                
+                recognition.onerror = (event) => {
+                    console.error("Speech Recognition Error:", event.error);
+                }
+            }
+            return recognition;
+        }
+
+        // --- MOBILE SAFE MEDIA RECORDER MIME TYPES ---
+        function getSupportedMimeType() {
+            const types = ['audio/mp4', 'audio/aac', 'audio/webm;codecs=opus', 'audio/webm'];
+            for (const type of types) {
+                if (typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported(type)) {
+                    return type;
+                }
+            }
+            return ''; 
+        }
+
+        // Initialize voices explicitly when they load (critical for Safari/Chrome)
+        window.addEventListener('DOMContentLoaded', () => {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.onvoiceschanged = () => {
+                    window.speechSynthesis.getVoices();
+                    document.getElementById('voiceEngineLabel').innerText = "Dr. Sterling US Native Voice Ready";
+                };
+                window.speechSynthesis.getVoices();
+            }
+        });
+
+        function playAgentVoice() {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            
+            if(!textManuallyRevealed) {
+                document.getElementById('proposalText').style.display = 'none';
+            }
+            speechPlayed = false;
+
+            const textToSpeak = dialogueDataTree[simulationTurnIndex].speakerPrompt;
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            
+            // --- NATIVE AMERICAN ENGLISH VOICE SELECTION ---
+            utterance.lang = 'en-US'; 
+            
+            const voices = window.speechSynthesis.getVoices();
+            if (voices.length > 0) {
+                const doctorVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('David') || v.name.includes('Alex') || v.name.includes('Fred') || v.name.includes('Google US English'))) 
+                                 || voices.find(v => v.lang === 'en-US' && v.name.includes('Male'))
+                                 || voices.find(v => v.lang === 'en-US') 
+                                 || voices.find(v => v.lang.startsWith('en-'));
+                
+                if (doctorVoice) {
+                    utterance.voice = doctorVoice;
+                }
+            }
+            
+            utterance.rate = 0.92; 
+            utterance.pitch = 0.90; 
+
+            document.getElementById('statusMessage').innerText = "Dr. Sterling is speaking...";
+            document.getElementById('statusMessage').style.color = "var(--accent-teal)";
+
+            utterance.onend = () => {
+                document.getElementById('statusMessage').innerText = "Doctor finished. Tap 'Record Reply'.";
+                document.getElementById('statusMessage').style.color = "var(--text-light)";
+                speechPlayed = true;
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function revealAgentTextManual() {
+            textManuallyRevealed = true;
+            document.getElementById('proposalText').style.display = 'block';
+            document.getElementById('statusMessage').innerText = "Script revealed. Tap 'Record Reply' when ready.";
+        }
+
+        function toggleRecording() {
+            if (!speechPlayed && !textManuallyRevealed) {
+                alert("Please listen to the doctor or show the script first!");
+                return;
+            }
+
+            if (!hardwareStream) {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(stream => { 
+                        hardwareStream = stream; 
+                        startRecordingSequence(); 
+                    })
+                    .catch(err => alert("Microphone access is required to participate in the simulation."));
+            } else {
+                startRecordingSequence();
+            }
+        }
+
+        function startRecordingSequence() {
+            const recordBtn = document.getElementById('recordBtn');
+            const recInstance = getSpeechRecognitionInstance();
+            
+            if (!isRecording) {
+                isRecording = true;
+                audioChunks = [];
+                document.getElementById('transcribedText').innerText = "Listening...";
+                document.getElementById('transcriptionBox').style.display = "block";
+                recordBtn.classList.add('recording');
+                document.getElementById('recordText').innerText = "Stop Recording";
+                
+                if (recInstance) { 
+                    try { recInstance.start(); } catch(e){ console.warn(e); } 
+                }
+                
+                const mimeType = getSupportedMimeType();
+                const options = mimeType ? { mimeType } : {};
+                mediaRecorder = new MediaRecorder(hardwareStream, options);
+                
+                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+                mediaRecorder.onstop = () => {
+                    audioBlob = new Blob(audioChunks, { type: mimeType || 'audio/wav' });
+                    audioUrl = URL.createObjectURL(audioBlob);
+                    userAudioElement.src = audioUrl;
+                    
+                    // Allow 1.5 seconds for SpeechRecognition to finalize its result
+                    setTimeout(() => {
+                        let text = document.getElementById('transcribedText').innerText;
+                        
+                        // If no speech was picked up, alert the user rather than faking an answer
+                        if (text.includes("Listening...") || text.trim() === "") {
+                            if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+                                document.getElementById('transcribedText').innerText = "[Speech Recognition API is not supported on this browser. Try Chrome, Edge, or Safari on iOS.]";
+                            } else {
+                                document.getElementById('transcribedText').innerText = "[No speech detected. Please speak clearly into the microphone and try again.]";
+                            }
+                        }
+                        
+                        document.getElementById('playBtn').disabled = false;
+                        document.getElementById('analyzeBtn').disabled = false;
+                        document.getElementById('statusMessage').innerText = "Audio captured. Tap 'Coach's Analysis'.";
+                        document.getElementById('statusMessage').style.color = "var(--accent-success)";
+                    }, 1500); 
+                };
+                
+                mediaRecorder.start(1000); 
+            } else {
+                isRecording = false;
+                recordBtn.classList.remove('recording');
+                document.getElementById('recordText').innerText = "Re-Record";
+                
+                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                    mediaRecorder.stop();
+                }
+                if (recInstance) { 
+                    try { recInstance.stop(); } catch(e){} 
+                }
+            }
+        }
+
+        function playbackUserVoice() {
+            if (audioUrl) userAudioElement.play();
+        }
+
+        // --- PEDAGOGICAL ENGINE ---
+        function runPedagogicalEvaluation() {
+            const workingText = document.getElementById('transcribedText').innerText;
+            const lowerText = workingText.toLowerCase();
+            
+            // Abort evaluation if no speech was detected
+            if (lowerText.includes("[no speech detected") || lowerText.includes("[speech recognition api")) {
+                alert("Please record a valid response before analyzing.");
+                return;
+            }
+            
+            let encouragement = "";
+            let metricFbk = "";
+            let vocabFbk = "";
+            let suggestion = "";
+            let stars = "⭐⭐⭐";
+            let vocabListHtml = "";
+
+            switch(simulationTurnIndex) {
+                case 1:
+                    let hasSymptom = lowerText.includes('cough') || lowerText.includes('throat') || lowerText.includes('pain') || lowerText.includes('headache') || lowerText.includes('runny nose');
+                    let hasTime = lowerText.includes('day') || lowerText.includes('week');
+                    let hasFever = lowerText.includes('fever') || lowerText.includes('temperature');
+                    
+                    if(hasSymptom && hasTime && hasFever) {
+                        encouragement = "Fantastic work! 🎉 You successfully hit all three critical pieces of information.";
+                        metricFbk = "You perfectly described your symptom, provided a timeline, and clarified your fever status. This makes diagnosing you much easier!";
+                        stars = "⭐⭐⭐⭐⭐";
+                    } else {
+                        encouragement = "Great effort! You're on the right track. 💪";
+                        metricFbk = "You shared some great details. To be even more effective, always try to mention exactly **what hurts**, **for how long**, and **if you have a fever**.";
+                        stars = "⭐⭐⭐";
+                    }
+                    
+                    if (lowerText.includes('super bad') || lowerText.includes('hurts') || lowerText.includes('terrible')) {
+                        vocabFbk = "You used natural English, which is good! To elevate your **Medical Register**, try using words like 'persistent' instead of 'terrible', or 'sore' instead of 'hurts'.";
+                        suggestion = '"I have been experiencing a persistent cough and a sore throat for about 3 days, but I do not have a fever."';
+                    } else {
+                        vocabFbk = "Your vocabulary was clear and appropriate for a medical setting. Well done!";
+                        suggestion = '"I am experiencing a sore throat and cough. It started 3 days ago. I haven\'t had a fever."';
+                    }
+                    
+                    vocabListHtml = `
+                        <div class="vocab-list">
+                            <h5>🩺 Common "Bad Cold" Vocabulary:</h5>
+                            <ul>
+                                <li><strong>Runny nose / Congestion:</strong> "My nose is extremely congested."</li>
+                                <li><strong>Sore throat:</strong> "It hurts when I swallow."</li>
+                                <li><strong>Aches and pains:</strong> "My body feels achy."</li>
+                                <li><strong>Fatigue:</strong> "I feel extremely tired and drained."</li>
+                                <li><strong>Chills:</strong> "I've been shivering."</li>
+                            </ul>
+                        </div>
+                    `;
+                    break;
+                    
+                case 2:
+                    let hasAllergy = lowerText.includes('allerg') || lowerText.includes('no') || lowerText.includes('none');
+                    let hasClass = lowerText.includes('class') || lowerText.includes('school') || lowerText.includes('work');
+                    
+                    if(hasAllergy && hasClass) {
+                        encouragement = "Brilliant communication! 🌟 You are handling this consultation like a pro.";
+                        metricFbk = "You answered both of the doctor's specific questions seamlessly. Providing accurate allergy info is crucial for your safety.";
+                        stars = "⭐⭐⭐⭐⭐";
+                    } else {
+                        encouragement = "Good job keeping the conversation flowing! 👍";
+                        metricFbk = "Remember, when the doctor asks multiple questions (like allergies AND schedule), try to address both in your reply to keep things efficient.";
+                    }
+                    
+                    vocabFbk = "Your tone was great. When stating allergies, a highly professional phrase is 'I have no known allergies to medication.'";
+                    suggestion = '"I have no known drug allergies. And yes, I do have a class this afternoon that I need to attend."';
+                    break;
+
+                case 3:
+                    let isPolite = lowerText.includes('please') || lowerText.includes('could') || lowerText.includes('would') || lowerText.includes('may');
+                    let asksNote = lowerText.includes('note') || lowerText.includes('excuse') || lowerText.includes('certificate');
+                    
+                    if(isPolite && asksNote) {
+                        encouragement = "Excellent use of formal politeness! 🎩✨";
+                        metricFbk = "You requested the medical note perfectly. Politeness builds an excellent rapport with healthcare professionals.";
+                        stars = "⭐⭐⭐⭐⭐";
+                    } else {
+                        encouragement = "Way to advocate for your needs! 🗣️";
+                        metricFbk = "You made your needs known. To make it even better, wrap your request in a polite question structure rather than a direct statement.";
+                    }
+                    vocabFbk = "Instead of 'Yeah, give me a note', phrasing it as a polite inquiry shows high-level language mastery.";
+                    suggestion = '"Yes, please. Could you provide a medical excuse note for today and tomorrow so I can rest?"';
+                    break;
+
+                case 4:
+                    let gratitude = lowerText.includes('thank') || lowerText.includes('appreciate');
+                    let goodbye = lowerText.includes('bye') || lowerText.includes('good day');
+                    
+                    encouragement = "What a wonderful way to close the appointment! 🎊";
+                    metricFbk = "You successfully completed a full medical consultation! Acknowledging the doctor's instructions and expressing gratitude is the perfect conclusion.";
+                    stars = gratitude ? "⭐⭐⭐⭐⭐" : "⭐⭐⭐⭐";
+                    vocabFbk = "Your closing remarks were friendly. A highly polished conclusion might include a confirmation of the next steps.";
+                    suggestion = '"Thank you very much, Doctor. I appreciate your help. I will rest and take the medication. Goodbye!"';
+                    break;
+            }
+
+            document.getElementById('starRating').innerText = stars;
+            document.getElementById('coachEncouragement').innerText = encouragement;
+            document.getElementById('metricFeedback').innerHTML = metricFbk;
+            document.getElementById('vocabularyFeedback').innerHTML = vocabFbk;
+            document.getElementById('suggestedAlternative').innerText = suggestion;
+            document.getElementById('vocabListContainer').innerHTML = vocabListHtml;
+
+            document.getElementById('feedbackDashboard').style.display = "block";
+            document.getElementById('submitBtn').disabled = false;
+            
+            if(simulationTurnIndex === 4) {
+                document.getElementById('submitBtn').innerText = "Finish Scenario ✨";
+            }
+            
+            document.getElementById('feedbackDashboard').scrollIntoView({ behavior: 'smooth' });
+            analysisExecuted = true;
+        }
+
+        function advanceSimulationTurn() {
+            if(!analysisExecuted) return;
+            
+            if (simulationTurnIndex === 4) {
+                alert("🎉 Congratulations! You have successfully completed the Clinical Sandbox 4-Step Roleplay. You demonstrated great conversational skills and medical register awareness!");
+                resetTurnState();
+                return;
+            }
+
+            simulationTurnIndex++;
+            updateUIForTurn();
+        }
+
+        function updateUIForTurn() {
+            // Update dots
+            for(let i=1; i<=4; i++) {
+                let dot = document.getElementById('dot-'+i);
+                if (i < simulationTurnIndex) {
+                    dot.className = "step-dot completed";
+                } else if (i === simulationTurnIndex) {
+                    dot.className = "step-dot active";
+                } else {
+                    dot.className = "step-dot";
+                }
+            }
+            
+            const stepLabels = ["Symptoms", "Medical History", "Requests", "Closure"];
+            document.getElementById('step-label').innerText = `Step ${simulationTurnIndex}/4: ${stepLabels[simulationTurnIndex-1]}`;
+
+            speechPlayed = false;
+            textManuallyRevealed = false;
+            analysisExecuted = false;
+            audioChunks = [];
+            audioUrl = null;
+            document.getElementById('playBtn').disabled = true;
+            document.getElementById('analyzeBtn').disabled = true;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('feedbackDashboard').style.display = "none";
+            document.getElementById('transcriptionBox').style.display = "none";
+            document.getElementById('proposalText').style.display = "none";
+
+            const nextTurnData = dialogueDataTree[simulationTurnIndex];
+            document.getElementById('proposalText').innerText = `"${nextTurnData.speakerPrompt}"`;
+            document.getElementById('taskInstructions').innerHTML = nextTurnData.taskPrompt;
+            document.getElementById('statusMessage').innerText = `Step ${simulationTurnIndex} active. Tap 'Listen to Doctor'.`;
+            document.getElementById('statusMessage').style.color = "var(--warning)";
+            document.getElementById('submitBtn').innerHTML = 'Continue to Next Step <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+        }
+
+        function resetTurnState() {
+            window.speechSynthesis.cancel();
+            isRecording = false;
+            simulationTurnIndex = 1;
+            updateUIForTurn();
+        }
+    </script>
+</body>
+</html>
