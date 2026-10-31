@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Present Continuous Speech & Grammar Lab</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Smooth scale animation for active recording */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        .pulse-recording {
+            animation: pulse-ring 1.5s infinite ease-in-out;
+        }
+
+        /* Glassmorphism containers */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- TOP HEADER -->
+    <header class="w-full bg-slate-900/80 border-b border-white/10 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-indigo-500 to-purple-500 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-microphone-lines text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg sm:text-xl text-white tracking-wide">Present Continuous Lab</h1>
+                    <p class="text-xs text-indigo-400 font-semibold">By coach Carlos O.</p>
+                </div>
+            </div>
+
+            <!-- Total Score Indicator -->
+            <div class="flex items-center space-x-2 bg-slate-800/80 border border-slate-700 px-3 py-1.5 rounded-full shadow-inner">
+                <i class="fa-solid fa-trophy text-amber-400 text-sm"></i>
+                <span class="text-xs text-slate-300 font-medium">Score:</span>
+                <span id="score-display" class="text-sm font-bold text-amber-400">0 pts</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-4xl w-full mx-auto px-4 py-6 flex-grow flex flex-col justify-center">
+        
+        <!-- SECTION TABS NAVIGATION -->
+        <nav class="grid grid-cols-3 gap-2 mb-6">
+            <button onclick="switchSection(1)" id="tab-sec-1" class="tab-btn px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
+                <i class="fa-solid fa-circle-check mr-1.5"></i> 1. Affirmative
+            </button>
+            <button onclick="switchSection(2)" id="tab-sec-2" class="tab-btn px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white">
+                <i class="fa-solid fa-circle-minus mr-1.5"></i> 2. Negative
+            </button>
+            <button onclick="switchSection(3)" id="tab-sec-3" class="tab-btn px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white">
+                <i class="fa-solid fa-circle-question mr-1.5"></i> 3. Questions
+            </button>
+        </nav>
+
+        <!-- ACTIVITY DISPLAY CARD -->
+        <div class="glass-panel rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+            
+            <!-- Section Header Info -->
+            <div class="mb-6 pb-4 border-b border-slate-700/60 flex items-start justify-between">
+                <div>
+                    <span id="section-badge" class="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-wider">Section 1</span>
+                    <h2 id="section-title" class="text-xl sm:text-2xl font-bold text-white mt-2">Listen & Practice Speaking</h2>
+                    <p id="grammar-rule" class="text-xs sm:text-sm text-slate-400 mt-1">Structure: Subject + am/is/are + verb-ing.</p>
+                </div>
+                <div class="text-right">
+                    <span id="item-counter" class="text-xs font-bold text-slate-400 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">Item 1 of 3</span>
+                </div>
+            </div>
+
+            <!-- Interactive Area Container -->
+            <div class="space-y-6">
+
+                <!-- Sentence Display Card -->
+                <div class="glass-card rounded-xl p-5 sm:p-6 text-center relative flex flex-col items-center justify-center min-h-[140px]">
+                    <p id="prompt-instruction" class="text-xs uppercase tracking-widest text-indigo-400 font-bold mb-2">Target Sentence</p>
+                    <h3 id="target-phrase-display" class="text-xl sm:text-2xl font-extrabold text-white tracking-wide leading-relaxed">
+                        Jenny is working in the office.
+                    </h3>
+                    
+                    <!-- Audio TTS Trigger Button -->
+                    <button onclick="speakTargetPhrase()" class="mt-4 inline-flex items-center space-x-2 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer">
+                        <i class="fa-solid fa-volume-high text-sm"></i>
+                        <span>Listen Model Speech</span>
+                    </button>
+                </div>
+
+                <!-- Unscramble Word Bank Area (Section 3 Only) -->
+                <div id="unscramble-container" class="hidden glass-card rounded-xl p-4">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Tap words in correct order:</p>
+                    <!-- Target Drop/Answer Zone -->
+                    <div id="word-answer-zone" class="min-h-[48px] bg-slate-900/80 rounded-lg border border-indigo-500/30 p-2 flex flex-wrap gap-2 items-center justify-center mb-3">
+                        <span class="text-xs text-slate-500 italic" id="unscramble-placeholder">Construct the question here...</span>
+                    </div>
+                    <!-- Word Bank Options -->
+                    <div id="word-bank-zone" class="flex flex-wrap gap-2 justify-center">
+                        <!-- Dynamic Word Chips populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Voice Recording Interaction Area -->
+                <div class="flex flex-col items-center justify-center space-y-4 pt-2">
+                    
+                    <!-- Mic Recording Button -->
+                    <div class="relative">
+                        <div id="recording-pulse" class="absolute inset-0 rounded-full bg-rose-500 hidden pulse-recording"></div>
+                        <button id="mic-btn" onclick="toggleSpeechRecognition()" class="relative z-10 w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-xl shadow-indigo-600/40 flex items-center justify-center transition-all duration-300 transform active:scale-95 focus:outline-none">
+                            <i id="mic-icon" class="fa-solid fa-microphone text-2xl"></i>
+                        </button>
+                    </div>
+
+                    <p id="mic-status text-center" class="text-xs sm:text-sm font-medium text-slate-400">
+                        Tap the microphone and speak the sentence standardly.
+                    </p>
+                </div>
+
+                <!-- FEEDBACK & SCORING RESULTS CARD -->
+                <div id="feedback-card" class="hidden rounded-xl p-4 border transition-all duration-300 glass-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Speech Analysis</span>
+                        <span id="badge-score" class="px-2.5 py-0.5 rounded-full text-xs font-bold">0% Match</span>
+                    </div>
+                    <div class="space-y-1 text-sm">
+                        <p class="text-slate-400 text-xs">Target: <span id="feedback-target-text" class="text-slate-200 font-medium">--</span></p>
+                        <p class="text-slate-400 text-xs">Detected Speech: <span id="feedback-user-text" class="text-indigo-300 font-medium italic">"--"</span></p>
+                    </div>
+                    <div id="feedback-message" class="mt-3 text-xs sm:text-sm pt-2 border-t border-slate-700/50">
+                        <!-- Calibrated evaluation text inserted here -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- CONTROLS & NAVIGATION -->
+            <div class="mt-8 pt-4 border-t border-slate-700/60 flex items-center justify-between">
+                <button onclick="previousItem()" id="prev-btn" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs sm:text-sm font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center space-x-1.5">
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                    <span>Previous</span>
+                </button>
+
+                <button onclick="nextItem()" id="next-btn" class="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-indigo-600/30 transition-all flex items-center space-x-1.5">
+                    <span>Next Sentence</span>
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER WITH MANDATORY SOP BRANDING -->
+    <footer class="w-full text-center py-4 text-xs text-slate-400 border-t border-white/10 bg-slate-900/50">
+        <p>© Developed for educational excellence By Coach Carlos O</p>
+    </footer>
+
+    <!-- INTERACTIVE LOGIC & ENGINE SCRIPT -->
+    <script>
+        /* --- CURRICULUM DATA MODEL --- */
+        const curriculumData = {
+            1: {
+                badge: "Section 1",
+                title: "Affirmative Sentences",
+                rule: "Meaning: Something is happening now. (Subject + am/is/are + verb-ing)",
+                items: [
+                    { target: "Jenny is working in the office.", prompt: "Repeat the affirmative sentence:" },
+                    { target: "Rob is wearing a blue shirt.", prompt: "Repeat the affirmative sentence:" },
+                    { target: "They are waiting for Eddie.", prompt: "Repeat the affirmative sentence:" }
+                ]
+            },
+            2: {
+                badge: "Section 2",
+                title: "Negative Sentences",
+                rule: "Meaning: Something is NOT happening now. (Subject + am/is/are + not + verb-ing)",
+                items: [
+                    { 
+                        target: "Jenny is not working in the office.", 
+                        prompt: "Convert into negative sentence (Jenny is working in the office.):",
+                        altTargets: ["Jenny isn't working in the office.", "Jenny is not working in the office"]
+                    },
+                    { 
+                        target: "Rob is not wearing a blue shirt.", 
+                        prompt: "Convert into negative sentence (Rob is wearing a blue shirt.):",
+                        altTargets: ["Rob isn't wearing a blue shirt.", "Rob is not wearing a blue shirt"]
+                    },
+                    { 
+                        target: "They are not waiting for Eddie.", 
+                        prompt: "Convert into negative sentence (They are waiting for Eddie.):",
+                        altTargets: ["They aren't waiting for Eddie.", "They are not waiting for Eddie"]
+                    }
+                ]
+            },
+            3: {
+                badge: "Section 3",
+                title: "Questions (Interrogative)",
+                rule: "Meaning: Ask what someone is doing. (Am/Is/Are + subject + verb-ing?)",
+                items: [
+                    { 
+                        target: "What are you doing?", 
+                        prompt: "Unscramble the question & speak it out:",
+                        words: ["doing", "are", "what", "you", "?"]
+                    },
+                    { 
+                        target: "Is Rob buying a shirt?", 
+                        prompt: "Unscramble the question & speak it out:",
+                        words: ["Rob", "buying", "is", "a shirt", "?"]
+                    },
+                    { 
+                        target: "Is Jenny waiting for Eddie?", 
+                        prompt: "Unscramble the question & speak it out:",
+                        words: ["waiting", "Jenny", "is", "for Eddie", "?"]
+                    }
+                ]
+            }
+        };
+
+        // State variables
+        let currentSection = 1;
+        let currentIndex = 0;
+        let totalScore = 0;
+        let isRecording = false;
+        let recognition = null;
+        let currentUnscrambleOrder = [];
+
+        /* --- INITIALIZATION --- */
+        window.onload = function() {
+            initSpeechRecognition();
+            loadCurrentItem();
+        };
+
+        /* --- UI & TAB NAVIGATION --- */
+        function switchSection(secId) {
+            currentSection = secId;
+            currentIndex = 0;
+
+            // Reset tab button states
+            [1, 2, 3].forEach(id => {
+                const tab = document.getElementById(`tab-sec-${id}`);
+                if (id === secId) {
+                    tab.className = "tab-btn px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30";
+                } else {
+                    tab.className = "tab-btn px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white";
+                }
+            });
+
+            loadCurrentItem();
+        }
+
+        function loadCurrentItem() {
+            const secData = curriculumData[currentSection];
+            const item = secData.items[currentIndex];
+
+            // Update Headers
+            document.getElementById("section-badge").innerText = secData.badge;
+            document.getElementById("section-title").innerText = secData.title;
+            document.getElementById("grammar-rule").innerText = secData.rule;
+            document.getElementById("item-counter").innerText = `Item ${currentIndex + 1} of ${secData.items.length}`;
+
+            // Update Prompts
+            document.getElementById("prompt-instruction").innerText = item.prompt;
+            document.getElementById("target-phrase-display").innerText = item.target;
+
+            // Handle Navigation Buttons
+            document.getElementById("prev-btn").disabled = (currentIndex === 0 && currentSection === 1);
+
+            // Hide Feedback Card on new item
+            document.getElementById("feedback-card").classList.add("hidden");
+
+            // Setup Section 3 Unscramble container if applicable
+            const unscrambleContainer = document.getElementById("unscramble-container");
+            if (currentSection === 3 && item.words) {
+                unscrambleContainer.classList.remove("hidden");
+                renderUnscrambleWords(item.words);
+            } else {
+                unscrambleContainer.classList.add("hidden");
+            }
+        }
+
+        function nextItem() {
+            const secData = curriculumData[currentSection];
+            if (currentIndex < secData.items.length - 1) {
+                currentIndex++;
+                loadCurrentItem();
+            } else if (currentSection < 3) {
+                switchSection(currentSection + 1);
+            } else {
+                // Completed all
+                alert("🎉 Congratulations! You have completed all Present Continuous activities!");
+            }
+        }
+
+        function previousItem() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                loadCurrentItem();
+            } else if (currentSection > 1) {
+                currentSection--;
+                currentIndex = curriculumData[currentSection].items.length - 1;
+                switchSection(currentSection);
+            }
+        }
+
+        /* --- SECTION 3 UNSCRAMBLE LOGIC --- */
+        function renderUnscrambleWords(wordsArray) {
+            currentUnscrambleOrder = [];
+            const answerZone = document.getElementById("word-answer-zone");
+            const bankZone = document.getElementById("word-bank-zone");
+
+            answerZone.innerHTML = `<span class="text-xs text-slate-500 italic" id="unscramble-placeholder">Construct the question here...</span>`;
+            bankZone.innerHTML = "";
+
+            // Shuffle words for bank
+            const shuffled = [...wordsArray].sort(() => 0.5 - Math.random());
+
+            shuffled.forEach((word, idx) => {
+                const chip = document.createElement("button");
+                chip.className = "px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 rounded-lg text-xs font-medium cursor-pointer transition-all";
+                chip.innerText = word;
+                chip.id = `bank-chip-${idx}`;
+                chip.onclick = () => selectWord(word, chip);
+                bankZone.appendChild(chip);
+            });
+        }
+
+        function selectWord(word, chipElement) {
+            const placeholder = document.getElementById("unscramble-placeholder");
+            if (placeholder) placeholder.remove();
+
+            currentUnscrambleOrder.push(word);
+            chipElement.classList.add("opacity-30", "pointer-events-none");
+
+            const answerZone = document.getElementById("word-answer-zone");
+            const selectedChip = document.createElement("span");
+            selectedChip.className = "px-3 py-1 bg-indigo-600 text-white rounded-lg text-xs font-semibold shadow-sm inline-flex items-center space-x-1 animate-pulse";
+            selectedChip.innerText = word;
+            answerZone.appendChild(selectedChip);
+        }
+
+        /* --- TEXT TO SPEECH FALLBACK ENGINE --- */
+        function speakTargetPhrase() {
+            const targetPhrase = curriculumData[currentSection].items[currentIndex].target;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop ongoing speech
+                const utterance = new SpeechSynthesisUtterance(targetPhrase);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9; // Slightly slower for language learners
+
+                // Try selecting US voice if available
+                const voices = window.speechSynthesis.getVoices();
+                const usVoice = voices.find(v => v.lang === 'en-US' || v.lang.includes('en'));
+                if (usVoice) utterance.voice = usVoice;
+
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Speech Synthesis is not supported in this browser.");
+            }
+        }
+
+        /* --- CALIBRATED SPEECH RECONGNITION ENGINE --- */
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onstart = function() {
+                    isRecording = true;
+                    document.getElementById("mic-btn").classList.replace("from-indigo-600", "from-rose-600");
+                    document.getElementById("mic-btn").classList.replace("to-purple-600", "to-rose-500");
+                    document.getElementById("recording-pulse").classList.remove("hidden");
+                    document.getElementById("mic-icon").className = "fa-solid fa-stop text-2xl";
+                };
+
+                recognition.onend = function() {
+                    isRecording = false;
+                    document.getElementById("mic-btn").classList.replace("from-rose-600", "from-indigo-600");
+                    document.getElementById("mic-btn").classList.replace("to-rose-500", "to-purple-600");
+                    document.getElementById("recording-pulse").classList.add("hidden");
+                    document.getElementById("mic-icon").className = "fa-solid fa-microphone text-2xl";
+                };
+
+                recognition.onresult = function(event) {
+                    const userTranscript = event.results[0][0].transcript;
+                    evaluateSpeechInput(userTranscript);
+                };
+
+                recognition.onerror = function(event) {
+                    console.error("STT Error: ", event.error);
+                    document.getElementById("mic-status text-center").innerText = "Speech recognition error. Please try again.";
+                };
+            }
+        }
+
+        function toggleSpeechRecognition() {
+            if (!recognition) {
+                alert("Web Speech Recognition API is not supported in this browser environment. Try using Chrome or Edge.");
+                return;
+            }
+
+            if (isRecording) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        }
+
+        /* --- CALIBRATED EVALUATION ENGINE & SIMILARITY ALGORITHM --- */
+        function normalizeText(text) {
+            return text.toLowerCase()
+                .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "")
+                .replace(/\s+/g, " ")
+                .trim();
+        }
+
+        function calculateLevenshteinSimilarity(s1, s2) {
+            let n1 = normalizeText(s1);
+            let n2 = normalizeText(s2);
+
+            // CALIBRATED SPEECH TOLERANCE: Normalize Proper Names & STT homophones/contractions
+            const fuzzyRules = [
+                { pattern: /\bjenny's\b|\bjenny\b|\bgenny\b|\bjennie\b/g, replacement: "jenny" },
+                { pattern: /\brob's\b|\brob\b|\brobert\b|\bbob\b/g, replacement: "rob" },
+                { pattern: /\beddie's\b|\beddie\b|\beddy\b|\bed\b/g, replacement: "eddie" },
+                { pattern: /\bisn't\b|\bisnt\b/g, replacement: "is not" },
+                { pattern: /\baren't\b|\barent\b/g, replacement: "are not" },
+                { pattern: /\bi'm\b|\bim\b/g, replacement: "i am" }
+            ];
+
+            fuzzyRules.forEach(rule => {
+                n1 = n1.replace(rule.pattern, rule.replacement);
+                n2 = n2.replace(rule.pattern, rule.replacement);
+            });
+
+            if (n1 === n2) return 1.0;
+            if (n1.length === 0 || n2.length === 0) return 0.0;
+
+            const matrix = [];
+            for (let i = 0; i <= n2.length; i++) matrix[i] = [i];
+            for (let j = 0; j <= n1.length; j++) matrix[0][j] = j;
+
+            for (let i = 1; i <= n2.length; i++) {
+                for (let j = 1; j <= n1.length; j++) {
+                    if (n2.charAt(i - 1) === n1.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(
+                            matrix[i - 1][j - 1] + 1,
+                            Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1)
+                        );
+                    }
+                }
+            }
+
+            const distance = matrix[n2.length][n1.length];
+            const maxLength = Math.max(n1.length, n2.length);
+            return (1.0 - distance / maxLength);
+        }
+
+        function evaluateSpeechInput(userTranscript) {
+            const currentItem = curriculumData[currentSection].items[currentIndex];
+            const primaryTarget = currentItem.target;
+            
+            // Check all alternative allowed forms (contractions, variations)
+            let maxSimilarity = calculateLevenshteinSimilarity(primaryTarget, userTranscript);
+
+            if (currentItem.altTargets) {
+                currentItem.altTargets.forEach(alt => {
+                    const sim = calculateLevenshteinSimilarity(alt, userTranscript);
+                    if (sim > maxSimilarity) maxSimilarity = sim;
+                });
+            }
+
+            const matchPercentage = Math.round(maxSimilarity * 100);
+
+            // Display Feedback Element
+            const feedbackCard = document.getElementById("feedback-card");
+            const badgeScore = document.getElementById("badge-score");
+            const feedbackTarget = document.getElementById("feedback-target-text");
+            const feedbackUser = document.getElementById("feedback-user-text");
+            const feedbackMsg = document.getElementById("feedback-message");
+
+            feedbackCard.classList.remove("hidden");
+            feedbackTarget.innerText = `"${primaryTarget}"`;
+            feedbackUser.innerText = `"${userTranscript}"`;
+
+            // Calibrated Encouraging Thresholds (Medium Strictness: >=68% pass)
+            if (matchPercentage >= 68) {
+                badgeScore.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                badgeScore.innerText = `${matchPercentage}% Match • Great Job! ⭐`;
+                feedbackMsg.innerHTML = `<span class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i> Spot on!</span> Excellent pronunciation and sentence structure.`;
+                
+                // Add Score
+                totalScore += 25;
+                document.getElementById("score-display").innerText = `${totalScore} pts`;
+            } else if (matchPercentage >= 45) {
+                badgeScore.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                badgeScore.innerText = `${matchPercentage}% Match • Good Attempt`;
+                feedbackMsg.innerHTML = `<span class="text-amber-400 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Close effort!</span> Try speaking clearly: <span class="italic text-amber-200">"${primaryTarget}"</span>`;
+            } else {
+                badgeScore.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30";
+                badgeScore.innerText = `${matchPercentage}% Match • Try Again`;
+                feedbackMsg.innerHTML = `<span class="text-rose-400 font-semibold"><i class="fa-solid fa-circle-xmark mr-1"></i> Keep practicing!</span> Click the audio model button to listen and try recording again.`;
+            }
+        }
+    </script>
+</body>
+</html>
