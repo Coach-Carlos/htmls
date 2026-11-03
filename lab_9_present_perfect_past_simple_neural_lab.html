@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 9: Present Perfect & Past Simple Neural Lab</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .pulse-recording { animation: pulse-ring 1.5s infinite ease-in-out; }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.78);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+        ::-webkit-scrollbar-thumb { background: rgba(14, 165, 233, 0.5); border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+
+    <!-- TOP HEADER WITH MANDATORY BRANDING -->
+    <header class="w-full bg-slate-900/80 border-b border-white/10 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-sky-500 via-indigo-500 to-purple-500 p-2.5 rounded-xl shadow-lg shadow-sky-500/20">
+                    <i class="fa-solid fa-code-compare text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg sm:text-xl text-white tracking-wide">Lab 9: Present Perfect vs. Past Simple</h1>
+                    <p class="text-xs text-sky-400 font-semibold">By coach Carlos O.</p>
+                </div>
+            </div>
+
+            <!-- Score & Progress Stats -->
+            <div class="flex items-center space-x-3">
+                <div class="hidden sm:flex flex-col items-end mr-2">
+                    <span class="text-[10px] text-slate-400 uppercase tracking-widest font-bold font-mono">Lab Mastered</span>
+                    <div class="w-24 bg-slate-800 rounded-full h-2 mt-1 border border-slate-700 overflow-hidden">
+                        <div id="progress-bar" class="bg-gradient-to-r from-sky-400 to-indigo-500 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2 bg-slate-800/80 border border-slate-700 px-3.5 py-1.5 rounded-full shadow-inner">
+                    <i class="fa-solid fa-trophy text-amber-400 text-sm"></i>
+                    <span class="text-xs text-slate-300 font-medium">Score:</span>
+                    <span id="score-display" class="text-sm font-bold text-amber-400">0 pts</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="max-w-5xl w-full mx-auto px-4 py-6 flex-grow flex flex-col justify-center">
+        
+        <!-- SECTION NAVIGATION TABS -->
+        <nav class="grid grid-cols-3 gap-2 mb-6">
+            <button onclick="switchTab('tab-guide')" id="btn-tab-guide" class="tab-btn px-3 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 bg-sky-600 text-white shadow-lg shadow-sky-600/30 flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-brain"></i>
+                <span class="truncate">1. Grammar Matrix Guide</span>
+            </button>
+            <button onclick="switchTab('tab-examples')" id="btn-tab-examples" class="tab-btn px-3 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-headphones"></i>
+                <span class="truncate">2. 15 Native Speech Models</span>
+            </button>
+            <button onclick="switchTab('tab-practice')" id="btn-tab-practice" class="tab-btn px-3 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-microphone-lines"></i>
+                <span class="truncate">3. 15 Interactive Activities</span>
+            </button>
+        </nav>
+
+        <!-- ================= TAB 1: NEURAL GRAMMAR GUIDE ================= -->
+        <div id="view-guide" class="tab-view space-y-6">
+            <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-sky-500/30 shadow-xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="p-2.5 bg-sky-500/20 text-sky-400 rounded-xl">
+                        <i class="fa-solid fa-diagram-project text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-extrabold text-white">Present Perfect vs. Past Simple Matrix</h2>
+                        <p class="text-xs text-sky-300">Understand connected experiences vs. completed events at specific past times.</p>
+                    </div>
+                </div>
+
+                <div class="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-slate-900/90 rounded-xl border border-emerald-500/30">
+                        <span class="px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase tracking-wider">Present Perfect</span>
+                        <h3 class="text-sm font-bold text-white mt-2">Connected to the PRESENT / Unspecified Time</h3>
+                        <p class="text-xs text-slate-300 mt-1">"She <span class="text-emerald-400 font-bold">has worked</span> at the magazine for six months."</p>
+                        <p class="text-xs text-slate-300 mt-1">"I <span class="text-emerald-400 font-bold">have been</span> very busy recently."</p>
+                        <div class="text-[10px] text-slate-400 mt-2 font-mono">Subject + HAVE / HAS + Past Participle (V3)</div>
+                    </div>
+
+                    <div class="p-4 bg-slate-900/90 rounded-xl border border-sky-500/30">
+                        <span class="px-2.5 py-0.5 rounded bg-sky-500/20 text-sky-300 text-[10px] font-bold uppercase tracking-wider">Past Simple</span>
+                        <h3 class="text-sm font-bold text-white mt-2">Finished Action / SPECIFIC Past Time</h3>
+                        <p class="text-xs text-slate-300 mt-1">"Rob <span class="text-sky-400 font-bold">broke up</span> with his girlfriend a few months ago."</p>
+                        <p class="text-xs text-slate-300 mt-1">"She <span class="text-sky-400 font-bold">started</span> her new job last month."</p>
+                        <div class="text-[10px] text-slate-400 mt-2 font-mono">Subject + Past Form (V2)</div>
+                    </div>
+                </div>
+
+                <!-- Signal Time Expression Matrix -->
+                <div class="overflow-x-auto mt-4">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900 border-b border-slate-700 text-slate-300">
+                                <th class="p-2.5 font-bold">Feature</th>
+                                <th class="p-2.5 font-bold">Present Perfect (Have/Has + V3)</th>
+                                <th class="p-2.5 font-bold">Past Simple (V2)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800 text-slate-300">
+                            <tr>
+                                <td class="p-2.5 font-semibold text-sky-300">Time Connection</td>
+                                <td class="p-2.5">Unspecified past time / experience connected to present</td>
+                                <td class="p-2.5 font-mono text-slate-400">Completed time frame in the past</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-semibold text-purple-300">Signal Words</td>
+                                <td class="p-2.5">recently, ever, never, for, since, so far</td>
+                                <td class="p-2.5 font-mono text-slate-400">yesterday, last year, in 2024, a few months ago</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-semibold text-emerald-300">Comparison Example</td>
+                                <td class="p-2.5 italic">She <strong>has visited</strong> New York several times.</td>
+                                <td class="p-2.5 italic">She <strong>visited</strong> New York in 2024.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SEARCHABLE VERB FORM FINDER -->
+            <div class="glass-panel p-6 rounded-2xl border border-white/10 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-list-check text-sky-400"></i>
+                        <h3 class="text-base font-bold text-white">V1 / V2 / V3 Verb Form Finder</h3>
+                    </div>
+                    <input type="text" id="verb-search" oninput="filterVerbBank()" placeholder="Search (be, visit, get, break)..." class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-sky-500 w-full sm:w-60">
+                </div>
+
+                <div id="verb-bank-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-h-56 overflow-y-auto pr-1"></div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 2: 15 MODELED EXAMPLES ================= -->
+        <div id="view-examples" class="tab-view hidden space-y-4">
+            <div class="glass-panel p-6 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-white">15 Native US Speech Models</h2>
+                    <p class="text-xs text-slate-400">Listen to native American speech modeling Present Perfect and Past Simple distinctions.</p>
+                </div>
+                <button onclick="playAllModelsSequence()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md flex items-center space-x-2 cursor-pointer">
+                    <i class="fa-solid fa-circle-play"></i>
+                    <span>Listen All Models</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[550px] overflow-y-auto pr-1" id="models-container"></div>
+        </div>
+
+        <!-- ================= TAB 3: 15 INTERACTIVE ACTIVITIES ================= -->
+        <div id="view-practice" class="tab-view hidden">
+            <div class="glass-panel rounded-2xl p-6 sm:p-8 shadow-2xl relative">
+                
+                <div class="mb-6 pb-4 border-b border-slate-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span id="act-number-badge" class="px-2.5 py-1 rounded-md text-xs font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30 uppercase tracking-wider">Activity 1 of 15</span>
+                            <span id="act-cat-badge" class="px-2.5 py-1 rounded-md text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 uppercase tracking-wider">Present Perfect Practice</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white mt-2">Conjugation & Speech Lab</h2>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <select id="activity-selector" onchange="jumpToActivity(this.value)" class="bg-slate-900 border border-slate-700 text-xs text-sky-300 rounded-xl px-3 py-1.5 focus:outline-none focus:border-sky-500 font-semibold"></select>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 relative border border-white/10 mb-6">
+                    <div class="p-4 bg-slate-900/90 rounded-xl border border-slate-800 my-2">
+                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Complete the sentence with the correct verb form:</span>
+                        <p id="prompt-sentence-text" class="text-base sm:text-lg font-bold text-slate-100 leading-relaxed"></p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-4">
+                        <input type="text" id="user-gap-input" placeholder="Type your full sentence here..." class="bg-slate-900 border border-slate-700 text-xs sm:text-sm text-white rounded-xl px-4 py-3 focus:outline-none focus:border-sky-500 flex-grow font-medium">
+                        <button onclick="checkAnswer()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold px-5 py-3 rounded-xl text-xs shadow-lg shadow-sky-600/30 transition-all cursor-pointer">Verify Answer</button>
+                    </div>
+
+                    <div id="rewrite-feedback-msg" class="hidden mt-3 text-xs p-3 rounded-xl border"></div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 text-center relative border border-white/10">
+                    <h3 id="target-phrase-display" class="text-lg sm:text-xl font-extrabold text-white tracking-wide my-2 max-w-2xl mx-auto"></h3>
+                    <div class="flex items-center justify-center space-x-3 my-4">
+                        <button onclick="speakTargetPhrase()" class="inline-flex items-center space-x-2 bg-sky-600/30 hover:bg-sky-600/50 text-sky-200 border border-sky-500/40 px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer">
+                            <i class="fa-solid fa-volume-high"></i>
+                            <span>Listen Model (Native US)</span>
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center space-y-3 pt-2">
+                        <div class="relative">
+                            <div id="mic-pulse" class="absolute inset-0 rounded-full bg-rose-500 hidden pulse-recording"></div>
+                            <button id="mic-button" onclick="toggleSpeechRecognition()" class="relative z-10 w-16 h-16 rounded-full bg-gradient-to-tr from-sky-600 to-purple-600 hover:from-sky-500 hover:to-purple-500 text-white shadow-xl flex items-center justify-center transition-all cursor-pointer">
+                                <i id="mic-icon" class="fa-solid fa-microphone text-xl"></i>
+                            </button>
+                        </div>
+                        <p id="mic-status" class="text-xs text-slate-400 font-medium">Tap mic to speak and record your voice</p>
+                    </div>
+
+                    <div id="speech-feedback-panel" class="hidden mt-5 text-left rounded-xl p-4 border bg-slate-900/90 border-slate-800">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-slate-300">Speech Evaluation</span>
+                            <span id="speech-badge-score" class="px-3 py-0.5 rounded-full text-xs font-bold">0% Match</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs mb-2">
+                            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+                                <span class="text-slate-500 block text-[10px]">Target Model:</span>
+                                <span id="speech-target-text" class="text-slate-100 font-medium">--</span>
+                            </div>
+                            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+                                <span class="text-slate-500 block text-[10px]">Your Speech Transcription:</span>
+                                <span id="speech-transcription-text" class="text-sky-300 font-medium italic">"--"</span>
+                            </div>
+                        </div>
+                        <div id="speech-feedback-msg" class="text-xs pt-2 border-t border-slate-800"></div>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-4 border-t border-slate-700/60 flex items-center justify-between">
+                    <button onclick="prevActivity()" id="btn-prev-act" class="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs sm:text-sm font-semibold cursor-pointer">Previous</button>
+                    <button onclick="nextActivity()" id="btn-next-act" class="px-5 py-2.5 rounded-xl bg-sky-600 text-white text-xs sm:text-sm font-semibold cursor-pointer">Next</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER WITH MANDATORY SOP BRANDING -->
+    <footer class="w-full text-center py-4 text-xs text-slate-400 border-t border-white/10 bg-slate-900/60 backdrop-blur-md">
+        <p>© Developed for educational excellence By Coach Carlos O</p>
+    </footer>
+
+    <script>
+        const verbBank = [
+            { base: "be", v2: "was/were", v3: "been", type: "Irregular" },
+            { base: "get", v2: "got", v3: "got / gotten", type: "Irregular" },
+            { base: "visit", v2: "visited", v3: "visited", type: "Regular" },
+            { base: "work", v2: "worked", v3: "worked", type: "Regular" },
+            { base: "meet", v2: "met", v3: "met", type: "Irregular" },
+            { base: "have", v2: "had", v3: "had", type: "Irregular" },
+            { base: "break up", v2: "broke up", v3: "broken up", type: "Phrasal" },
+            { base: "start", v2: "started", v3: "started", type: "Regular" },
+            { base: "go", v2: "went", v3: "gone", type: "Irregular" },
+            { base: "see", v2: "saw", v3: "seen", type: "Irregular" }
+        ];
+
+        const modeledExamples = [
+            { id: 1, text: "It's been great being in New York.", type: "Present Perfect" },
+            { id: 2, text: "I have been very busy recently.", type: "Present Perfect" },
+            { id: 3, text: "Have you ever visited New York?", type: "Present Perfect Question" },
+            { id: 4, text: "She has worked at the magazine for six months.", type: "Present Perfect" },
+            { id: 5, text: "Rob broke up with his girlfriend a few months ago.", type: "Past Simple" },
+            { id: 6, text: "Jenny got a job at the magazine.", type: "Past Simple" },
+            { id: 7, text: "They went for a run in the morning.", type: "Past Simple" },
+            { id: 8, text: "Rob met Jenny in New York.", type: "Past Simple" },
+            { id: 9, text: "They had a lovely meal together.", type: "Past Simple" },
+            { id: 10, text: "I started my new job last month.", type: "Past Simple" },
+            { id: 11, text: "She has visited New York several times.", type: "Present Perfect" },
+            { id: 12, text: "She visited New York in 2024.", type: "Past Simple" },
+            { id: 13, text: "She has got a new job at the company.", type: "Present Perfect" },
+            { id: 14, text: "They have visited New York several times this year.", type: "Present Perfect" },
+            { id: 15, text: "She started her new job last year.", type: "Past Simple" }
+        ];
+
+        const practiceActivities = [
+            // Present Perfect Practice (a, b, c)
+            { id: 1, cat: "1. Present Perfect", prompt: "I __________ (be) very busy recently.", target: "I have been very busy recently.", alt: ["I've been very busy recently."], hint: "Present Perfect: have + been" },
+            { id: 2, cat: "1. Present Perfect", prompt: "She __________ (get) a new job.", target: "She has got a new job.", alt: ["She has gotten a new job.", "She's got a new job."], hint: "Present Perfect: has + got / gotten" },
+            { id: 3, cat: "1. Present Perfect", prompt: "They __________ (visit) New York several times.", target: "They have visited New York several times.", alt: ["They've visited New York several times."], hint: "Present Perfect: have + visited" },
+            
+            // Past Simple Practice (a, b, c)
+            { id: 4, cat: "2. Past Simple", prompt: "Rob __________ (meet) Jenny in New York.", target: "Rob met Jenny in New York.", alt: [], hint: "Past Simple: met (V2)" },
+            { id: 5, cat: "2. Past Simple", prompt: "Jenny __________ (get) a new job at the magazine.", target: "Jenny got a new job at the magazine.", alt: [], hint: "Past Simple: got (V2)" },
+            { id: 6, cat: "2. Past Simple", prompt: "They __________ (have) a lovely meal.", target: "They had a lovely meal.", alt: [], hint: "Past Simple: had (V2)" },
+
+            // Present Perfect vs. Past Simple Choice (a, b, c + extra)
+            { id: 7, cat: "3. Contrast Choice", prompt: "I __________ (have been / was) busy recently.", target: "I have been busy recently.", alt: ["I've been busy recently."], hint: "Use Present Perfect for 'recently'." },
+            { id: 8, cat: "3. Contrast Choice", prompt: "Rob __________ (has broken up / broke up) with his girlfriend a few months before meeting Jenny.", target: "Rob broke up with his girlfriend a few months before meeting Jenny.", alt: [], hint: "Use Past Simple for a completed past time." },
+            { id: 9, cat: "3. Contrast Choice", prompt: "She __________ (has started / started) her new job last year.", target: "She started her new job last year.", alt: [], hint: "Use Past Simple for 'last year'." },
+            { id: 10, cat: "3. Contrast Choice", prompt: "She __________ (has visited / visited) New York in 2024.", target: "She visited New York in 2024.", alt: [], hint: "Use Past Simple for a specific past year (2024)." },
+            { id: 11, cat: "1. Present Perfect", prompt: "She __________ (work) at the magazine for six months.", target: "She has worked at the magazine for six months.", alt: ["She's worked at the magazine for six months."], hint: "Present Perfect: has worked" },
+            { id: 12, cat: "2. Past Simple", prompt: "They __________ (go) for a run in the morning.", target: "They went for a run in the morning.", alt: [], hint: "Past Simple: went" },
+            { id: 13, cat: "3. Contrast Choice", prompt: "I __________ (have started / started) my new job last month.", target: "I started my new job last month.", alt: [], hint: "Use Past Simple for 'last month'." },
+            { id: 14, cat: "1. Present Perfect", prompt: "__________ (you / ever / visit) New York?", target: "Have you ever visited New York?", alt: [], hint: "Present Perfect question: Have you ever visited..." },
+            { id: 15, cat: "3. Contrast Choice", prompt: "She __________ (has visited / visited) New York several times.", target: "She has visited New York several times.", alt: ["She's visited New York several times."], hint: "Use Present Perfect for unspecified experience." }
+        ];
+
+        let currentActivityIndex = 0;
+        let totalScore = 0;
+        let isRecording = false;
+        let recognition = null;
+
+        window.onload = function() {
+            renderVerbBank(verbBank);
+            renderModels();
+            initActivitySelector();
+            loadActivity(0);
+            initSpeechRecognition();
+        };
+
+        function renderVerbBank(list) {
+            const grid = document.getElementById("verb-bank-grid");
+            grid.innerHTML = "";
+            list.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "bg-slate-900/90 border border-slate-800 p-2.5 rounded-xl flex items-center justify-between text-xs";
+                card.innerHTML = `
+                    <div>
+                        <span class="text-white font-bold block">${item.base} &rarr; <span class="text-sky-300 font-extrabold">${item.v2}</span> &rarr; <span class="text-emerald-300 font-extrabold">${item.v3}</span></span>
+                        <span class="text-[10px] font-semibold text-slate-400">${item.type}</span>
+                    </div>
+                    <button onclick="speakText('${item.base}, ${item.v2}, ${item.v3}')" class="w-6 h-6 bg-sky-600/30 text-sky-200 rounded-lg flex items-center justify-center text-[10px]">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterVerbBank() {
+            const q = document.getElementById("verb-search").value.toLowerCase().trim();
+            const filtered = verbBank.filter(v => v.base.toLowerCase().includes(q) || v.v2.toLowerCase().includes(q) || v.v3.toLowerCase().includes(q));
+            renderVerbBank(filtered);
+        }
+
+        function renderModels() {
+            const container = document.getElementById("models-container");
+            container.innerHTML = "";
+            modeledExamples.forEach((item, index) => {
+                const card = document.createElement("div");
+                card.className = "glass-panel p-4 rounded-xl flex items-center justify-between border border-slate-800";
+                card.innerHTML = `
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold text-sky-400">Model ${index + 1} • ${item.type}</span>
+                        <p class="text-xs font-semibold text-white">"${item.text}"</p>
+                    </div>
+                    <button onclick="speakText('${item.text.replace(/'/g, "\\'")}')" class="w-8 h-8 bg-sky-600/30 text-sky-200 rounded-lg flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function playAllModelsSequence() {
+            let idx = 0;
+            function playNext() {
+                if (idx < modeledExamples.length) {
+                    speakText(modeledExamples[idx].text, () => {
+                        idx++;
+                        setTimeout(playNext, 600);
+                    });
+                }
+            }
+            playNext();
+        }
+
+        function switchTab(tabId) {
+            ['tab-guide', 'tab-examples', 'tab-practice'].forEach(id => {
+                document.getElementById(`btn-${id}`).className = (id === tabId) ? 
+                    "tab-btn px-3 py-3 rounded-xl text-xs sm:text-sm font-bold bg-sky-600 text-white shadow-lg shadow-sky-600/30" : 
+                    "tab-btn px-3 py-3 rounded-xl text-xs sm:text-sm font-bold bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white";
+            });
+            document.getElementById('view-guide').classList.toggle('hidden', tabId !== 'tab-guide');
+            document.getElementById('view-examples').classList.toggle('hidden', tabId !== 'tab-examples');
+            document.getElementById('view-practice').classList.toggle('hidden', tabId !== 'tab-practice');
+        }
+
+        function initActivitySelector() {
+            const select = document.getElementById("activity-selector");
+            select.innerHTML = "";
+            practiceActivities.forEach((act, idx) => {
+                const opt = document.createElement("option");
+                opt.value = idx;
+                opt.innerText = `Act ${idx + 1}: ${act.target.substring(0, 24)}...`;
+                select.appendChild(opt);
+            });
+        }
+
+        function loadActivity(index) {
+            currentActivityIndex = index;
+            const act = practiceActivities[index];
+            document.getElementById("activity-selector").value = index;
+            document.getElementById("act-number-badge").innerText = `Activity ${index + 1} of 15`;
+            document.getElementById("act-cat-badge").innerText = act.cat;
+            document.getElementById("prompt-sentence-text").innerText = act.prompt;
+            document.getElementById("user-gap-input").value = "";
+            document.getElementById("rewrite-feedback-msg").classList.add("hidden");
+            document.getElementById("target-phrase-display").innerText = `"${act.target}"`;
+            document.getElementById("speech-feedback-panel").classList.add("hidden");
+        }
+
+        function jumpToActivity(idx) { loadActivity(parseInt(idx)); }
+        function nextActivity() { if (currentActivityIndex < 14) loadActivity(currentActivityIndex + 1); }
+        function prevActivity() { if (currentActivityIndex > 0) loadActivity(currentActivityIndex - 1); }
+
+        function checkAnswer() {
+            const act = practiceActivities[currentActivityIndex];
+            const userInput = document.getElementById("user-gap-input").value.trim();
+            const msg = document.getElementById("rewrite-feedback-msg");
+            msg.classList.remove("hidden");
+
+            const normUser = normalizeText(userInput);
+            const isMatch = normUser === normalizeText(act.target) || (act.alt && act.alt.some(a => normalizeText(a) === normUser));
+
+            if (isMatch) {
+                msg.className = "mt-3 text-xs p-3 rounded-xl border bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
+                msg.innerHTML = `<strong>Correct!</strong> Perfect grammar response!`;
+                totalScore += 20;
+                document.getElementById("score-display").innerText = `${totalScore} pts`;
+            } else {
+                msg.className = "mt-3 text-xs p-3 rounded-xl border bg-rose-500/20 text-rose-300 border-rose-500/30";
+                msg.innerHTML = `<strong>Try again:</strong> Expected: "${act.target}" (${act.hint})`;
+            }
+        }
+
+        function speakTargetPhrase() { speakText(practiceActivities[currentActivityIndex].target); }
+        function speakText(text, callback) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'en-US';
+                u.rate = 0.88;
+                if (callback) u.onend = callback;
+                window.speechSynthesis.speak(u);
+            }
+        }
+
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.lang = 'en-US';
+                recognition.onstart = () => {
+                    isRecording = true;
+                    document.getElementById("mic-pulse").classList.remove("hidden");
+                };
+                recognition.onend = () => {
+                    isRecording = false;
+                    document.getElementById("mic-pulse").classList.add("hidden");
+                };
+                recognition.onresult = (e) => {
+                    const speech = e.results[0][0].transcript;
+                    evaluateSpeech(speech);
+                };
+            }
+        }
+
+        function toggleSpeechRecognition() {
+            if (!recognition) return alert("Speech Recognition not supported in browser.");
+            if (isRecording) recognition.stop(); else recognition.start();
+        }
+
+        function normalizeText(str) {
+            return str.toLowerCase()
+                .replace(/\bhave\b/g, "'ve")
+                .replace(/\bhas\b/g, "'s")
+                .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "")
+                .replace(/\s+/g, " ")
+                .trim();
+        }
+
+        function evaluateSpeech(userSpeech) {
+            const target = practiceActivities[currentActivityIndex].target;
+            const normTarget = normalizeText(target);
+            const normUser = normalizeText(userSpeech);
+
+            let score = normTarget === normUser ? 100 : Math.round((1 - (Math.abs(normTarget.length - normUser.length) / Math.max(normTarget.length, 1))) * 100);
+            if (score < 40) score = 60;
+
+            const panel = document.getElementById("speech-feedback-panel");
+            panel.classList.remove("hidden");
+            document.getElementById("speech-target-text").innerText = `"${target}"`;
+            document.getElementById("speech-transcription-text").innerText = `"${userSpeech}"`;
+            document.getElementById("speech-badge-score").innerText = `${score}% Match`;
+            document.getElementById("speech-feedback-msg").innerText = score >= 65 ? "Great pronunciation!" : "Keep practicing!";
+        }
+    </script>
+</body>
+</html>
