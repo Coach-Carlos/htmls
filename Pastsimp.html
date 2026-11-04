@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 2: Past Simple (A1 Level) Neural Speech & Grammar Lab</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .pulse-recording { animation: pulse-ring 1.5s infinite ease-in-out; }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.78);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+        ::-webkit-scrollbar-thumb { background: rgba(14, 165, 233, 0.5); border-radius: 3px; }
+        /* Mobile tap highlight reset */
+        button {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+
+    <!-- TOP HEADER WITH MANDATORY BRANDING -->
+    <header class="w-full bg-slate-900/80 border-b border-white/10 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-sky-500 via-indigo-500 to-purple-500 p-2.5 rounded-xl shadow-lg shadow-sky-500/20">
+                    <i class="fa-solid fa-history text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg sm:text-xl text-white tracking-wide">Lab 2: Past Simple (A1 Level)</h1>
+                    <p class="text-xs text-sky-400 font-semibold">By coach Carlos O.</p>
+                </div>
+            </div>
+
+            <!-- Score & Progress Stats -->
+            <div class="flex items-center space-x-3">
+                <div class="hidden sm:flex flex-col items-end mr-2">
+                    <span class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Lab Mastered</span>
+                    <div class="w-24 bg-slate-800 rounded-full h-2 mt-1 border border-slate-700 overflow-hidden">
+                        <div id="progress-bar" class="bg-gradient-to-r from-sky-400 to-indigo-500 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2 bg-slate-800/80 border border-slate-700 px-3.5 py-1.5 rounded-full shadow-inner">
+                    <i class="fa-solid fa-trophy text-amber-400 text-sm"></i>
+                    <span class="text-xs text-slate-300 font-medium">Score:</span>
+                    <span id="score-display" class="text-sm font-bold text-amber-400">0 pts</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="max-w-5xl w-full mx-auto px-4 py-6 flex-grow flex flex-col justify-center">
+        
+        <!-- SECTION NAVIGATION TABS -->
+        <nav class="flex flex-wrap gap-2 mb-6">
+            <button onclick="switchTab('tab-guide')" id="btn-tab-guide" class="tab-btn flex-1 min-w-[140px] px-3 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 bg-sky-600 text-white shadow-lg shadow-sky-600/30 flex items-center justify-center space-x-2 active:scale-95 touch-manipulation">
+                <i class="fa-solid fa-book-open"></i>
+                <span class="truncate">1. A1 Rules & Verb Bank</span>
+            </button>
+            <button onclick="switchTab('tab-sec1')" id="btn-tab-sec1" class="tab-btn flex-1 min-w-[140px] px-3 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center space-x-2 active:scale-95 touch-manipulation">
+                <i class="fa-solid fa-cloud"></i>
+                <span class="truncate">2. Was/Were & Could</span>
+            </button>
+            <button onclick="switchTab('tab-sec2')" id="btn-tab-sec2" class="tab-btn flex-1 min-w-[140px] px-3 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center space-x-2 active:scale-95 touch-manipulation">
+                <i class="fa-solid fa-bolt"></i>
+                <span class="truncate">3. Action Verbs & Did</span>
+            </button>
+            <button onclick="switchTab('tab-practice')" id="btn-tab-practice" class="tab-btn flex-1 min-w-[140px] px-3 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center space-x-2 active:scale-95 touch-manipulation">
+                <i class="fa-solid fa-microphone-lines"></i>
+                <span class="truncate">4. Speech Practice Lab</span>
+            </button>
+        </nav>
+
+        <!-- ================= TAB 1: GRAMMAR RULES & VERB BANK ================= -->
+        <div id="view-guide" class="tab-view space-y-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- SECTION 1 RULE CARD -->
+                <div class="glass-panel p-6 rounded-2xl border border-sky-500/30 shadow-xl space-y-3">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="p-2 bg-sky-500/20 text-sky-400 rounded-lg">
+                            <i class="fa-solid fa-asterisk"></i>
+                        </div>
+                        <h2 class="text-base font-extrabold text-white">Section 1: Was / Were & Could</h2>
+                    </div>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        We use <span class="text-sky-300 font-bold">was/were</span> for the past of <em>to be</em> and <span class="text-sky-300 font-bold">could</span> for past ability. 
+                        <strong class="text-rose-400">NEVER use the auxiliary "did" with was, were, or could!</strong>
+                    </p>
+                    <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-sm space-y-2 font-mono mt-2">
+                        <div class="text-emerald-400"><strong>Affirmative:</strong> I was at home. / She could swim.</div>
+                        <div class="text-rose-400"><strong>Negative:</strong> They weren't late. / He couldn't come.</div>
+                        <div class="text-amber-400"><strong>Question:</strong> Were you happy? / Could she hear us?</div>
+                    </div>
+                </div>
+
+                <!-- SECTION 2 RULE CARD -->
+                <div class="glass-panel p-6 rounded-2xl border border-purple-500/30 shadow-xl space-y-3">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="p-2 bg-purple-500/20 text-purple-400 rounded-lg">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <h2 class="text-base font-extrabold text-white">Section 2: Action Verbs & Auxiliary "Did"</h2>
+                    </div>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        For all other verbs: use the past form (<span class="text-purple-300 font-bold">V2</span>) in Affirmative sentences. 
+                        In Negative & Interrogative sentences, use <span class="text-purple-300 font-bold">didn't / did</span> + <span class="text-emerald-300 font-bold">BASE VERB</span>.
+                    </p>
+                    <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-sm space-y-2 font-mono mt-2">
+                        <div class="text-emerald-400"><strong>Affirmative:</strong> Rob bought a shirt. (No "did")</div>
+                        <div class="text-rose-400"><strong>Negative:</strong> Rob didn't buy a shirt. (didn't + buy)</div>
+                        <div class="text-amber-400"><strong>Question:</strong> Did Rob buy a shirt? (Did + subject + buy)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEARCHABLE A1 VERB BANK -->
+            <div class="glass-panel p-6 rounded-2xl border border-white/10 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-list-check text-sky-400 text-lg"></i>
+                        <h3 class="text-lg font-bold text-white">A1 Past Simple Verb Bank</h3>
+                    </div>
+                    <input type="text" id="verb-search" oninput="filterVerbBank()" placeholder="Search verbs (e.g. work, go)..." class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500 w-full sm:w-64 font-medium">
+                </div>
+
+                <div id="verb-bank-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 max-h-72 overflow-y-auto pr-1">
+                    <!-- Populated dynamically by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 2: SECTION 1 (WAS/WERE & COULD - 15 EXERCISES) ================= -->
+        <div id="view-sec1" class="tab-view hidden space-y-4">
+            <div class="glass-panel p-6 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-white">Section 1: Was, Were & Could (15 Exercises)</h2>
+                    <p class="text-sm text-slate-400 mt-1">Master past states, locations, and abilities. Listen to native speech models.</p>
+                </div>
+                <button onclick="playSectionSequence(sec1Exercises)" class="bg-sky-600 hover:bg-sky-500 text-white px-5 py-3 rounded-xl text-sm font-bold transition-all shadow-md flex items-center justify-center space-x-2 w-full sm:w-auto active:scale-95 touch-manipulation">
+                    <i class="fa-solid fa-circle-play"></i>
+                    <span>Listen All Section 1</span>
+                </button>
+            </div>
+
+            <div id="sec1-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto pr-2 pb-4"></div>
+        </div>
+
+        <!-- ================= TAB 3: SECTION 2 (ALL OTHER VERBS & DID - 15 EXERCISES) ================= -->
+        <div id="view-sec2" class="tab-view hidden space-y-4">
+            <div class="glass-panel p-6 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-white">Section 2: Action Verbs & Auxiliary "Did" (15 Exercises)</h2>
+                    <p class="text-sm text-slate-400 mt-1">Affirmative V2 past forms vs. Negative/Questions with auxiliary "did".</p>
+                </div>
+                <button onclick="playSectionSequence(sec2Exercises)" class="bg-purple-600 hover:bg-purple-500 text-white px-5 py-3 rounded-xl text-sm font-bold transition-all shadow-md flex items-center justify-center space-x-2 w-full sm:w-auto active:scale-95 touch-manipulation">
+                    <i class="fa-solid fa-circle-play"></i>
+                    <span>Listen All Section 2</span>
+                </button>
+            </div>
+
+            <div id="sec2-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto pr-2 pb-4"></div>
+        </div>
+
+        <!-- ================= TAB 4: SPEECH PRACTICE LAB ================= -->
+        <div id="view-practice" class="tab-view hidden">
+            <div class="glass-panel rounded-2xl p-6 sm:p-8 shadow-2xl relative">
+                
+                <div class="mb-6 pb-4 border-b border-slate-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span id="act-number-badge" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30 uppercase tracking-wider">Exercise 1 of 30</span>
+                            <span id="act-category-badge" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 uppercase tracking-wider">Was/Were/Could</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white mt-3">Interactive Speech & Grammar Practice</h2>
+                    </div>
+
+                    <div class="w-full sm:w-auto">
+                        <select id="activity-selector" onchange="jumpToActivity(this.value)" class="w-full sm:w-auto bg-slate-900 border border-slate-700 text-sm text-sky-300 rounded-xl px-4 py-2.5 focus:outline-none focus:border-sky-500 font-semibold truncate"></select>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 relative border border-white/10 mb-6">
+                    <div class="p-4 bg-slate-900/90 rounded-xl border border-slate-800 my-2">
+                        <span class="text-xs text-slate-500 font-bold uppercase tracking-wider block mb-2">Complete the past tense sentence:</span>
+                        <p id="prompt-sentence-text" class="text-base sm:text-lg font-bold text-slate-100 leading-relaxed"></p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-4">
+                        <input type="text" id="user-gap-input" placeholder="Type your full sentence here..." class="bg-slate-900 border border-slate-700 text-sm text-white rounded-xl px-4 py-3.5 focus:outline-none focus:border-sky-500 flex-grow font-medium">
+                        <button onclick="checkAnswer()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold px-6 py-3.5 rounded-xl text-sm shadow-lg shadow-sky-600/30 transition-all active:scale-95 touch-manipulation">Verify Sentence</button>
+                    </div>
+
+                    <div id="rewrite-feedback-msg" class="hidden mt-4 text-sm p-4 rounded-xl border"></div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 text-center relative border border-white/10">
+                    <h3 id="target-phrase-display" class="text-xl sm:text-2xl font-extrabold text-white tracking-wide my-2 max-w-2xl mx-auto leading-snug"></h3>
+                    
+                    <div class="flex items-center justify-center mt-5 mb-6">
+                        <button onclick="speakTargetPhrase()" class="inline-flex items-center justify-center space-x-2 bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 px-6 py-3 rounded-xl text-sm font-bold shadow-md active:scale-95 touch-manipulation w-full sm:w-auto">
+                            <i class="fa-solid fa-volume-high text-lg"></i>
+                            <span>Listen Model (Native US)</span>
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center space-y-4 pt-2">
+                        <div class="relative">
+                            <div id="mic-pulse" class="absolute inset-0 rounded-full bg-rose-500 hidden pulse-recording"></div>
+                            <button id="mic-button" onclick="toggleSpeechRecognition()" class="relative z-10 w-20 h-20 rounded-full bg-gradient-to-tr from-sky-600 to-purple-600 hover:from-sky-500 hover:to-purple-500 text-white shadow-xl flex items-center justify-center transition-all active:scale-95 touch-manipulation">
+                                <i id="mic-icon" class="fa-solid fa-microphone text-3xl"></i>
+                            </button>
+                        </div>
+                        <p id="mic-status" class="text-sm text-slate-400 font-medium">Tap mic to speak and record your voice</p>
+                    </div>
+
+                    <div id="speech-feedback-panel" class="hidden mt-6 text-left rounded-xl p-5 border bg-slate-900/90 border-slate-800 shadow-inner">
+                        <div class="flex items-center justify-between mb-3 border-b border-slate-700 pb-2">
+                            <span class="text-sm font-bold text-slate-300 uppercase tracking-wider">Speech Evaluation</span>
+                            <span id="speech-badge-score" class="px-3 py-1 rounded-md text-xs font-bold text-white">0% Match</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mb-3">
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                                <span class="text-slate-500 font-bold block text-xs uppercase mb-1">Target Model:</span>
+                                <span id="speech-target-text" class="text-slate-100 font-medium leading-relaxed">--</span>
+                            </div>
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                                <span class="text-slate-500 font-bold block text-xs uppercase mb-1">Your Transcription:</span>
+                                <span id="speech-transcription-text" class="text-sky-300 font-medium italic leading-relaxed">"--"</span>
+                            </div>
+                        </div>
+                        <div id="speech-feedback-msg" class="text-sm font-medium pt-2 text-center mt-2"></div>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-5 border-t border-slate-700/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <button onclick="prevActivity()" id="btn-prev-act" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold shadow-md active:scale-95 touch-manipulation flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Previous
+                    </button>
+                    <button onclick="nextActivity()" id="btn-next-act" class="w-full sm:w-auto px-8 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-bold shadow-lg shadow-sky-600/30 active:scale-95 touch-manipulation flex items-center justify-center gap-2">
+                        Next <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER WITH MANDATORY SOP BRANDING -->
+    <footer class="w-full text-center py-5 text-sm text-slate-400 border-t border-white/10 bg-slate-900/60 backdrop-blur-md">
+        <p>© Developed for educational excellence By Coach Carlos O</p>
+    </footer>
+
+    <!-- MESSAGE TOAST -->
+    <div id="toast" class="fixed bottom-6 right-6 left-6 sm:left-auto transform translate-y-24 opacity-0 transition-all duration-300 z-50 px-6 py-4 rounded-xl shadow-2xl font-bold text-sm sm:text-base flex items-center gap-3 border pointer-events-none">
+        <i id="toast-icon" class="fa-solid fa-circle-info text-xl shrink-0"></i>
+        <span id="toast-msg">Mensaje</span>
+    </div>
+
+    <script>
+        // Audio Context Handling for Mobile Auto-play
+        let ttsInitialized = false;
+        function initializeAudioContext() {
+            if (!ttsInitialized && 'speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance('');
+                utterance.volume = 0;
+                window.speechSynthesis.speak(utterance);
+                ttsInitialized = true;
+            }
+        }
+        window.addEventListener('click', initializeAudioContext, { once: true });
+        window.addEventListener('touchstart', initializeAudioContext, { once: true });
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.innerText = message;
+
+            if (type === 'success') {
+                toast.className = 'fixed bottom-6 right-6 left-6 sm:left-auto z-50 px-6 py-4 rounded-xl shadow-2xl font-bold text-sm sm:text-base flex items-center gap-3 border bg-emerald-900/95 text-emerald-100 border-emerald-500 transition-all duration-300 opacity-100 translate-y-0';
+                toastIcon.className = 'fa-solid fa-circle-check text-emerald-400 text-xl shrink-0';
+            } else if (type === 'error') {
+                toast.className = 'fixed bottom-6 right-6 left-6 sm:left-auto z-50 px-6 py-4 rounded-xl shadow-2xl font-bold text-sm sm:text-base flex items-center gap-3 border bg-rose-900/95 text-rose-100 border-rose-500 transition-all duration-300 opacity-100 translate-y-0';
+                toastIcon.className = 'fa-solid fa-triangle-exclamation text-rose-400 text-xl shrink-0';
+            } else {
+                toast.className = 'fixed bottom-6 right-6 left-6 sm:left-auto z-50 px-6 py-4 rounded-xl shadow-2xl font-bold text-sm sm:text-base flex items-center gap-3 border bg-slate-800/95 text-slate-100 border-slate-600 transition-all duration-300 opacity-100 translate-y-0';
+                toastIcon.className = 'fa-solid fa-circle-info text-cyan-400 text-xl shrink-0';
+            }
+
+            setTimeout(() => {
+                toast.className = toast.className.replace('opacity-100 translate-y-0', 'opacity-0 translate-y-24 pointer-events-none');
+            }, 3500);
+        }
+
+        const verbBank = [
+            { base: "be", past: "was / were", type: "Irregular" },
+            { base: "can", past: "could", type: "Modal" },
+            { base: "work", past: "worked", type: "Regular" },
+            { base: "wear", past: "wore", type: "Irregular" },
+            { base: "wait", past: "waited", type: "Regular" },
+            { base: "buy", past: "bought", type: "Irregular" },
+            { base: "go", past: "went", type: "Irregular" },
+            { base: "see", past: "saw", type: "Irregular" },
+            { base: "have", past: "had", type: "Irregular" },
+            { base: "do", past: "did", type: "Irregular" },
+            { base: "like", past: "liked", type: "Regular" },
+            { base: "study", past: "studied", type: "Regular" },
+            { base: "call", past: "called", type: "Regular" },
+            { base: "speak", past: "spoke", type: "Irregular" },
+            { base: "eat", past: "ate", type: "Irregular" },
+            { base: "travel", past: "traveled", type: "Regular" }
+        ];
+
+        // SECTION 1: WAS / WERE & COULD (15 Exercises)
+        const sec1Exercises = [
+            { prompt: "Jenny __________ (be) in the office yesterday.", target: "Jenny was in the office yesterday.", mode: "Affirmative" },
+            { prompt: "Rob and Eddie __________ (be) at the meeting.", target: "Rob and Eddie were at the meeting.", mode: "Affirmative" },
+            { prompt: "She __________ (can) speak three languages as a child.", target: "She could speak three languages as a child.", mode: "Affirmative" },
+            { prompt: "I __________ (be) very busy this morning.", target: "I was very busy this morning.", mode: "Affirmative" },
+            { prompt: "They __________ (can) finish the project on time.", target: "They could finish the project on time.", mode: "Affirmative" },
+            
+            { prompt: "Jenny __________ (not / be) at her desk.", target: "Jenny was not at her desk.", mode: "Negative" },
+            { prompt: "They __________ (not / be) in the conference room.", target: "They were not in the conference room.", mode: "Negative" },
+            { prompt: "Rob __________ (not / can) find his keys.", target: "Rob could not find his keys.", mode: "Negative" },
+            { prompt: "We __________ (not / be) late for the bus.", target: "We were not late for the bus.", mode: "Negative" },
+            { prompt: "Eddie __________ (not / can) attend the evening lecture.", target: "Eddie could not attend the evening lecture.", mode: "Negative" },
+            
+            { prompt: "__________ (be) Jenny at the office yesterday?", target: "Was Jenny at the office yesterday?", mode: "Interrogative" },
+            { prompt: "__________ (be) Rob and Eddie waiting outside?", target: "Were Rob and Eddie waiting outside?", mode: "Interrogative" },
+            { prompt: "__________ (can) you hear the presenter clearly?", target: "Could you hear the presenter clearly?", mode: "Interrogative" },
+            { prompt: "__________ (be) the exam difficult for students?", target: "Was the exam difficult for students?", mode: "Interrogative" },
+            { prompt: "__________ (can) Eddie finish the report in time?", target: "Could Eddie finish the report in time?", mode: "Interrogative" }
+        ];
+
+        // SECTION 2: OTHER VERBS & AUXILIARY "DID" (15 Exercises)
+        const sec2Exercises = [
+            { prompt: "Jenny __________ (work) in the office yesterday.", target: "Jenny worked in the office yesterday.", mode: "Affirmative" },
+            { prompt: "Rob __________ (wear) a blue shirt on Monday.", target: "Rob wore a blue shirt on Monday.", mode: "Affirmative" },
+            { prompt: "They __________ (wait) for Eddie at the station.", target: "They waited for Eddie at the station.", mode: "Affirmative" },
+            { prompt: "Rob __________ (buy) a new coat last week.", target: "Rob bought a new coat last week.", mode: "Affirmative" },
+            { prompt: "Eddie __________ (go) to the store after work.", target: "Eddie went to the store after work.", mode: "Affirmative" },
+            
+            { prompt: "Jenny __________ (not / work) in the office today.", target: "Jenny did not work in the office today.", mode: "Negative" },
+            { prompt: "Rob __________ (not / wear) a suitable shirt.", target: "Rob did not wear a suitable shirt.", mode: "Negative" },
+            { prompt: "They __________ (not / wait) for Eddie long.", target: "They did not wait for Eddie long.", mode: "Negative" },
+            { prompt: "Rob __________ (not / buy) the expensive coat.", target: "Rob did not buy the expensive coat.", mode: "Negative" },
+            { prompt: "Eddie __________ (not / call) the manager.", target: "Eddie did not call the manager.", mode: "Negative" },
+            
+            { prompt: "__________ (work / Jenny) in the office yesterday?", target: "Did Jenny work in the office yesterday?", mode: "Interrogative" },
+            { prompt: "__________ (wear / Rob) a blue shirt to the party?", target: "Did Rob wear a blue shirt to the party?", mode: "Interrogative" },
+            { prompt: "__________ (wait / they) for Eddie near the gate?", target: "Did they wait for Eddie near the gate?", mode: "Interrogative" },
+            { prompt: "__________ (buy / Rob) a new shirt online?", target: "Did Rob buy a new shirt online?", mode: "Interrogative" },
+            { prompt: "__________ (call / Eddie) you last night?", target: "Did Eddie call you last night?", mode: "Interrogative" }
+        ];
+
+        const allExercises = [...sec1Exercises, ...sec2Exercises];
+
+        let currentActivityIndex = 0;
+        let totalScore = 0;
+        let isRecording = false;
+        let recognition = null;
+        let finalTranscript = '';
+
+        window.onload = function() {
+            renderVerbBank(verbBank);
+            renderSectionList("sec1-list-container", sec1Exercises, "Sec 1");
+            renderSectionList("sec2-list-container", sec2Exercises, "Sec 2");
+            initActivitySelector();
+            loadActivity(0);
+            initSpeechRecognition();
+        };
+
+        function renderVerbBank(list) {
+            const grid = document.getElementById("verb-bank-grid");
+            grid.innerHTML = "";
+            list.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "bg-slate-900/90 border border-slate-800 p-4 rounded-xl flex items-center justify-between shadow-sm";
+                card.innerHTML = `
+                    <div>
+                        <span class="text-white font-bold block text-sm mb-1">${item.base} &rarr; <span class="text-sky-300 font-extrabold">${item.past}</span></span>
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">${item.type}</span>
+                    </div>
+                    <button onclick="speakText('${item.base}, ${item.past}')" class="w-10 h-10 bg-sky-600/20 hover:bg-sky-600/40 text-sky-300 rounded-lg flex items-center justify-center text-sm transition-all active:scale-95 touch-manipulation">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterVerbBank() {
+            const q = document.getElementById("verb-search").value.toLowerCase().trim();
+            const filtered = verbBank.filter(v => v.base.toLowerCase().includes(q) || v.past.toLowerCase().includes(q));
+            renderVerbBank(filtered);
+        }
+
+        function renderSectionList(containerId, list, prefix) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "";
+            list.forEach((item, idx) => {
+                const card = document.createElement("div");
+                card.className = "glass-panel p-4 rounded-xl border border-slate-800 flex items-center justify-between text-sm shadow-sm";
+                card.innerHTML = `
+                    <div class="space-y-1.5 pr-3">
+                        <span class="text-[10px] sm:text-xs font-bold text-purple-400 uppercase tracking-wider">${prefix} Ex ${idx + 1} • ${item.mode}</span>
+                        <p class="text-white font-semibold leading-snug">"${item.target}"</p>
+                    </div>
+                    <button onclick="speakText('${item.target.replace(/'/g, "\\'")}')" class="w-10 h-10 bg-sky-600/20 hover:bg-sky-600/40 text-sky-300 rounded-lg flex items-center justify-center shrink-0 transition-all active:scale-95 touch-manipulation">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function playSectionSequence(list) {
+            let idx = 0;
+            function playNext() {
+                if (idx < list.length) {
+                    speakText(list[idx].target, () => {
+                        idx++;
+                        setTimeout(playNext, 600);
+                    });
+                }
+            }
+            playNext();
+        }
+
+        function switchTab(tabId) {
+            ['tab-guide', 'tab-sec1', 'tab-sec2', 'tab-practice'].forEach(id => {
+                document.getElementById(`btn-${id}`).className = (id === tabId) ? 
+                    "tab-btn flex-1 min-w-[140px] px-3 py-3 rounded-xl text-xs sm:text-sm font-bold bg-sky-600 text-white shadow-lg shadow-sky-600/30 flex items-center justify-center space-x-2 active:scale-95 touch-manipulation" : 
+                    "tab-btn flex-1 min-w-[140px] px-3 py-3 rounded-xl text-xs sm:text-sm font-bold bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center space-x-2 active:scale-95 touch-manipulation";
+            });
+            document.getElementById('view-guide').classList.toggle('hidden', tabId !== 'tab-guide');
+            document.getElementById('view-sec1').classList.toggle('hidden', tabId !== 'tab-sec1');
+            document.getElementById('view-sec2').classList.toggle('hidden', tabId !== 'tab-sec2');
+            document.getElementById('view-practice').classList.toggle('hidden', tabId !== 'tab-practice');
+        }
+
+        function initActivitySelector() {
+            const select = document.getElementById("activity-selector");
+            select.innerHTML = "";
+            allExercises.forEach((act, idx) => {
+                const opt = document.createElement("option");
+                opt.value = idx;
+                opt.innerText = `Ex ${idx + 1}: ${act.target.substring(0, 30)}...`;
+                select.appendChild(opt);
+            });
+        }
+
+        function loadActivity(index) {
+            currentActivityIndex = index;
+            const act = allExercises[index];
+            document.getElementById("activity-selector").value = index;
+            document.getElementById("act-number-badge").innerText = `Exercise ${index + 1} of 30`;
+            document.getElementById("act-category-badge").innerText = index < 15 ? "Section 1: Was/Were/Could" : "Section 2: Other Verbs & Did";
+            document.getElementById("prompt-sentence-text").innerText = act.prompt;
+            document.getElementById("user-gap-input").value = "";
+            document.getElementById("rewrite-feedback-msg").classList.add("hidden");
+            document.getElementById("target-phrase-display").innerText = `"${act.target}"`;
+            document.getElementById("speech-feedback-panel").classList.add("hidden");
+            document.getElementById("speech-transcription-text").innerText = `"--"`;
+            document.getElementById("mic-status").innerText = "Tap mic to speak and record your voice";
+            
+            // Update progress bar
+            const progress = ((index + 1) / allExercises.length) * 100;
+            document.getElementById("progress-bar").style.width = `${progress}%`;
+        }
+
+        function jumpToActivity(idx) { loadActivity(parseInt(idx)); }
+        function nextActivity() { if (currentActivityIndex < allExercises.length - 1) loadActivity(currentActivityIndex + 1); }
+        function prevActivity() { if (currentActivityIndex > 0) loadActivity(currentActivityIndex - 1); }
+
+        function normalizeText(str) {
+            return str.toLowerCase()
+                .replace(/\bdid not\b/g, "didn't")
+                .replace(/\bwas not\b/g, "wasn't")
+                .replace(/\bwere not\b/g, "weren't")
+                .replace(/\bcould not\b/g, "couldn't")
+                .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "")
+                .replace(/\s+/g, " ")
+                .trim();
+        }
+
+        function checkAnswer() {
+            const act = allExercises[currentActivityIndex];
+            const userInput = document.getElementById("user-gap-input").value.trim();
+            const msg = document.getElementById("rewrite-feedback-msg");
+            
+            if (userInput === "") {
+                showToast("Please type your sentence before verifying.", "info");
+                return;
+            }
+            
+            msg.classList.remove("hidden");
+            
+            if (normalizeText(userInput) === normalizeText(act.target)) {
+                msg.className = "mt-4 text-sm p-4 rounded-xl border bg-emerald-500/20 text-emerald-300 border-emerald-500/30 font-medium";
+                msg.innerHTML = `<strong><i class="fa-solid fa-circle-check"></i> Correct!</strong> Accurate past simple structure.`;
+                totalScore += 15;
+                document.getElementById("score-display").innerText = `${totalScore} pts`;
+                triggerConfetti();
+            } else {
+                msg.className = "mt-4 text-sm p-4 rounded-xl border bg-rose-500/20 text-rose-300 border-rose-500/30 font-medium";
+                msg.innerHTML = `<strong><i class="fa-solid fa-circle-xmark"></i> Try again:</strong> Expected target: "${act.target}"`;
+            }
+        }
+
+        function speakTargetPhrase() { 
+            speakText(allExercises[currentActivityIndex].target); 
+        }
+
+        function speakText(text, callback) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'en-US';
+                u.rate = 0.88;
+                
+                // Prioritize best US voice
+                const voices = window.speechSynthesis.getVoices();
+                const usVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha'))) || voices.find(v => v.lang === 'en-US');
+                if (usVoice) u.voice = usVoice;
+
+                if (callback) u.onend = callback;
+                window.speechSynthesis.speak(u);
+            }
+        }
+
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.lang = 'en-US';
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                
+                recognition.onstart = () => {
+                    isRecording = true;
+                    finalTranscript = '';
+                    document.getElementById("mic-pulse").classList.remove("hidden");
+                    const micBtn = document.getElementById("mic-button");
+                    micBtn.className = "relative z-10 w-20 h-20 rounded-full bg-rose-600 hover:bg-rose-500 text-white shadow-xl shadow-rose-500/30 flex items-center justify-center transition-all cursor-pointer animate-pulse";
+                    micBtn.innerHTML = '<i class="fa-solid fa-square text-2xl"></i>';
+                    document.getElementById("mic-status").innerText = "Recording... Tap again to stop and evaluate.";
+                    document.getElementById("speech-feedback-panel").classList.add("hidden");
+                };
+                
+                recognition.onend = () => {
+                    isRecording = false;
+                    document.getElementById("mic-pulse").classList.add("hidden");
+                    const micBtn = document.getElementById("mic-button");
+                    micBtn.className = "relative z-10 w-20 h-20 rounded-full bg-gradient-to-tr from-sky-600 to-purple-600 hover:from-sky-500 hover:to-purple-500 text-white shadow-xl flex items-center justify-center transition-all cursor-pointer";
+                    micBtn.innerHTML = '<i id="mic-icon" class="fa-solid fa-microphone text-3xl"></i>';
+                    document.getElementById("mic-status").innerText = "Tap mic to speak and record your voice";
+                    
+                    if (finalTranscript.trim().length > 0) {
+                        evaluateSpeech(finalTranscript);
+                    } else {
+                        showToast("No speech detected. Please try again.", "error");
+                    }
+                };
+                
+                // ULTIMATE ANTI-DUPLICATION ALGORITHM FOR ANDROID CHROME
+                recognition.onresult = (event) => {
+                    if (event.results.length === 0) return;
+                    
+                    let transcripts = [];
+                    for (let i = 0; i < event.results.length; ++i) {
+                        let text = event.results[i][0].transcript.trim();
+                        if (text) transcripts.push(text);
+                    }
+                    
+                    if (transcripts.length === 0) return;
+
+                    let mergedText = transcripts[0];
+                    
+                    for (let i = 1; i < transcripts.length; i++) {
+                        let current = transcripts[i];
+                        let prevLower = mergedText.toLowerCase();
+                        let currLower = current.toLowerCase();
+                        
+                        if (currLower.startsWith(prevLower)) {
+                            mergedText = current; 
+                        } 
+                        else if (prevLower.endsWith(currLower) || prevLower.includes(currLower)) {
+                            continue;
+                        } 
+                        else {
+                            let prevWords = prevLower.split(' ');
+                            let currWords = currLower.split(' ');
+                            let overlapCount = 0;
+                            let maxPossibleOverlap = Math.min(prevWords.length, currWords.length);
+                            
+                            for (let k = maxPossibleOverlap; k > 0; k--) {
+                                let prevSlice = prevWords.slice(-k).join(' ');
+                                let currSlice = currWords.slice(0, k).join(' ');
+                                if (prevSlice === currSlice) {
+                                    overlapCount = k;
+                                    break;
+                                }
+                            }
+                            
+                            if (overlapCount > 0) {
+                                let currOriginalWords = current.split(' ');
+                                mergedText += ' ' + currOriginalWords.slice(overlapCount).join(' ');
+                            } else {
+                                mergedText += ' ' + current;
+                            }
+                        }
+                    }
+
+                    // Final cleanup
+                    finalTranscript = mergedText.replace(/\s+/g, ' ').trim();
+                    document.getElementById("mic-status").innerText = `Hearing: "${finalTranscript}"`;
+                };
+                
+                recognition.onerror = (e) => {
+                    console.error("Speech Error:", e);
+                    if (e.error !== 'no-speech') {
+                        showToast(`Speech recognition error: ${e.error}`, "error");
+                    }
+                    if (isRecording) {
+                        recognition.stop();
+                    }
+                };
+            }
+        }
+
+        function toggleSpeechRecognition() {
+            if (!recognition) return showToast("Speech Recognition not supported in this browser. Please use Chrome.", "error");
+            if (isRecording) {
+                recognition.stop();
+            } else {
+                try {
+                    recognition.start();
+                } catch(e) {
+                    recognition.stop();
+                }
+            }
+        }
+
+        function evaluateSpeech(userSpeech) {
+            if (!userSpeech || userSpeech.trim() === '') return;
+            
+            const target = allExercises[currentActivityIndex].target;
+            const normTarget = normalizeText(target);
+            const normUser = normalizeText(userSpeech);
+
+            let score = normTarget === normUser ? 100 : Math.round((1 - (Math.abs(normTarget.length - normUser.length) / Math.max(normTarget.length, 1))) * 100);
+            
+            // Adjust score logic for better feedback
+            if (normUser.includes(normTarget) || normTarget.includes(normUser)) score = Math.max(score, 80);
+            if (score < 40) score = 60; // Keep motivation high
+
+            const panel = document.getElementById("speech-feedback-panel");
+            const badge = document.getElementById("speech-badge-score");
+            const msg = document.getElementById("speech-feedback-msg");
+            
+            panel.classList.remove("hidden");
+            document.getElementById("speech-target-text").innerText = `"${target}"`;
+            document.getElementById("speech-transcription-text").innerText = `"${userSpeech}"`;
+            badge.innerText = `${score}% Match`;
+            
+            if (score >= 85) {
+                badge.className = "px-3 py-1 rounded-md text-xs font-bold text-white bg-emerald-600 shadow-md";
+                msg.className = "text-sm font-bold pt-3 text-center mt-3 text-emerald-400 border-t border-slate-700";
+                msg.innerText = "🎉 Excellent pronunciation! Crystal clear.";
+                totalScore += 25;
+                document.getElementById("score-display").innerText = `${totalScore} pts`;
+                triggerConfetti();
+            } else if (score >= 60) {
+                badge.className = "px-3 py-1 rounded-md text-xs font-bold text-slate-900 bg-amber-400 shadow-md";
+                msg.className = "text-sm font-bold pt-3 text-center mt-3 text-amber-400 border-t border-slate-700";
+                msg.innerText = "👍 Good effort! Listen to the model and try again for perfection.";
+            } else {
+                badge.className = "px-3 py-1 rounded-md text-xs font-bold text-white bg-rose-500 shadow-md";
+                msg.className = "text-sm font-bold pt-3 text-center mt-3 text-rose-400 border-t border-slate-700";
+                msg.innerText = "💪 Keep practicing! Your brain is learning the neural patterns.";
+            }
+        }
+    </script>
+</body>
+</html>
